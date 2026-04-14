@@ -1,14 +1,7 @@
+import type { NextConfig } from "next";
 
-// next.config.js
-const nextConfig = {
-  webpack: (config) => {
-    config.watchOptions = {
-      poll: 1000,        // check for changes every 1 second
-      aggregateTimeout: 300,
-    };
-    return config;
-  },
+const nextConfig: NextConfig = {
+  /* config options here */
 };
 
-module.exports = nextConfig;
-
+export default nextConfig;
