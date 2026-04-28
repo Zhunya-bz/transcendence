@@ -1,0 +1,32 @@
+name: jirok
+
+services:
+
+  #the database container
+  db:
+    image: postgres:15-alpine
+    container_name: jirok_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER} #taken form the .env file
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} #this too from the .env file
+      POSTGRES_DB: ${POSTGRES_DB} #this too from .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  
+  #the backend API container
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jirok_backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: ${DATABASE_URL} #taken frmo the .env
+
+volumes:
+    postgres_data:
