@@ -44,11 +44,11 @@ export default function Home() {
               <div className='relative bg-white rounded-lg shadow-2xl overflow-hidden'>
                 <Image 
                   src='/image.webp' 
-                  width={800} // Increased base resolution for quality
+                  width={800} 
                   height={450} 
                   className='w-full h-auto object-cover'
                   alt="Jirok Tasks Table Dashboard" 
-                  priority // Loads this image faster as it's at the top
+                  priority 
                 />
               </div>
             </div>
