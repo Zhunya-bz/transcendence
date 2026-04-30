@@ -9,7 +9,7 @@ return (
     <div className="min-h-10 bg-blue-300 flex flex-col items-center text-center py-4">
       <div className="flex space-x-6 mb-2">
         <Link href="/files/privacy-policy.txt" target="_blank" className="text-gray-900 hover:text-blue-700 transition-colors">Privacy Policy</Link>
-        <Link href="/files/terms.txt" target="_blank" className="text-gray-900 hover:text-blue-700 transition-colors">Terms and Conditions</Link>
+        <Link href="/files/terms.txt" target="_blank" className="text-gray-900 hover:text-blue-700 transition-colors">Terms of Service</Link>
       </div>
 
       <div className="flex items-center space-x-2 text-gray-700">

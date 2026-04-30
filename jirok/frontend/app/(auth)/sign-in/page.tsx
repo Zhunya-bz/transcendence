@@ -1,12 +1,29 @@
 'use client';
+import { z } from "zod";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Image from 'next/image';
 import { Separator } from "@/components/ui/separator";
+import {useForm} from "react-hook-form";
+import {zodResolver} from '@hookform/resolvers'
+
+const formSchema = z.object({
+    email: z.email(),
+    password: z.string().min(1),
+})
+
 
 export default function SignIn() {
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            email: "", 
+            password: "",
+        },
+    });
+
     return (
         <>
         <Navbar/>
@@ -21,6 +38,7 @@ export default function SignIn() {
                 <Separator className="bg-blue-500"/>
             </div>
             <CardContent className="p-7">
+                <Form></Form>
                 <form className="space-y-5">
                     <Input 
                         required
