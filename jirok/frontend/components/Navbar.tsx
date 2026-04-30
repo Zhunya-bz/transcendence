@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import { Button } from "./ui/button";
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Navbar() {
     const pathname = usePathname();
@@ -19,9 +20,11 @@ export default function Navbar() {
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
                 {(pathname === '/' || pathname === '/sign-up') 
-                    && (<Button variant='ghost' className="text-base sm:text-lg bg-orange-300 hover:bg-orange-400">Sign In</Button>)}
+                    && (<Button variant='ghost' className="text-base sm:text-lg bg-orange-300 hover:bg-orange-400">
+                        <Link href="/sign-in">Sign In</Link></Button>)}
                 {(pathname === '/' || pathname === '/sign-in') 
-                    && (<Button className="text-base sm:text-lg bg-blue-600 hover:bg-blue-800" >Sign Up</Button>)}
+                    && (<Button className="text-base sm:text-lg bg-blue-600 hover:bg-blue-800" >
+                        <Link href="/sign-up">Sign Up</Link></Button>)}
             </div>
         </div>
     </header>
