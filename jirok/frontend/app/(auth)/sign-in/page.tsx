@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import { signin } from "@/actions/signin";
 
 const formSchema = z.object({
   email: z.email(),
@@ -31,13 +32,19 @@ export default function SignIn() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const result = await signin(values);
+      console.log("Login successful:", result);
+      // Handle redirect or token storage here
+    } catch (error) {
+      console.error("Login error:", error);
+    }
   };
 
   return (
     <>
-    <Navbar/>
+      <Navbar />
       <div className="flex items-start justify-center min-h-screen p-8">
         <Card className="w-full sm:w-[90%] md:w-[487px] shadow-lg rounded-lg">
           <CardHeader className="flex items-center justify-center text-center p-5">

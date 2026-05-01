@@ -22,6 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import Navbar from "@/components/Navbar";
+import { signup } from "@/actions/signup";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, "Required"),
@@ -42,8 +43,14 @@ export default function SignUp() {
       password: "",
     },
   });
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const result = await signup(values);
+      console.log("SignUp successful:", result);
+      // Handle redirect or token storage here
+    } catch (error) {
+      console.error("SignUp error:", error);
+    }
   };
   return ( <>
     <Navbar/>
