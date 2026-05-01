@@ -4,10 +4,192 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
+
+//ENUMS
+enum UserRole {
+  Admin		@map("admin")
+  Member	@map("member")
+  VIEWER	@map("viewer")
+}
+
+enum IssueStatus {
+  TODO			@map("todo")
+  IN_PROGRESS	@map("in_progress")
+  IN_REVIEW		@map("in_review")
+  DONE			@map("done")
+}
+
+enum IssuePriority {
+	LOW		@map("low")
+	MEDIUM	@map("medium")
+	HIGH	@map("high")
+}
+
+enum IssueType {
+	BUG		@map("bug")
+	TASK	@map("task")
+	STORY	@map("story")
+}
+
+enum AttachmentEntityType {
+	ISSUE	@map("issue")
+	COMMENT	@map("comment")
+}
+
+enum NotificationEntityType {
+	ISSUE	@map("issue")
+	COMMENT	@map("comment")
+	PROJECT	@map("project")
+}
+
+//MODELS
+
+model User {
+	id						Int				@id @default(autoincrement())
+	name					String
+	surname					String?
+	email					String			@unique
+	passwordHash			String			@map("password_hash")
+	jobTitle				String?			@map("job_title")
+	JobOrganization			String?			@map("job_organization")
+	location				String?
+	avatarUrl				String?			@map("avatar_url")
+	accountCreated			DateTime		@default(now()) @map("account_created")
+	updatedAt				DateTime		@updatedAt @map("updated_at")
+	deletedAt				DateTime?		@map("deleted_at")
+	projects				UserProject[]
+	comments				Comment[]
+	attachments				Attachment[]
+	apiKeys					ApiKey[]
+	reportedIssues			Issue[]			@relation("ReportedIssues")
+	assignedIssues			Issue[]			@relation("AssignedIssues")
+	changedIssues			Issue[]			@relation("ChangedIssues")
+	notifications			Notification[]	@relation("UserNotifications")
+	triggeredNotifications	Notification[]	@relation("TriggeredNotifications")
+
+	@@map("users")
+}
+
+model Project {
+	id			Int			@id @default(autoincrement())
+	name		String		@unique
+	projectKey	String		@map("project_key") @db.VarChar(10)
+	createdAt	DateTime	@default(now()) @map("created_at")
+	updatedAt	DateTime	@updatedAt @map("updated_at")
+	deletedAt	DateTime?	@map("deleted_at")
+
+	members	UserProject[]
+	issues	Issue[]
+
+	@@map("projects")
+}
+
+model UserProject {
+	userId		Int			@map("user_id")
+	projectId	Int			@map("project_id")
+	role		UserRole
+	joinedAt	DateTime	@default(now()) @map("joined_at")
+
+	//Foreign Key connections
+	user		User		@relation(fields: [userId], references: [id], onDelete: Cascade)
+	project		Project		@relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+	@@id([userId, projectId])
+	@@map("user_projects")
+}
+
+model Issue {
+	id				Int			@id @default(autoincrement())
+	projectId		Int			@map("project_id")
+	reporterId		Int			@map("reported_id")
+	assigneeId		Int?		@map("assignee_id")
+	changedUserId	Int?		@map("change_user_id")
+	status			IssueStatus
+	type			IssueType
+	title			String
+	description		String?
+	priority		IssuePriority
+	created			DateTime	@default(now())
+	updatedAt		DateTime	@updatedAt @map("updated_at")
+	deletedAt		DateTime?	@map("deleted_at")
+
+	project		Project		@relation(fields: [projectId], references: [id], onDelete: Cascade)
+	reporter	User		@relation("ReportedIssues", fields: [reporterId], references: [id], onDelete: Cascade)
+	assignee	User?		@relation("AssignedIssues", fields: [assigneeId], references: [id], onDelete: SetNull)
+	changedUser	User?		@relation("ChangedIssues", fields: [changedUserId], references: [id], onDelete: SetNull)
+
+	//onDelete is SetNull because we don't to delete the issue if the user assigned to an issue gets delete, so the assignee_id is set to NULL
+
+	comments	Comment[]
+	@@map("issues")
+}
+
+model Comment {
+	id			Int			@id @default(autoincrement())
+	issueId		Int			@map("issue_id")
+	authorId	Int			@map("author_id")
+	description	String
+	createdAt	DateTime	@default(now()) @map("created_at")
+	updatedAt	DateTime	@updatedAt @map("updated_at")
+	deletedAt	DateTime?	@map("deleted_at")
+
+	issue	Issue	@relation(fields: [issueId], references: [id], onDelete: Cascade)
+	author	User	@relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+	@@map("comments")
+}
+
+model Attachment {
+	id				Int						@id @default(autoincrement())
+	fileName		String					@map("file_name")
+	fileSize		Int						@map("file_size")
+	storagePath		String					@map("storage_path")
+	uploadedById	Int						@map("uploaded_by_id")
+	entityType		AttachmentEntityType	@map("entity_type")
+	entityId		Int						@map("entity_id")
+	createdAt		DateTime				@default(now()) @map("created_at")
+	updatedAt		DateTime				@updatedAt @map("updated_at")
+
+	uploader	User	@relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+
+	@@map("attachments")
+}
+
+model Notification {
+	id					Int						@id @default(autoincrement())
+	userId				Int						@map("user_id")
+	title				String
+	message				String?
+	entityType			NotificationEntityType	@map("entity_type")
+	entityId			Int?					@map("entity_id")
+	triggeredByUserId	Int?					@map("triggered_by_user_id")
+	eventType			String					@map("event_type")
+	isRead				Boolean					@default(false) @map("is_read")
+	readAt				DateTime?				@map("read_at")
+	createdAt			DateTime				@default(now()) @map("created_at")
+
+	user			User	@relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+	triggeredByUser	User?	@relation("TriggeredNotifications", fields: [triggeredByUserId], references: [id], onDelete: SetNull)
+
+	@@map("notifications")
+}
+
+model ApiKey {
+	id			Int			@id @default(autoincrement())
+	userId		Int			@map("user_id")
+	keyHash		String		@unique @map("key_hash")
+	createdAt	DateTime?	@default(now()) @map("created_at")
+
+	user	User	@relation(fields: [userId], references: [id], onDelete: Cascade)
+
+	@@map("api_keys")
+}
+
+
