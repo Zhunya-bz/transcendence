@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import { signin } from "@/actions/signin";
+import { signin } from "@/actions/auth";
 
 const formSchema = z.object({
   email: z.email(),

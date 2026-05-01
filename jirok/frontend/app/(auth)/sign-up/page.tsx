@@ -22,7 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import Navbar from "@/components/Navbar";
-import { signup } from "@/actions/signup";
+import { signup } from "@/actions/auth";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, "Required"),
