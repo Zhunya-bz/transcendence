@@ -1,6 +1,5 @@
 "use client";
 import { z } from "zod";
-import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,6 +14,8 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 const formSchema = z.object({
   email: z.email(),
@@ -36,14 +37,14 @@ export default function SignIn() {
 
   return (
     <>
-      <Navbar />
+    <Navbar/>
       <div className="flex items-start justify-center min-h-screen p-8">
         <Card className="w-full sm:w-[90%] md:w-[487px] shadow-lg rounded-lg">
           <CardHeader className="flex items-center justify-center text-center p-5">
             <CardTitle className="text-2xl">Welcome back!</CardTitle>
           </CardHeader>
           <div className="px-7">
-            <Separator className="bg-blue-500" />
+            <Separator className="bg-gray-400" />
           </div>
           <CardContent className="p-7">
             <Form {...form}>
@@ -94,6 +95,9 @@ export default function SignIn() {
               </form>
             </Form>
           </CardContent>
+          <div className="px-7">
+            <Separator className="bg-gray-400" />
+          </div>
           <div className="px-7 flex items-center justify-center text-lg">
             or login with
           </div>
@@ -102,8 +106,25 @@ export default function SignIn() {
               variant="ghost"
               className="w-full bg-orange-300 hover:bg-orange-400 mb-3"
             >
-              <Image src="/42icon.svg" width={30} height={30} alt="42 Icon" />
+              <Image
+                src="/42icon.svg"
+                width={500}
+                height={500}
+                alt="42 Icon"
+                className="w-[30px]"
+              />
             </Button>
+          </CardContent>
+          <div className="px-7">
+            <Separator className="bg-gray-400" />
+          </div>
+          <CardContent className="px-7 py-1 flex items-center justify-center">
+            <p>
+              Don&apos;t have an account? &nbsp;
+              <Link href="/sign-up">
+                <span className="text-blue-700">Sign Up</span>
+              </Link>
+            </p>
           </CardContent>
         </Card>
       </div>
