@@ -13,13 +13,17 @@ export class UsersService {
     });
   }
 
-  async findAll() {
-    return this.prisma.user.findMany();
+  async findAll(page: number = 1, limit: number = 20) {
+    return this.prisma.user.findMany({
+      where : { deletedAt: null },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
   }
 
   async findOne(id: number) {
     return this.prisma.user.findUnique({
-      where: { id: id },
+      where: { id: id, deletedAt: null },
     });
   }
 
@@ -31,8 +35,22 @@ export class UsersService {
   }
 
   async remove(id: number) {
-  return this.prisma.user.delete({
+  return this.prisma.user.update({
     where: { id: id},
+    data: { deletedAt: new Date() },
   });
+  }
+
+  async findUserProjects(id: number) {
+    return this.prisma.userProject.findMany({
+      where: { userId: id },
+      include : { project: true },
+    });
+  }
+
+  async findUserIssues(id: number) {
+    return this.prisma.issue.findMany({
+      where: { assigneeId: id, deletedAt: null },
+    });
   }
 }
