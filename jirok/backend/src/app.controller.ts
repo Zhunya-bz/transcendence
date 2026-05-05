@@ -6,8 +6,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('test')
-  getTest()
-   {
-    return {message: "backend is work"};
+  getTest() {
+    return { message: 'backend is work' };
   }
 }
