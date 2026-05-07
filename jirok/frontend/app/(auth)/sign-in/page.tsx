@@ -32,14 +32,9 @@ export default function SignIn() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      const result = await signin(values);
-      console.log("Login successful:", result);
-      // Handle redirect or token storage here
-    } catch (error) {
-      console.error("Login error:", error);
-    }
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+      const result = signin(values);
+      console.log(result); // should do something with result a?
   };
 
   return (

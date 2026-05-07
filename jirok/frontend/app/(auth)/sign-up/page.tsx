@@ -43,14 +43,9 @@ export default function SignUp() {
       password: "",
     },
   });
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      const result = await signup(values);
-      console.log("SignUp successful:", result);
-      // Handle redirect or token storage here
-    } catch (error) {
-      console.error("SignUp error:", error);
-    }
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+      const result = signup(values);
+      console.log(result); // should do something with result a?
   };
   return ( <>
     <Navbar/>
