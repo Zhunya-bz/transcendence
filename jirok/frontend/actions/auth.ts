@@ -6,6 +6,7 @@ export const signin = async(data: { email: string; password: string }) => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
+        credentials: "include",
     }).then(response => response.json())
     .then(data => {
         return data;
@@ -20,6 +21,7 @@ export const signup = async(data: { name:string; email: string; password: string
             "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
+        credentials: "include",
     }).then(response => response.json())
     .then(data => {
         return data;
@@ -27,8 +29,8 @@ export const signup = async(data: { name:string; email: string; password: string
     .catch(error => console.error(error));
 }
 
-export async function getCurrentMe() {
-  const res = await fetch("http://localhost:3001/auth/me")
-  if (!res.ok) return null;
-  return res.json();
-}
+// export async function getCurrentMe() {
+//   const res = await fetch("http://localhost:3001/auth/me")
+//   if (!res.ok) return null;
+//   return res.json();
+// }

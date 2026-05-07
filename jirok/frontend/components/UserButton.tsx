@@ -1,4 +1,5 @@
-import { getCurrentMe } from "@/actions/auth";
+"use client";
+import { getCurrentMe } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
@@ -6,7 +7,7 @@ import { Loader } from "lucide-react";
 export const UserButton = () => {
   const { data: user, isLoading } = useQuery({
     queryKey: ["currentUser"],
-    queryFn: getCurrentMe,
+    queryFn: () => getCurrentMe(),
   });
   if (isLoading)
     return (
@@ -14,11 +15,11 @@ export const UserButton = () => {
         <Loader className="size-4 animate-spin text-muted-foreground" />
       </div>
     );
-  if (!user) return null;
+  if (!user) return <div>user is null</div>; // todo! make it NULL !
   const { name, email } = user;
   const avatarFallback = name
-    ? name.charAt(0).toUpeerCase()
-    : (email.charAt(0).toUpeerCase() ?? "U");
+    ? name.charAt(0).toUpperCase()
+    : (email.charAt(0).toUpperCase() ?? "U");
   return (
     <Avatar className="size-10 hover:opacity-75 transition border border-neutral-300">
       <AvatarFallback className="bg-neutral-200 font-medium text-neutral-500 flex items-center justify-center">
