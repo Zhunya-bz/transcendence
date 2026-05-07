@@ -32,9 +32,16 @@ export default function SignIn() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-      const result = signin(values);
-      console.log(result); // should do something with result a?
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const result = await signin(values);
+      console.log(result);
+    } catch (err) {
+      console.error(err);
+      form.setError("root", {
+        message: "Login failed. Please try again.",
+      });
+    }
   };
 
   return (
@@ -88,12 +95,18 @@ export default function SignIn() {
                 />
 
                 <Button
-                  disabled={false}
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
                   className="bg-blue-600 text-lg w-full hover:bg-blue-800"
                   size="lg"
                 >
-                  Login
+                  {form.formState.isSubmitting ? "Logging in..." : "Login"}
                 </Button>
+                {form.formState.errors.root?.message ? (
+                  <p className="text-sm text-red-600" role="alert">
+                    {form.formState.errors.root.message}
+                  </p>
+                ) : null}
               </form>
             </Form>
           </CardContent>

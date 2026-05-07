@@ -27,11 +27,8 @@ export const signup = async(data: { name:string; email: string; password: string
     .catch(error => console.error(error));
 }
 
-export const getCurrentMe = async() => {
-    const res = await fetch("http://localhost:3001/auth/me")
-    .then(response => response.json())
-    .then(data => {
-        return data;
-    })
-    .catch(error => console.error(error));
+export async function getCurrentMe() {
+  const res = await fetch("http://localhost:3001/auth/me")
+  if (!res.ok) return null;
+  return res.json();
 }
