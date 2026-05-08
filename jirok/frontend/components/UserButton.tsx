@@ -1,8 +1,10 @@
 "use client";
-import { getCurrentMe } from "@/lib/utils";
+import { getCurrentMe } from "../actions/auth";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useQuery } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
+import { Loader, LogOutIcon, UserIcon } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
+import Link from "next/link";
 
 export const UserButton = () => {
   const { data: user, isLoading } = useQuery({
@@ -16,14 +18,33 @@ export const UserButton = () => {
       </div>
     );
   if (!user) return <div>user is null</div>; // todo! make it NULL !
-  const { name, email } = user;
+  // const { name, email } = user.results[0];
+  const name = user.results[0].name.title;
+  const email = user.results[0].email;
+  console.log(user);
   const avatarFallback = name
     ? name.charAt(0).toUpperCase()
     : (email.charAt(0).toUpperCase() ?? "U");
   return (
-    <Avatar className="size-10 hover:opacity-75 transition border border-neutral-300">
-      <AvatarFallback className="bg-neutral-200 font-medium text-neutral-500 flex items-center justify-center">
-        {avatarFallback}</AvatarFallback>
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger className="outline-none relative">
+    <Avatar className="size-10 opacity-85 hover:opacity-100 transition">
+      <AvatarFallback className="bg-blue-400 font-medium text-gray-900 flex items-center justify-center">
+        {avatarFallback}
+      </AvatarFallback>
     </Avatar>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end" side="bottom" className="w-40" sideOffset={10}>
+      <DropdownMenuItem>
+          <UserIcon />
+          <Link href="/profile">Profile</Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem variant="destructive">
+          <LogOutIcon />
+          Log out
+        </DropdownMenuItem>
+    </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

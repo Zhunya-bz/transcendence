@@ -29,8 +29,8 @@ export const signup = async(data: { name:string; email: string; password: string
     .catch(error => console.error(error));
 }
 
-// export async function getCurrentMe() {
-//   const res = await fetch("http://localhost:3001/auth/me")
-//   if (!res.ok) return null;
-//   return res.json();
-// }
+export async function getCurrentMe() {
+  const res = await fetch("https://randomuser.me/api/")
+  if (!res.ok) return null;
+  return res.json();
+}
