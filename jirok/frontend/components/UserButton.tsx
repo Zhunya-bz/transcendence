@@ -1,6 +1,6 @@
 "use client";
 import { getCurrentMe } from "../actions/auth";
-import { Avatar, AvatarFallback } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { Loader, LogOutIcon, UserIcon } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
@@ -28,8 +28,12 @@ export const UserButton = () => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className="outline-none relative">
-    <Avatar className="size-10 opacity-85 hover:opacity-100 transition">
-      <AvatarFallback className="bg-blue-400 font-medium text-gray-900 flex items-center justify-center">
+    <Avatar size="lg" className="size-10 hover:opacity-85 transition">
+      <AvatarImage
+          src={user.results[0].picture.medium}
+          alt="Avatar image"
+        />
+      <AvatarFallback className="bg-blue-500 font-medium text-gray-900 flex items-center justify-center">
         {avatarFallback}
       </AvatarFallback>
     </Avatar>
