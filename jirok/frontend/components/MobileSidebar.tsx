@@ -33,7 +33,8 @@ export const MobileSidebar = () => {
       <SheetContent
         side="left"
         overlayClassName="z-40 bg-black/10 backdrop-blur-md"
-        className="z-40 max-w-none bg-white border-r shadow-none data-[side=left]:w-[40vw] data-[side=left]:top-16 data-[side=left]:bottom-0 data-[side=left]:h-auto"
+        className="z-40 max-w-none bg-white border-r shadow-none data-[side=left]:w-full
+  sm:data-[side=left]:w-[40vw] data-[side=left]:top-16 data-[side=left]:bottom-0 data-[side=left]:h-auto"
       >
         <SheetHeader className="hidden">
           <SheetTitle></SheetTitle>

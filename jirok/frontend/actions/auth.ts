@@ -11,7 +11,7 @@ export const signin = async(data: { email: string; password: string }) => {
     .then(data => {
         return data;
     })
-    .catch(error => console.error(error));
+    .catch(error => {console.error(error); return error.message});
 }
 
 export const signup = async(data: { name:string; email: string; password: string }) => {
@@ -26,11 +26,12 @@ export const signup = async(data: { name:string; email: string; password: string
     .then(data => {
         return data;
     })
-    .catch(error => console.error(error));
+    .catch(error => {console.error(error); return error.message});
 }
 
 export async function getCurrentMe() {
   const res = await fetch("https://randomuser.me/api/")
-  if (!res.ok) return null;
-  return res.json();
+  .then(response => response.json)
+  .then(data => {return data})
+  .catch(error => {console.error(error); return error.message});
 }
