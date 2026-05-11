@@ -3,14 +3,34 @@ import { getCurrentMe } from "../actions/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { Loader, LogOutIcon, UserIcon } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
 import Link from "next/link";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 export const UserButton = () => {
-  const { data: user, isLoading } = useQuery({
+  const {
+    data: user,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["currentUser"],
-    queryFn: () => getCurrentMe(),
+    queryFn: getCurrentMe,
   });
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(error.message);
+    }
+  }, [isError, error]);
+
   if (isLoading)
     return (
       <div className="size-10 rounded-full flex items-center justify-center bg-neutral-200 border-neutral-300">
@@ -28,18 +48,23 @@ export const UserButton = () => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className="outline-none relative">
-    <Avatar size="lg" className="size-10 hover:opacity-85 transition">
-      <AvatarImage
-          src={user.results[0].picture.medium}
-          alt="Avatar image"
-        />
-      <AvatarFallback className="bg-blue-500 font-medium text-gray-900 flex items-center justify-center">
-        {avatarFallback}
-      </AvatarFallback>
-    </Avatar>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align="end" side="bottom" className="w-40" sideOffset={10}>
-      <DropdownMenuItem>
+        <Avatar size="lg" className="size-10 hover:opacity-85 transition">
+          <AvatarImage
+            src={user.results[0].picture.medium}
+            alt="Avatar image"
+          />
+          <AvatarFallback className="bg-blue-500 font-medium text-gray-900 flex items-center justify-center">
+            {avatarFallback}
+          </AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        side="bottom"
+        className="w-40"
+        sideOffset={10}
+      >
+        <DropdownMenuItem>
           <UserIcon />
           <Link href="/profile">Profile</Link>
         </DropdownMenuItem>
@@ -48,7 +73,7 @@ export const UserButton = () => {
           <LogOutIcon />
           Log out
         </DropdownMenuItem>
-    </DropdownMenuContent>
+      </DropdownMenuContent>
     </DropdownMenu>
   );
 };

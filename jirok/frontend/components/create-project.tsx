@@ -1,12 +1,13 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Separator } from "./ui/separator";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { createProject } from "@/actions/projects";
 
 export const createProjectSchema = z.object({
   name: z.string().trim().min(1, "Required"),
@@ -20,12 +21,13 @@ export const CreateProject = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof createProjectSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof createProjectSchema>) => {
+    const result = await createProject(values);
+    console.log(result);
   };
 
   return (
-    <Card className="w-full h-full border-none">
+    <Card className="w-full max-w-2xl mx-auto h-full border-none shadow-lg shadow-orange-400/50">
       <CardHeader className="flex p-7">
         <CardTitle className="text-xl font-bold">
           Create a new project
@@ -38,7 +40,7 @@ export const CreateProject = () => {
         <Form {...form}>
           
             <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="flex flex-col gap-y-4">
+              <div className="flex flex-col gap-y-7">
                 <FormField 
                 control={form.control}
                 name="name"
@@ -57,7 +59,7 @@ export const CreateProject = () => {
                     </FormItem>
                 )}
                 />
-                <Button type="submit" size="lg" variant='ghost' className="bg-orange-400">
+                <Button type="submit" size="lg" variant='ghost' className="bg-orange-400 hover:bg-orange-500 font-semibold">
                   Create project
                 </Button>
                 </div>

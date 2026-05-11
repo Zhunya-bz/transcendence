@@ -1,0 +1,23 @@
+"use server";
+
+export const createProject = async (data: { name: string }) => {
+  try {
+    const response = await fetch("http://localhost:3001/projects", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error(`${response.status}: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

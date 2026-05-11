@@ -5,7 +5,7 @@ export default function ProjectPage() {
     const projects = null;
     if (!projects) 
         return (
-            <div className="bg-orange-300 p-2">
+            <div className="p-2">
                 <CreateProject/>
             </div>
         )
