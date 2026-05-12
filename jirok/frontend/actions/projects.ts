@@ -15,3 +15,11 @@ export const createProject = async (data: { name: string }) => {
     }
     return await response.json();
 }
+
+export async function getCurrentProject() {
+  const response = await fetch("http://localhost:3001/projects");
+  if (!response.ok) {
+    throw new Error(`${response.status}: ${response.statusText}`);
+  }
+  return response.json();
+}

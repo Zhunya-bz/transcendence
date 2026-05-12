@@ -7,6 +7,7 @@ import {
 } from "react-icons/go";
 import { AiFillProject, AiOutlineProject } from "react-icons/ai";
 import { PiListChecks, PiListChecksFill } from "react-icons/pi";
+import { RiAddCircleFill } from "react-icons/ri";
 import {
   MdOutlineSpaceDashboard,
   MdSpaceDashboard,
@@ -16,6 +17,12 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Separator } from "./ui/separator";
+import { useEffect } from "react";
+import { getCurrentProject } from "@/actions/projects";
+import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { ModalCreateProject } from "./modal-create-project";
 
 const routes = [
   {
@@ -53,26 +60,30 @@ const routes = [
 export const Navigation = () => {
   const pathname = usePathname();
 
+
   return (
-    <ul className="flex flex-col ">
-      {routes.map((item) => {
-        const isActive = pathname.startsWith(item.href);
-        const Icon = isActive ? item.activeIcon : item.icon;
-        return (
-          <Link key={item.href} href={item.href}>
-            <div
-              className={cn(
-                "flex items-center gap-3 p-3 rounded-md font-medium hover:text-primary transition text-neutral-500",
-                isActive &&
-                  "bg-orange-300 shadow-sm hover:opacity-100 text-primary",
-              )}
-            >
-              <Icon className="size-5 text-neutral-500" />
-              {item.label}
-            </div>
-          </Link>
-        );
-      })}
-    </ul>
+    <>
+      <ModalCreateProject/>
+      <ul className="flex flex-col ">
+        {routes.map((item) => {
+          const isActive = pathname.startsWith(item.href);
+          const Icon = isActive ? item.activeIcon : item.icon;
+          return (
+            <Link key={item.href} href={item.href}>
+              <div
+                className={cn(
+                  "flex items-center gap-3 p-3 rounded-md font-medium hover:text-primary transition text-neutral-500",
+                  isActive &&
+                    "bg-orange-300 shadow-sm hover:opacity-100 text-primary",
+                )}
+              >
+                <Icon className="size-5 text-neutral-500" />
+                {item.label}
+              </div>
+            </Link>
+          );
+        })}
+      </ul>
+    </>
   );
 };
