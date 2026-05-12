@@ -46,15 +46,18 @@ export default function SignUp() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const result = await signup(values);
-      console.log("SignUp successful:", result);
-      // Handle redirect or token storage here
-    } catch (error) {
-      console.error("SignUp error:", error);
+      console.log(result);
+    } catch (err) {
+      console.error(err);
+      form.setError("root", {
+        message: "Sign up failed. Please try again.",
+      });
     }
   };
-  return ( <>
-    <Navbar/>
-    <div className="flex items-start justify-center min-h-screen p-8">
+  return (
+    <>
+      <Navbar />
+      <div className="flex items-start justify-center min-h-screen p-8">
         <Card className="w-full sm:w-[90%] md:w-[487px] shadow-lg rounded-lg">
           <CardHeader className="flex flex-col items-center justify-center text-center p-5">
             <CardTitle className="text-2xl">Sign Up</CardTitle>
@@ -127,16 +130,22 @@ export default function SignUp() {
                   )}
                 />
                 <Button
-                  disabled={false}
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
                   className="bg-blue-600 text-lg w-full hover:bg-blue-800"
                   size="lg"
                 >
-                  Register
+                  {form.formState.isSubmitting ? "Registering..." : "Register"}
                 </Button>
+                {form.formState.errors.root?.message ? (
+                  <p className="text-sm text-red-600" role="alert">
+                    {form.formState.errors.root.message}
+                  </p>
+                ) : null}
               </form>
             </Form>
           </CardContent>
-                    <div className="px-7">
+          <div className="px-7">
             <Separator className="bg-gray-400" />
           </div>
           <div className="px-7 flex items-center justify-center text-lg">
@@ -147,20 +156,28 @@ export default function SignUp() {
               variant="ghost"
               className="w-full bg-orange-300 hover:bg-orange-400 mb-3"
             >
-              <Image src="/42icon.svg" width={500} height={500} alt="42 Icon" className="w-[30px]"/>
+              <Image
+                src="/42icon.svg"
+                width={500}
+                height={500}
+                alt="42 Icon"
+                className="w-[30px]"
+              />
             </Button>
           </CardContent>
           <div className="px-7">
             <Separator className="bg-gray-400" />
           </div>
-                  <CardContent className="px-7 py-1 flex items-center justify-center">
-                    <p>Already have an account? &nbsp; 
-                      <Link href='/sign-in'>
-                      <span className="text-blue-700">Sign In</span></Link>
-                    </p>
-                  </CardContent>
+          <CardContent className="px-7 py-1 flex items-center justify-center">
+            <p>
+              Already have an account? &nbsp;
+              <Link href="/sign-in">
+                <span className="text-blue-700">Sign In</span>
+              </Link>
+            </p>
+          </CardContent>
         </Card>
       </div>
-      </>
-    );
-  }
+    </>
+  );
+}

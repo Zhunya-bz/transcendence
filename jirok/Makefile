@@ -15,6 +15,10 @@ start:
 logs:
 	$(COMPOSE) logs -f
 
+ps:
+	$(COMPOSE) ps
+
+
 clean:
 	$(COMPOSE) down
 
