@@ -1,7 +1,7 @@
 "use client";
-import { getCurrentMe } from "../actions/auth";
+import { getCurrentMe, logout } from "../actions/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader, LogOutIcon, UserIcon } from "lucide-react";
 import {
   DropdownMenu,
@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export const UserButton = () => {
   const {
@@ -30,6 +31,20 @@ export const UserButton = () => {
       toast.error(error.message);
     }
   }, [isError, error]);
+
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      queryClient.clear(); // clear all cached data
+      router.push("/login");
+    },
+    onError: () => toast.error("Logout failed"),
+  });
+  const handleLogout = () => {
+    mutation.mutate();
+  };
 
   if (isLoading)
     return (
@@ -69,7 +84,7 @@ export const UserButton = () => {
           <Link href="/profile">Profile</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive">
+        <DropdownMenuItem variant="destructive" onClick={handleLogout}>
           <LogOutIcon />
           Log out
         </DropdownMenuItem>

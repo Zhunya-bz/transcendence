@@ -54,3 +54,10 @@ export async function getCurrentMe() {
   }
   return response.json();
 }
+
+export const logout = async () => {
+  await fetch("http://localhost:3001/auth/logout", {
+    method: "POST",
+    credentials: "include",
+  });
+};
