@@ -24,12 +24,17 @@ export default function DashboardHome() {
             <TaskStack status="todo" tasks={tasks.filter(task => task.status === "todo")} setTasks={setTasks} />
             <TaskStack status="in_progress" tasks={tasks.filter(task => task.status === "in_progress")} setTasks={setTasks} />
             <TaskStack status="in_review" tasks={tasks.filter(task => task.status === "in_review")} setTasks={setTasks} />
-            <TaskStack status="done" tasks={tasks.filter(task => task.status === "done")} setTasks={setTasks} />
+            <TaskStack status="done" tasks={tasks.filter(task => task.status === "done")} setTasks={setTasks} showAdd={false} />
        </div>
     )
 }
 
-function TaskStack({ status, tasks, setTasks }: { status: string, tasks: Task[], setTasks: React.Dispatch<React.SetStateAction<Task[]>> }) {
+function TaskStack({
+    status,
+    tasks,
+    setTasks,
+    showAdd=true,
+}: { status: string, tasks: Task[], setTasks: React.Dispatch<React.SetStateAction<Task[]>>, showAdd?: boolean }) {
     const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         const data = e.dataTransfer?.getData('text');
@@ -50,13 +55,13 @@ function TaskStack({ status, tasks, setTasks }: { status: string, tasks: Task[],
     }
 
     return <div
-        className="flex-1 flex flex-col gap-4 min-w-[90px] bg-amber-50 p-4 rounded-md"
+        className="flex-1 flex flex-col gap-1 min-w-[90px] bg-[rgba(241,114,16,0.2)] bg-opacity-25 p-1 pt-3 rounded-md"
         onDrop={onDrop}
         onDragOver={onDragOver}
     >
-        <h1 className="pl-4 font-bold">{status.replaceAll("_", " ").toUpperCase()}</h1>
+        <h1 className="pl-4 font-bold">{status.replaceAll("_", " ").toUpperCase()} <span>({tasks.length})</span></h1>
         {tasks.map(task => <TaskCard key={task.id} task={task} />)}
-        <TaskAdd />
+        {showAdd && <TaskAdd status={status} setTasks={setTasks} />}
     </div>
 }
 
@@ -74,6 +79,26 @@ function TaskCard({ task }: { task: Task }) {
     </div>
 }
 
-function TaskAdd() {
-    return <h1 className="text-center">+ task</h1>
+function TaskAdd({ setTasks, status }: { status: string, setTasks: React.Dispatch<React.SetStateAction<Task[]>> }) {
+    const onMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+        const text = e.target.querySelector('#task-add-text')?.innerText;
+        if (text) {
+            setTasks((tasks) => [
+                ...tasks,
+                { id: tasks.length + 1, name: text, status }
+            ])
+            e.target.innerText = ""
+        }
+    }
+
+    return <h1
+        className="opacity-0 hover:opacity-50 bg-blue-50 p-2 rounded-md border-2"
+        onMouseLeave={onMouseLeave}
+    >
+        <div
+            className="p-2"
+            contentEditable
+            id="task-add-text"
+        ></div>
+    </h1>
 }
