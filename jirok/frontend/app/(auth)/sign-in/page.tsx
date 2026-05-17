@@ -17,6 +17,8 @@ import {
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { signin } from "@/actions/auth";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   email: z.email(),
@@ -32,12 +34,14 @@ export default function SignIn() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await signin(values);
-    } catch (error) {
-      console.error("Login error:", error);
-    }
+  const mutation = useMutation({
+    mutationFn: signin,
+    onSuccess: () => toast.success("Successful!"),
+    onError: (error) => toast.error(error.message),
+  });
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    mutation.mutate(values);
   };
 
   return (
@@ -91,12 +95,18 @@ export default function SignIn() {
                 />
 
                 <Button
-                  disabled={false}
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
                   className="bg-blue-600 text-lg w-full hover:bg-blue-800"
                   size="lg"
                 >
-                  Login
+                  {form.formState.isSubmitting ? "Logging in..." : "Login"}
                 </Button>
+                {form.formState.errors.root?.message ? (
+                  <p className="text-sm text-red-600" role="alert">
+                    {form.formState.errors.root.message}
+                  </p>
+                ) : null}
               </form>
             </Form>
           </CardContent>
