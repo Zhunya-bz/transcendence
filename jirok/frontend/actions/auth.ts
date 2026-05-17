@@ -1,4 +1,5 @@
 "use server";
+
 export const signin = async (data: { email: string; password: string }) => {
   try {
     const response = await fetch("http://localhost:3001/auth/login", {
