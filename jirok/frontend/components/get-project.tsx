@@ -42,7 +42,8 @@ export const GetProject = () => {
 
   const handleProjectClick = (project: Project) => {
     // Redirect to project dashboard
-    router.push(`/projects/${project.id}/dashboard`);
+    const encodedKey = encodeURIComponent(project.projectKey);
+    router.push(`/projects/${project.id}/dashboard?key=${encodedKey}`);
   };
 
   // Return null if no projects exist
