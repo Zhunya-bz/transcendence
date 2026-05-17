@@ -23,7 +23,7 @@ export default function ProjectPage() {
       }
     }, [isError, error]);
 
-    if (projects) 
+    if (!projects) 
         return (
             <div className="p-2">
                 <CreateProject/>
