@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/form";
 import Navbar from "@/components/Navbar";
 import { signup } from "@/actions/auth";
+import toast from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, "Required"),
@@ -43,16 +45,14 @@ export default function SignUp() {
       password: "",
     },
   });
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      const result = await signup(values);
-      console.log(result);
-    } catch (err) {
-      console.error(err);
-      form.setError("root", {
-        message: "Sign up failed. Please try again.",
-      });
-    }
+  const mutation = useMutation({
+    mutationFn: signup,
+    onSuccess: () => toast.success("Successful!"),
+    onError: (error) => toast.error(error.message),
+  });
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    mutation.mutate(values);
   };
   return (
     <>

@@ -1,36 +1,63 @@
-'use server';
-export const signin = async(data: { email: string; password: string }) => {
-    const res = await fetch("http://localhost:3001/auth/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-        credentials: "include",
-    }).then(response => response.json())
-    .then(data => {
-        return data;
-    })
-    .catch(error => console.error(error));
-}
+"use server";
+export const signin = async (data: { email: string; password: string }) => {
+  try {
+    const response = await fetch("http://localhost:3001/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+      credentials: "include",
+    });
 
-export const signup = async(data: { name:string; email: string; password: string }) => {
-    const res = await fetch("http://localhost:3001/auth/signup", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-        credentials: "include",
-    }).then(response => response.json())
-    .then(data => {
-        return data;
-    })
-    .catch(error => console.error(error));
-}
+    if (!response.ok) {
+      throw new Error(`${response.status}: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const signup = async (data: {
+  name: string;
+  email: string;
+  password: string;
+}) => {
+  try {
+    const response = await fetch("http://localhost:3001/auth/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error(`${response.status}: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 export async function getCurrentMe() {
-  const res = await fetch("https://randomuser.me/api/")
-  if (!res.ok) return null;
-  return res.json();
+  const response = await fetch("https://randomuser.me/api/");
+  if (!response.ok) {
+    throw new Error(`${response.status}: ${response.statusText}`);
+  }
+  return response.json();
 }
+
+export const logout = async () => {
+  await fetch("http://localhost:3001/auth/logout", {
+    method: "POST",
+    credentials: "include",
+  });
+};
