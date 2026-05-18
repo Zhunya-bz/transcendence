@@ -1,9 +1,10 @@
-import { Controller, Post, Get, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Get, Body, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { Throttle } from '@nestjs/throttler';
 import { Public } from './decorators/public.decorator';
+
 
 @Controller('auth')
 export class AuthController {
@@ -11,6 +12,7 @@ export class AuthController {
 
     //post /auth/signup - public(no guard)
     @Public()
+    @Throttle({ default: { limit: 5, ttl: 300000 } })
     @Post('signup')
     signup(@Body() signupDto : SignupDto) {
         return this.authService.signup(signupDto);
@@ -18,6 +20,7 @@ export class AuthController {
 
     //post /auth/login - public(no guard)
     @Public()
+    @Throttle({ default: { limit: 5, ttl: 300000 } })
     @Post('login')
     login(@Body() loginDto: LoginDto) {
         return this.authService.login(loginDto);
