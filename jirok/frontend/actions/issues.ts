@@ -8,6 +8,7 @@ export interface TaskItem {
   status: "todo" | "in_progress" | "in_review" | "done";
   priority: "low" | "medium" | "high";
   createdAt: string;
+  projectId: number;
 }
 
 const mockTasks: TaskItem[] = [
@@ -19,6 +20,7 @@ const mockTasks: TaskItem[] = [
     status: "in_progress",
     priority: "high",
     createdAt: "2026-05-12",
+    projectId: 1,
   },
   {
     id: 2,
@@ -28,6 +30,7 @@ const mockTasks: TaskItem[] = [
     status: "todo",
     priority: "medium",
     createdAt: "2026-05-13",
+        projectId: 1,
   },
   {
     id: 3,
@@ -37,6 +40,7 @@ const mockTasks: TaskItem[] = [
     status: "in_review",
     priority: "low",
     createdAt: "2026-05-14",
+        projectId: 1,
   },
   {
     id: 4,
@@ -46,6 +50,7 @@ const mockTasks: TaskItem[] = [
     status: "done",
     priority: "high",
     createdAt: "2026-05-15",
+        projectId: 1,
   },
 ];
 

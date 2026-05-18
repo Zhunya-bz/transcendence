@@ -1,8 +1,10 @@
 "use client";
 import { getBacklogTasks, type TaskItem } from "@/actions/issues";
 import { getProjectMembers, type ProjectMember } from "@/actions/members";
+import { getCurrentMe } from "@/actions/auth";
 import { useQuery } from "@tanstack/react-query";
 import { use, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { TasksTable } from "@/components/TaskTable";
 
 interface BacklogPageProps {
@@ -11,6 +13,8 @@ interface BacklogPageProps {
 
 export default function BacklogPage({ params }: BacklogPageProps) {
   const { projectId, projectKey } = use(params);
+  const searchParams = useSearchParams();
+  const assigneeFilter = searchParams.get("assignee");
 
   const LIMIT = 3; //todo make 20
   const [visible, setVisible] = useState(LIMIT);
@@ -25,14 +29,30 @@ export default function BacklogPage({ params }: BacklogPageProps) {
     queryFn: () => getProjectMembers(projectId),
   });
 
+  const { data: currentUser } = useQuery({
+    queryKey: ["current-user"],
+    queryFn: getCurrentMe,
+  });
+
   const allTasks = data ?? [];
 
-  const visibleTasks = allTasks.slice(0, visible);
+  const currentUserId = currentUser?.userId;
+
+  const filteredTasks =
+    assigneeFilter === "me"
+      ? currentUserId
+        ? allTasks.filter((task) => task.assigneeId === currentUserId)
+        : []
+      : allTasks;
+
+  const visibleTasks = filteredTasks.slice(0, visible);
 
   return (
     <div className="w-full">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Backlog</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          {assigneeFilter === "me" ? "My Tasks" : "Backlog"}
+        </h1>
       </div>
 
       {isLoading && <p className="text-sm text-gray-500">Loading tasks...</p>}
@@ -45,7 +65,7 @@ export default function BacklogPage({ params }: BacklogPageProps) {
         projectKey={projectKey}
       />
 
-      {visible < allTasks.length && (
+      {visible < filteredTasks.length && (
         <div className="flex justify-center mt-4">
           <button
             onClick={() => setVisible((prev) => prev + LIMIT)}

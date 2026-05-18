@@ -9,7 +9,7 @@ import {
 } from "react-icons/md";
 import { GoCheckCircle, GoCheckCircleFill } from "react-icons/go";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Separator } from "./ui/separator";
 import { ModalCreateProject } from "./modal-create-project";
@@ -53,9 +53,13 @@ const routes = [
 
 export const Navigation = () => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const projectIdMatch = pathname.match(/\/projects\/(\d+)\/([^\/]+)/);
   const projectId = projectIdMatch?.[1] ?? null;
   const projectKey = projectIdMatch?.[2] ?? null;
+  const isBacklogPath = pathname.includes("/backlog");
+  const isMyTasks = isBacklogPath && searchParams.get("assignee") === "me";
+  const isBacklog = isBacklogPath && !searchParams.get("assignee");
 
   return (
     <>
@@ -67,12 +71,21 @@ export const Navigation = () => {
           const href = item.requiresProject
             ? `/projects/${projectId}/${projectKey}/${item.href}`
             : item.href;
-          const basePath = item.requiresProject
-            ? `/projects/${projectId}/${projectKey}/${item.href}`
-            : item.href;
-          const isActive = item.requiresProject
-            ? pathname.startsWith(basePath)
-            : pathname === basePath;
+
+          let isActive = false;
+          if (item.requiresProject) {
+            if (item.href === "backlog?assignee=me") {
+              isActive = isMyTasks;
+            } else if (item.href === "backlog") {
+              isActive = isBacklog;
+            } else {
+              const basePath = `/projects/${projectId}/${projectKey}/${item.href}`;
+              isActive = pathname.startsWith(basePath);
+            }
+          } else {
+            isActive = pathname === href;
+          }
+
           const isDisabled = item.requiresProject && !projectId;
           const Icon = isActive ? item.activeIcon : item.icon;
 

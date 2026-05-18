@@ -4,6 +4,8 @@ export interface ProjectMember {
   id: number;
   name: string;
   surname?: string | null;
+  email: string;
+  projectId: number;
 }
 
 export async function getProjectMembers(
