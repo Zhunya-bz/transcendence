@@ -3,25 +3,27 @@ import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { Public } from './decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) {}
 
     //post /auth/signup - public(no guard)
+    @Public()
     @Post('signup')
     signup(@Body() signupDto : SignupDto) {
         return this.authService.signup(signupDto);
     }
 
     //post /auth/login - public(no guard)
+    @Public()
     @Post('login')
     login(@Body() loginDto: LoginDto) {
         return this.authService.login(loginDto);
     }
 
     //get /auth/me - protected (requires valid jwt)
-    @UseGuards(JwtAuthGuard)
     @Get('me')
     getMe(@Request() req) {
         //req.user comes from jwtstrategy.validate()
@@ -30,7 +32,6 @@ export class AuthController {
     }
 
     //post /auth/logout - protected (requires valid jwt)
-    @UseGuards(JwtAuthGuard)
     @Post('logout')
     logout() {
         //jwt is stateless - the server doesn't store tokens.
