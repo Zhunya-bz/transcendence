@@ -1,11 +1,7 @@
 interface DashboardPageProps {
-  params: {
-    projectId: string;
-  };
+  params: Promise<{ projectId: string; projectKey: string }>;
 }
 
 export default function DashboardPage({ params }: DashboardPageProps) {
-  const { projectId } = params;
-
   return <></>;
 }

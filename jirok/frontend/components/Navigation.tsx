@@ -9,7 +9,7 @@ import {
 } from "react-icons/md";
 import { GoCheckCircle, GoCheckCircleFill } from "react-icons/go";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Separator } from "./ui/separator";
 import { ModalCreateProject } from "./modal-create-project";
@@ -37,7 +37,7 @@ const routes = [
   },
   {
     label: "My Tasks",
-    href: "my-tasks",
+    href: "backlog?assignee=me",
     requiresProject: true,
     icon: GoCheckCircle,
     activeIcon: GoCheckCircleFill,
@@ -53,10 +53,9 @@ const routes = [
 
 export const Navigation = () => {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const projectIdMatch = pathname.match(/\/projects\/(\d+)/);
+  const projectIdMatch = pathname.match(/\/projects\/(\d+)\/([^\/]+)/);
   const projectId = projectIdMatch?.[1] ?? null;
-  const projectKey = searchParams.get("key");
+  const projectKey = projectIdMatch?.[2] ?? null;
 
   return (
     <>
@@ -66,10 +65,10 @@ export const Navigation = () => {
       <ul className="flex flex-col">
         {routes.map((item) => {
           const href = item.requiresProject
-            ? `/projects/${projectId}/${item.href}${projectKey ? `?key=${encodeURIComponent(projectKey)}` : ""}`
+            ? `/projects/${projectId}/${projectKey}/${item.href}`
             : item.href;
           const basePath = item.requiresProject
-            ? `/projects/${projectId}/${item.href}`
+            ? `/projects/${projectId}/${projectKey}/${item.href}`
             : item.href;
           const isActive = item.requiresProject
             ? pathname.startsWith(basePath)

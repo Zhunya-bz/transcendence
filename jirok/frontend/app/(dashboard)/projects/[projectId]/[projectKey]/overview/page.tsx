@@ -1,11 +1,7 @@
 interface OverviewPageProps {
-  params: {
-    projectId: string;
-  };
+  params: Promise<{ projectId: string; projectKey: string }>;
 }
 
 export default function OverviewPage({ params }: OverviewPageProps) {
-  const { projectId } = params;
-
   return <></>;
 }

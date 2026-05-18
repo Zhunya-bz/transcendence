@@ -1,7 +1,7 @@
 "use server";
 
 export const createProject = async (data: { name: string }) => {
-  const response = await fetch("http://localhost:3001/projects", {
+  const response = await fetch("http://backend:3001/projects", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

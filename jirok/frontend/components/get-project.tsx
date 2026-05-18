@@ -41,9 +41,8 @@ export const GetProject = () => {
   }, [isError, error]);
 
   const handleProjectClick = (project: Project) => {
-    // Redirect to project dashboard
-    const encodedKey = encodeURIComponent(project.projectKey);
-    router.push(`/projects/${project.id}/dashboard?key=${encodedKey}`);
+    // Redirect to project backlog with projectKey in URL
+    router.push(`/projects/${project.id}/${project.projectKey}/backlog`);
   };
 
   // Return null if no projects exist
