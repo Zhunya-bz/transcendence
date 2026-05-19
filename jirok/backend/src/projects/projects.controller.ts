@@ -23,9 +23,7 @@ import { UpdateProjectMemberRoleDto } from './dto/update-project-member-role.dto
 import { CurrentUser } from './decorators/current-user.decorator';
 import { ProjectMemberGuard } from './guards/project-member.guard';
 import { ProjectAdminGuard } from './guards/project-admin.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
 @ApiTags('Projects')
 @ApiBearerAuth()
 @Controller('projects')
