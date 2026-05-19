@@ -25,6 +25,7 @@ export const UserButton = () => {
     queryKey: ["currentUser"],
     queryFn: getCurrentMe,
   });
+ 
 
   useEffect(() => {
     if (isError) {

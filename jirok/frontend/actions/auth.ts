@@ -2,7 +2,7 @@
 
 export const signin = async (data: { email: string; password: string }) => {
   try {
-    const response = await fetch("http://localhost:3001/auth/login", {
+    const response = await fetch("http://backend:3001/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -28,7 +28,7 @@ export const signup = async (data: {
   password: string;
 }) => {
   try {
-    const response = await fetch("http://localhost:3001/auth/signup", {
+    const response = await fetch("http://backend:3001/auth/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -49,7 +49,7 @@ export const signup = async (data: {
 };
 
 export async function getCurrentMe() {
-  const response = await fetch("https://randomuser.me/api/");
+  const response = await fetch("http://backend:3001/auth/me");
   if (!response.ok) {
     throw new Error(`${response.status}: ${response.statusText}`);
   }
@@ -57,7 +57,7 @@ export async function getCurrentMe() {
 }
 
 export const logout = async () => {
-  await fetch("http://localhost:3001/auth/logout", {
+  await fetch("http://backend:3001/auth/logout", {
     method: "POST",
     credentials: "include",
   });

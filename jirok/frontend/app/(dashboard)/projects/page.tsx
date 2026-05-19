@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { getCurrentProject } from "@/actions/projects";
 import { CreateProject } from "@/components/create-project";
@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 
 export default function ProjectPage() {
-     const {
+  const {
     data: projects,
     isLoading,
     isError,
@@ -17,21 +17,32 @@ export default function ProjectPage() {
     queryKey: ["currentProject"],
     queryFn: getCurrentProject,
   });
-    useEffect(() => {
-      if (isError) {
-        toast.error(error.message);
-      }
-    }, [isError, error]);
+  useEffect(() => {
+    if (isError) {
+      toast.error(error.message);
+    }
+  }, [isError, error]);
 
-    if (!projects) 
-        return (
-            <div className="p-2">
-                <CreateProject/>
-            </div>
-        )
+  if (isLoading) {
     return (
-        <div>
-            <GetProject/>
-        </div>
-    )    
+      <div className="p-4">
+        <div className="h-6 w-48 rounded bg-gray-200 animate-pulse" />
+        <div className="mt-4 h-32 rounded bg-gray-200 animate-pulse" />
+      </div>
+    );
+  }
+
+  if (!projects) {
+    return (
+      <div className="p-2">
+        <CreateProject />
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <GetProject />
+    </div>
+  );
 }

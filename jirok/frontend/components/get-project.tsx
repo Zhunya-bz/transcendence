@@ -41,8 +41,8 @@ export const GetProject = () => {
   }, [isError, error]);
 
   const handleProjectClick = (project: Project) => {
-    // Redirect to project dashboard
-    router.push(`/projects/${project.id}/dashboard`);
+    // Redirect to project backlog with projectKey in URL
+    router.push(`/projects/${project.id}/${project.projectKey}/backlog`);
   };
 
   // Return null if no projects exist
