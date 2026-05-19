@@ -1,5 +1,4 @@
 "use client";
-import { getCurrentMe, logout } from "../actions/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader, LogOutIcon, UserIcon } from "lucide-react";
@@ -23,7 +22,9 @@ export const UserButton = () => {
     error,
   } = useQuery({
     queryKey: ["currentUser"],
-    queryFn: getCurrentMe,
+    queryFn: () => fetch("http://localhost:3001/auth/me", {
+      credentials: "include",
+    }).then(b => b.json()),
   });
  
 
@@ -36,7 +37,10 @@ export const UserButton = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: logout,
+    mutationFn: () => fetch("http://localhost:3001/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    }).then(b => b.json()),
     onSuccess: () => {
       queryClient.clear(); // clear all cached data
       router.push("/login");
@@ -54,9 +58,10 @@ export const UserButton = () => {
       </div>
     );
   if (!user) return <div>user is null</div>; // todo! make it NULL !
-  // const { name, email } = user.results[0];
-  const name = user.results[0].name.title;
-  const email = user.results[0].email;
+  // const { name, email } = user;
+  console.log(user);
+  const name = user.name.title;
+  const email = user.email;
   console.log(user);
   const avatarFallback = name
     ? name.charAt(0).toUpperCase()
@@ -66,7 +71,7 @@ export const UserButton = () => {
       <DropdownMenuTrigger className="outline-none relative">
         <Avatar size="lg" className="size-10 hover:opacity-85 transition">
           <AvatarImage
-            src={user.results[0].picture.medium}
+            src={user?.picture?.medium}
             alt="Avatar image"
           />
           <AvatarFallback className="bg-blue-500 font-medium text-gray-900 flex items-center justify-center">
