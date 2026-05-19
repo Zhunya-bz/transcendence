@@ -11,14 +11,14 @@ import { ProjectMemberGuard } from './guards/project-member.guard';
 import { ProjectAdminGuard } from './guards/project-admin.guard';
 
 @Module({
-	controllers: [ProjectsController],
-	providers: [
-		PrismaService,
-		ProjectsService,
-		ProjectMembersService,
-		ProjectActivityService,
-		ProjectMemberGuard,
-		ProjectAdminGuard,
-	],
+  controllers: [ProjectsController],
+  providers: [
+    PrismaService,
+    ProjectsService,
+    ProjectMembersService,
+    ProjectActivityService,
+    ProjectMemberGuard,
+    ProjectAdminGuard,
+  ],
 })
 export class ProjectsModule {}

@@ -7,10 +7,4 @@ export class CreateProjectDto {
 	@IsNotEmpty()
 	@MaxLength(100)
 	name: string;
-
-	@ApiProperty()
-	@IsString()
-	@IsNotEmpty()
-	@MaxLength(10)
-	projectKey: string;
 }

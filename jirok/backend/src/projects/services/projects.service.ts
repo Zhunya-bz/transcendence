@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserRole } from '../../generated/prisma';
 import { CreateProjectDto } from '../dto/create-project.dto';
@@ -11,6 +7,32 @@ import { UpdateProjectDto } from '../dto/update-project.dto';
 @Injectable()
 export class ProjectsService {
   constructor(private prisma: PrismaService) {}
+
+  private async generateProjectKey(name: string): Promise<string> {
+    const initials = name
+      .trim()
+      .split(/\s+/)
+      .map((word) => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 5);
+
+    const baseKey = initials || 'PRJ';
+
+    let key = baseKey;
+    let counter = 1;
+
+    while (
+      await this.prisma.project.findUnique({
+        where: { projectKey: key },
+      })
+    ) {
+      counter++;
+      key = `${baseKey}${counter}`.slice(0, 10);
+    }
+
+    return key;
+  }
 
   async findAll(userId: number) {
     return this.prisma.project.findMany({
@@ -24,11 +46,13 @@ export class ProjectsService {
   }
 
   async create(userId: number, dto: CreateProjectDto) {
+    const projectKey = await this.generateProjectKey(dto.name);
+
     return this.prisma.$transaction(async (tx) => {
       const project = await tx.project.create({
         data: {
           name: dto.name,
-          projectKey: dto.projectKey,
+          projectKey,
         },
       });
 
