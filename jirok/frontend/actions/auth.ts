@@ -1,5 +1,8 @@
 "use server";
 
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
 export const signin = async (data: { email: string; password: string }) => {
   try {
     const response = await fetch("http://backend:3001/auth/login", {
@@ -15,7 +18,17 @@ export const signin = async (data: { email: string; password: string }) => {
       throw new Error(`${response.status}: ${response.statusText}`);
     }
 
-    return await response.json();
+    const { accessToken } = await response.json();
+
+    (await cookies()).set("token", accessToken, {
+      httpOnly: true,
+      secure: false, // true if you're using HTTPS
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    redirect("/projects");
   } catch (error) {
     console.error(error);
     throw error;
@@ -41,7 +54,17 @@ export const signup = async (data: {
       throw new Error(`${response.status}: ${response.statusText}`);
     }
 
-    return await response.json();
+    const { accessToken } = await response.json();
+
+    (await cookies()).set("token", accessToken, {
+      httpOnly: true,
+      secure: false, // true if you're using HTTPS
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    redirect("/projects");
   } catch (error) {
     console.error(error);
     throw error;
