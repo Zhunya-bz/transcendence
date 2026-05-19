@@ -1,6 +1,6 @@
 "use server";
 
-export const signin = async (data: { email: string; password: string }) => {
+export const signin = async (data: { email: string; password: string })  => {
   try {
     const response = await fetch("http://backend:3001/auth/login", {
       method: "POST",
