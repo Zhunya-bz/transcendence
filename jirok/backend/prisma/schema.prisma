@@ -5,7 +5,6 @@
 
 generator client {
   provider 		= "prisma-client-js"
-  output   		= "../src/generated/prisma"
 }
 
 datasource db {
@@ -79,8 +78,8 @@ model User {
 
 model Project {
 	id			Int			@id @default(autoincrement())
-	name		String		@unique
-	projectKey	String		@map("project_key") @db.VarChar(10)
+	name		String		
+	projectKey	String		@unique @map("project_key") @db.VarChar(10)
 	createdAt	DateTime	@default(now()) @map("created_at")
 	updatedAt	DateTime	@updatedAt @map("updated_at")
 	deletedAt	DateTime?	@map("deleted_at")
