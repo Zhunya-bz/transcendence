@@ -59,10 +59,8 @@ export const UserButton = () => {
     );
   if (!user) return <div>user is null</div>; // todo! make it NULL !
   // const { name, email } = user;
-  console.log(user);
   const name = user.name.title;
   const email = user.email;
-  console.log(user);
   const avatarFallback = name
     ? name.charAt(0).toUpperCase()
     : (email.charAt(0).toUpperCase() ?? "U");

@@ -9,7 +9,6 @@ PassportStrategy(Strategy) {
     constructor() {
         super({
             jwtFromRequest: (req: Request) => {
-                console.log("+===", req.headers, req?.cookies);
                 return req?.cookies?.['token'] ?? null;
             },
             ignoreExpiration: false,
@@ -18,7 +17,6 @@ PassportStrategy(Strategy) {
     }
 
     async validate(payload: { sub: number; email: string }) {
-        console.log("======", payload.sub, payload.email);
         return { userId: payload.sub, email: payload.email };
     }
 }
