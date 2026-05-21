@@ -70,18 +70,3 @@ export const signup = async (data: {
     throw error;
   }
 };
-
-export async function getCurrentMe() {
-  const response = await fetch("http://backend:3001/auth/me");
-  if (!response.ok) {
-    throw new Error(`${response.status}: ${response.statusText}`);
-  }
-  return response.json();
-}
-
-export const logout = async () => {
-  await fetch("http://backend:3001/auth/logout", {
-    method: "POST",
-    credentials: "include",
-  });
-};

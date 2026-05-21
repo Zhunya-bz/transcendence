@@ -1,7 +1,9 @@
 "use server";
 
+import { api } from "@/lib/api";
+
 export const createProject = async (data: { name: string }) => {
-  const response = await fetch("http://backend:3001/projects", {
+  const response = await api("/projects", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
