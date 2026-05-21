@@ -6,7 +6,7 @@ import {
 import { PrismaService } from '../../prisma/prisma.service';
 import { AddProjectMemberDto } from '../dto/add-project-member.dto';
 import { UpdateProjectMemberRoleDto } from '../dto/update-project-member-role.dto';
-import { UserRole } from '../../generated/prisma';
+import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class ProjectMembersService {
