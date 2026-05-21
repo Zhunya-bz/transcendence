@@ -9,7 +9,7 @@ const USER_SELECT = {
   surname: true,
   email: true,
   jobTitle: true,
-  JobOrganization: true,
+  jobOrganization: true,
   location: true,
   avatarUrl: true,
   accountCreated: true,
@@ -50,6 +50,7 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
+    console.log("Updating user with ID:", id);
     return this.prisma.user.update({
       where: { id: id},
       data: updateUserDto,

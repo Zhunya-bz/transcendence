@@ -57,7 +57,7 @@ model User {
 	email					String			@unique
 	passwordHash			String			@map("password_hash")
 	jobTitle				String?			@map("job_title")
-	JobOrganization			String?			@map("job_organization")
+	jobOrganization			String?			@map("job_organization")
 	location				String?
 	avatarUrl				String?			@map("avatar_url")
 	accountCreated			DateTime		@default(now()) @map("account_created")

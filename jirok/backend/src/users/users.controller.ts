@@ -30,6 +30,8 @@ export class UsersController {
 
   @Put(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    console.log("Received update request for user ID:", id);
+    console.log("Update data:", updateUserDto);
     return this.usersService.update(+id, updateUserDto);
   }
 
