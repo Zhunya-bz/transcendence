@@ -1,5 +1,7 @@
 "use server";
 
+import { api } from "@/lib/api";
+
 export interface TaskItem {
   id: number;
   type: "bug" | "task" | "story";
@@ -56,9 +58,7 @@ const mockTasks: TaskItem[] = [
 
 export async function getBacklogTasks(projectId: string): Promise<TaskItem[]> {
   try {
-    const response = await fetch(
-      `http://backend:3001/projects/${projectId}/issues`,
-    );
+    const response = await api(`/projects/${projectId}/issues`);
     if (!response.ok) {
       throw new Error("Failed to load backlog");
     }

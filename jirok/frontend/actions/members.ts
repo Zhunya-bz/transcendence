@@ -1,5 +1,7 @@
 "use server";
 
+import { api } from "@/lib/api";
+
 export interface ProjectMember {
   id: number;
   name: string;
@@ -11,9 +13,7 @@ export interface ProjectMember {
 export async function getProjectMembers(
   projectId: string,
 ): Promise<ProjectMember[]> {
-  const response = await fetch(
-    `http://backend:3001/projects/${projectId}/members`,
-  );
+  const response = await api(`/projects/${projectId}/members`);
   if (!response.ok) {
     throw new Error("Failed to load project members");
   }

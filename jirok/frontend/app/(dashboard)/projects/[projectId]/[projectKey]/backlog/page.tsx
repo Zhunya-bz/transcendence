@@ -1,7 +1,7 @@
 "use client";
+import { getCurrentMe } from "@/actions/current-user";
 import { getBacklogTasks, type TaskItem } from "@/actions/issues";
 import { getProjectMembers, type ProjectMember } from "@/actions/members";
-import { getCurrentMe } from "@/actions/auth";
 import { useQuery } from "@tanstack/react-query";
 import { use, useState } from "react";
 import { useSearchParams } from "next/navigation";

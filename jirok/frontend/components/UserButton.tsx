@@ -1,5 +1,4 @@
 "use client";
-import { getCurrentMe, logout } from "../actions/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader, LogOutIcon, UserIcon } from "lucide-react";
@@ -14,6 +13,9 @@ import Link from "next/link";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { getCurrentMe } from "@/actions/current-user";
+import { cookies } from "next/headers";
+import { logout } from "@/actions/auth";
 
 export const UserButton = () => {
   const {
@@ -25,7 +27,6 @@ export const UserButton = () => {
     queryKey: ["currentUser"],
     queryFn: getCurrentMe,
   });
- 
 
   useEffect(() => {
     if (isError) {
@@ -39,7 +40,8 @@ export const UserButton = () => {
     mutationFn: logout,
     onSuccess: () => {
       queryClient.clear(); // clear all cached data
-      router.push("/login");
+      router.push("/");
+      toast.success("Logged out successfully");
     },
     onError: () => toast.error("Logout failed"),
   });
@@ -53,23 +55,17 @@ export const UserButton = () => {
         <Loader className="size-4 animate-spin text-muted-foreground" />
       </div>
     );
-  if (!user) return <div>user is null</div>; // todo! make it NULL !
-  // const { name, email } = user.results[0];
-  const name = user.results[0].name.title;
-  const email = user.results[0].email;
-  console.log(user);
+  if (!user) return null;
+  const { name, email } = user;
   const avatarFallback = name
     ? name.charAt(0).toUpperCase()
-    : (email.charAt(0).toUpperCase() ?? "U");
+    : (email?.charAt(0).toUpperCase() ?? "U");
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className="outline-none relative">
         <Avatar size="lg" className="size-10 hover:opacity-85 transition">
-          <AvatarImage
-            src={user.results[0].picture.medium}
-            alt="Avatar image"
-          />
-          <AvatarFallback className="bg-blue-500 font-medium text-gray-900 flex items-center justify-center">
+          <AvatarImage src={user?.picture?.medium} alt="Avatar image" />
+          <AvatarFallback className="bg-blue-400 font-medium text-gray-900 flex items-center justify-center">
             {avatarFallback}
           </AvatarFallback>
         </Avatar>
@@ -80,12 +76,14 @@ export const UserButton = () => {
         className="w-40"
         sideOffset={10}
       >
-        <DropdownMenuItem>
-          <UserIcon />
-          <Link href="/profile">Profile</Link>
+        <DropdownMenuItem asChild>
+          <Link href="/profile" className="flex items-center gap-1.5 w-full">
+            <UserIcon />
+            Profile
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+        <DropdownMenuItem variant="destructive" onSelect={handleLogout}>
           <LogOutIcon />
           Log out
         </DropdownMenuItem>

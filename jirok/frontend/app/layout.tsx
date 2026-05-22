@@ -26,7 +26,7 @@ export default function RootLayout({
         lang="en"
         className={`${inter.variable}  h-full antialiased`}
       >
-        <body className="min-h-full flex flex-col bg-blue-50">{children}</body>
+        <body className="min-h-screen flex flex-col bg-blue-50">{children}</body>
       </html>
     </QueryProvider>
   );

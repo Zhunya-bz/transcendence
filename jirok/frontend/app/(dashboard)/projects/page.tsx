@@ -17,6 +17,7 @@ export default function ProjectPage() {
     queryKey: ["currentProject"],
     queryFn: getCurrentProject,
   });
+
   useEffect(() => {
     if (isError) {
       toast.error(error.message);
