@@ -1,4 +1,5 @@
 "use client";
+import { getCurrentMe } from "@/actions/current-user";
 import { getBacklogTasks, type TaskItem } from "@/actions/issues";
 import { getProjectMembers, type ProjectMember } from "@/actions/members";
 import { useQuery } from "@tanstack/react-query";
@@ -30,9 +31,7 @@ export default function BacklogPage({ params }: BacklogPageProps) {
 
   const { data: currentUser } = useQuery({
     queryKey: ["current-user"],
-    queryFn: () => fetch("localhost:3001/auth/me", {
-      credentials: "include",
-    }).then(b => b.json()),
+    queryFn: getCurrentMe,
   });
 
   const allTasks = data ?? [];

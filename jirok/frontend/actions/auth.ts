@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 export const signin = async (data: { email: string; password: string }) => {
   try {
@@ -27,8 +26,6 @@ export const signin = async (data: { email: string; password: string }) => {
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
-
-    redirect("/projects");
   } catch (error) {
     console.error(error);
     throw error;
@@ -64,9 +61,12 @@ export const signup = async (data: {
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
-    redirect("/projects");
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
+
+export const logout = async () => {
+    (await cookies()).delete("token");
+  };
