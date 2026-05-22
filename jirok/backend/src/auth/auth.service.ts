@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -66,6 +67,15 @@ export class AuthService {
         }
         return user;
     }
+
+    async generateApiKey(userId: number) {
+        const rawKey = crypto.randomBytes(32).toString('hex');
+        const keyHash = crypto.createHash('sha256').update(rawKey).digest('hex');
+        await this.userService.createApiKey(userId, keyHash);
+        return { apiKey: rawKey };
+    }
+
+    
 
     // generate JWT
     private generateToken(userId: number, email: string): string {
