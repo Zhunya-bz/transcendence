@@ -1,21 +1,18 @@
-"use client"
+"use client";
 
-type UserDto = {
-  name: string;
-  surname?: string;
-  email: string;
-jobTitle?: string;
-location?: string;
-jobOrganization?: string;
-avatarUrl?: string;
-}
-
-export const updateUserProfile = async ({ id, data }: {
+export const updateUserProfile = async ({
+  id,
+  data,
+}: {
   id: number;
-  data: { name?: string; surname?: string; jobTitle?: string;
-location?: string;
-jobOrganization?: string;
-avatarUrl?: string;};
+  data: {
+    name?: string;
+    surname?: string;
+    jobTitle?: string;
+    location?: string;
+    jobOrganization?: string;
+    avatarUrl?: string;
+  };
 }) => {
   try {
     const response = await fetch(`http://localhost:3001/users/${id}`, {

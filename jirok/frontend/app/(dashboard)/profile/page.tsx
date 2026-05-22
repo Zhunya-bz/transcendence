@@ -189,7 +189,7 @@ export default function ProfilePage() {
               <div>
                 <p className="text-lg font-semibold text-blue-900">About</p>
                 <p className="text-sm text-gray-500">
-                  Work info shown on your profile
+                  Information about you
                 </p>
               </div>
               {!editingAbout && (
