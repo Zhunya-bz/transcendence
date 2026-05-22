@@ -15,14 +15,20 @@ import {
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { createProject } from "@/actions/projects";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 export const createProjectSchema = z.object({
   name: z.string().trim().min(1, "Required"),
 });
 
-export const CreateProject = () => {
+interface Props {
+  onProjectCreated?: () => void;
+}
+
+export const CreateProject = ({ onProjectCreated }: Props) => {
+  const queryClient = useQueryClient();
+
   const form = useForm<z.infer<typeof createProjectSchema>>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
@@ -32,8 +38,15 @@ export const CreateProject = () => {
 
   const mutation = useMutation({
     mutationFn: createProject,
-    onSuccess: () => toast.success("Project created!"),
-    onError: (error) => toast.error(error.message),
+    onSuccess: async () => {
+      toast.success("Project created!");
+      await queryClient.invalidateQueries({ queryKey: ["currentProject"] });
+      onProjectCreated?.();
+    },
+    onError: (error) => {
+      console.log(error.message);
+      toast.error(error.message);
+    },
   });
 
   const onSubmit = (values: z.infer<typeof createProjectSchema>) => {
