@@ -17,6 +17,9 @@ import {
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { signin } from "@/actions/auth";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.email(),
@@ -24,6 +27,7 @@ const formSchema = z.object({
 });
 
 export default function SignIn() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,16 +36,17 @@ export default function SignIn() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      const result = await signin(values);
-      console.log(result);
-    } catch (err) {
-      console.error(err);
-      form.setError("root", {
-        message: "Login failed. Please try again.",
-      });
-    }
+  const mutation = useMutation({
+    mutationFn: signin,
+    onSuccess: () => {
+      toast.success("Successful!");
+      router.push("/projects");
+    },
+    onError: (error) => toast.error(error.message),
+  });
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    mutation.mutate(values);
   };
 
   return (

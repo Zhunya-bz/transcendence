@@ -3,6 +3,20 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
+const USER_SELECT = {
+  id: true,
+  name: true,
+  surname: true,
+  email: true,
+  jobTitle: true,
+  jobOrganization: true,
+  location: true,
+  avatarUrl: true,
+  accountCreated: true,
+  updatedAt: true,
+  deletedAt: true,
+};
+
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
@@ -16,6 +30,7 @@ export class UsersService {
   async findAll(page: number = 1, limit: number = 20) {
     return this.prisma.user.findMany({
       where : { deletedAt: null },
+      select: USER_SELECT,
       skip: (page - 1) * limit,
       take: limit,
     });
@@ -24,10 +39,18 @@ export class UsersService {
   async findOne(id: number) {
     return this.prisma.user.findUnique({
       where: { id: id, deletedAt: null },
+      select: USER_SELECT,
+    });
+  }
+
+  async findByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email, deletedAt: null },
     });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
+    console.log("Updating user with ID:", id);
     return this.prisma.user.update({
       where: { id: id},
       data: updateUserDto,
