@@ -68,7 +68,7 @@ export class IssuesService {
     dto: UpdateIssueDto,
     userId: number,
   ) {
-    await this.getIssue(projectId, issueId);
+    await this.getIssue(projectId, issueId); // use getissue logic to see if it exists. It throws 404 if not found which stops the update logic from running
 
     if (dto.assigneeId) {
       await this.validateAssignee(projectId, dto.assigneeId);
