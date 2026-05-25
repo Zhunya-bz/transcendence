@@ -2,12 +2,14 @@
 
 import { api } from "@/lib/api";
 
+export type TaskStatus = "todo" | "in_progress" | "in_review" | "done";
+
 export interface TaskItem {
   id: number;
   type: "bug" | "task" | "story";
   title: string;
   assigneeId: number;
-  status: "todo" | "in_progress" | "in_review" | "done";
+  status: TaskStatus;
   priority: "low" | "medium" | "high";
   createdAt: string;
   projectId: number;

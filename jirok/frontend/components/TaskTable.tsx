@@ -19,55 +19,50 @@ interface TasksTableProps {
   projectKey: string;
 }
 
+export const getTypeClasses = (type: TaskItem["type"]) => {
+  if (type === "bug") return "text-red-600";
+  if (type === "story") return "text-green-600";
+  return "text-blue-600";
+};
+
+export const getTypeIcon = (type: TaskItem["type"]) => {
+  if (type === "bug") return MdBugReport;
+  if (type === "story") return MdBookmark;
+  return MdTaskAlt;
+};
+
+export const getStatusClasses = (status: TaskItem["status"]) => {
+  if (status === "done") return "bg-green-100 text-green-700";
+  if (status === "in_progress") return "bg-orange-100 text-orange-700";
+  if (status === "in_review") return "bg-blue-100 text-blue-700";
+  return "bg-gray-100 text-gray-700";
+};
+
+export const getPriorityClasses = (priority: TaskItem["priority"]) => {
+  if (priority === "high") return "bg-orange-100 text-orange-700";
+  if (priority === "medium") return "bg-blue-100 text-blue-700";
+  return "bg-gray-100 text-gray-700";
+};
+
+export const getStatusLabel = (status: TaskItem["status"]) => {
+  if (status === "todo") return "To Do";
+  if (status === "in_progress") return "In Progress";
+  if (status === "in_review") return "In Review";
+  return "Done";
+};
+
+export const getPriorityLabel = (priority: TaskItem["priority"]) => {
+  if (priority === "high") return "High";
+  if (priority === "medium") return "Medium";
+  return "Low";
+};
+
 export const TasksTable = ({
   tasks,
   members,
   projectId,
   projectKey,
 }: TasksTableProps) => {
-  const getMemberName = (assigneeId: number) => {
-    const member = members?.find((m) => m.id === assigneeId);
-    return member ? `${member.name} ${member.surname ?? ""}` : "Unassigned";
-  };
-
-  const getTypeClasses = (type: TaskItem["type"]) => {
-    if (type === "bug") return "text-red-600";
-    if (type === "story") return "text-green-600";
-    return "text-blue-600";
-  };
-
-  const getTypeIcon = (type: TaskItem["type"]) => {
-    if (type === "bug") return MdBugReport;
-    if (type === "story") return MdBookmark;
-    return MdTaskAlt;
-  };
-
-  const getStatusClasses = (status: TaskItem["status"]) => {
-    if (status === "done") return "bg-green-100 text-green-700";
-    if (status === "in_progress") return "bg-orange-100 text-orange-700";
-    if (status === "in_review") return "bg-blue-100 text-blue-700";
-    return "bg-gray-100 text-gray-700";
-  };
-
-  const getPriorityClasses = (priority: TaskItem["priority"]) => {
-    if (priority === "high") return "bg-orange-100 text-orange-700";
-    if (priority === "medium") return "bg-blue-100 text-blue-700";
-    return "bg-gray-100 text-gray-700";
-  };
-
-  const getStatusLabel = (status: TaskItem["status"]) => {
-    if (status === "todo") return "To Do";
-    if (status === "in_progress") return "In Progress";
-    if (status === "in_review") return "In Review";
-    return "Done";
-  };
-
-  const getPriorityLabel = (priority: TaskItem["priority"]) => {
-    if (priority === "high") return "High";
-    if (priority === "medium") return "Medium";
-    return "Low";
-  };
-
   return (
     <div className="rounded-lg border-2 bg-white shadow-md overflow-hidden">
       <Table className="text-base">
@@ -149,4 +144,9 @@ export const TasksTable = ({
       </Table>
     </div>
   );
+
+  function getMemberName(assigneeId: number) {
+    const member = members?.find((m) => m.id === assigneeId);
+    return member ? `${member.name} ${member.surname ?? ""}` : "Unassigned";
+  };
 };
