@@ -1,16 +1,28 @@
 "use client";
 
-import { addProjectMemberByEmail, getProjectMembers } from "@/actions/members";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { getCurrentMe } from "@/actions/current-user";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+  addProjectMember,
+  getProjectMembers,
+  removeProjectMember,
+  updateProjectMemberRole,
+  type ProjectMember,
+  type ProjectMemberRole,
+} from "@/actions/members";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { X, UserPlus, Shield, Eye, Users } from "lucide-react";
+import { use } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import toast from "react-hot-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -19,31 +31,52 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { use } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import toast from "react-hot-toast";
 
 const addMemberSchema = z.object({
-  email: z.email("Enter a valid email address"),
+  email: z.string().email("Enter a valid email address"),
+  role: z.enum(["Admin", "Member", "VIEWER"]),
 });
 
-type ProjectMemberUser = {
-  id: number;
-  name: string;
-  surname?: string | null;
-  email: string;
-  avatarUrl?: string | null;
+const roleOptions: Array<{ value: ProjectMemberRole; label: string }> = [
+  { value: "Member", label: "Member" },
+  { value: "Admin", label: "Admin" },
+  { value: "VIEWER", label: "Viewer" },
+];
+
+const AVATAR_COLORS = [
+  { bg: "bg-blue-50", text: "text-blue-800" },
+  { bg: "bg-teal-50", text: "text-teal-800" },
+  { bg: "bg-orange-50", text: "text-orange-800" },
+  { bg: "bg-purple-50", text: "text-purple-800" },
+  { bg: "bg-amber-50", text: "text-amber-800" },
+  { bg: "bg-pink-50", text: "text-pink-800" },
+];
+
+const ROLE_STYLES: Record<
+  ProjectMemberRole,
+  { badge: string; icon: React.ReactNode }
+> = {
+  Admin: {
+    badge: "bg-orange-100 text-orange-800 border border-orange-100",
+    icon: <Shield size={11} className="inline mr-1 -mt-0.5" />,
+  },
+  Member: {
+    badge: "bg-blue-50 text-blue-800 border border-blue-100",
+    icon: <Users size={11} className="inline mr-1 -mt-0.5" />,
+  },
+  VIEWER: {
+    badge: "bg-gray-100 text-gray-600 border border-gray-200",
+    icon: <Eye size={11} className="inline mr-1 -mt-0.5" />,
+  },
 };
 
-type ProjectMember = {
-  userId: number;
-  projectId: number;
-  role: string;
-  user?: ProjectMemberUser;
-};
+function getInitials(name?: string, surname?: string) {
+  return `${name?.[0] ?? ""}${surname?.[0] ?? ""}`.toUpperCase() || "?";
+}
+
+function getAvatarColor(userId: number) {
+  return AVATAR_COLORS[userId % AVATAR_COLORS.length];
+}
 
 interface MembersPageProps {
   params: Promise<{ projectId: string; projectKey: string }>;
@@ -52,126 +85,264 @@ interface MembersPageProps {
 export default function MembersPage({ params }: MembersPageProps) {
   const { projectId, projectKey } = use(params);
   const queryClient = useQueryClient();
+
   const form = useForm<z.infer<typeof addMemberSchema>>({
     resolver: zodResolver(addMemberSchema),
-    defaultValues: {
-      email: "",
-    },
+    defaultValues: { email: "", role: "Member" },
   });
 
-  const { data: members = [], isLoading, isError } = useQuery<ProjectMember[]>({
+  const {
+    data: members = [],
+    isLoading,
+    isError,
+  } = useQuery<ProjectMember[]>({
     queryKey: ["project-members", projectId],
     queryFn: () => getProjectMembers(projectId),
   });
 
+  const { data: currentUser } = useQuery<{ id: number } | null>({
+    queryKey: ["current-user"],
+    queryFn: getCurrentMe,
+    retry: false,
+  });
+
+  const isProjectAdmin =
+    currentUser != null &&
+    members.some((m) => m.userId === currentUser.id && m.role === "Admin");
+
+  // Mutation functions
   const addMemberMutation = useMutation({
     mutationFn: (values: z.infer<typeof addMemberSchema>) =>
-      addProjectMemberByEmail(projectId, values.email),
+      addProjectMember(projectId, { email: values.email, role: values.role }),
     onSuccess: async () => {
       toast.success("Member added!");
       form.reset();
-      await queryClient.invalidateQueries({ queryKey: ["project-members", projectId] });
+      await queryClient.invalidateQueries({
+        queryKey: ["project-members", projectId],
+      });
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
+    onError: (error: Error) => toast.error(error.message),
   });
 
-  const handleSubmit = (values: z.infer<typeof addMemberSchema>) => {
-    addMemberMutation.mutate(values);
-  };
+  const updateRoleMutation = useMutation({
+    mutationFn: (values: { userId: number; role: ProjectMemberRole }) =>
+      updateProjectMemberRole(projectId, values.userId, values.role),
+    onSuccess: async () => {
+      toast.success("Role updated");
+      await queryClient.invalidateQueries({
+        queryKey: ["project-members", projectId],
+      });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const removeMemberMutation = useMutation({
+    mutationFn: (userId: number) => removeProjectMember(projectId, userId),
+    onSuccess: async () => {
+      toast.success("Member removed");
+      await queryClient.invalidateQueries({
+        queryKey: ["project-members", projectId],
+      });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
 
   return (
     <div className="w-full space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Members</h1>
-        <p className="text-sm text-gray-500">
-          People on project {projectKey}
+        <h1 className="text-xl font-semibold text-gray-900">Members</h1>
+        <p className="text-sm text-gray-500 mt-0.5">
+          {members.length} {members.length === 1 ? "person" : "people"} on{" "}
+          <span className="font-medium text-gray-700">{projectKey}</span>
         </p>
       </div>
 
-      <div>
-        {isLoading && <p className="text-sm text-gray-500">Loading members...</p>}
-        {isError && <p className="text-sm text-red-600">Could not load members.</p>}
-
-        {!isLoading && members.length > 0 && (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {members.map((member) => {
-              const user = member.user;
-              const fullName = user
-                ? `${user.name} ${user.surname ?? ""}`.trim()
-                : `User ${member.userId}`;
-              const initials = user?.name?.[0]?.toUpperCase() ?? "U";
-
-              return (
-                <Card
-                  key={`${member.projectId}-${member.userId}`}
-                  className="border border-orange-100 shadow-sm transition hover:shadow-md"
-                >
-                  <CardContent className="flex items-center gap-4 p-4">
-                    <Avatar size="lg" className="size-12 shrink-0">
-                      <AvatarImage src={user?.avatarUrl ?? undefined} alt={fullName} />
-                      <AvatarFallback className="bg-orange-100 font-semibold text-orange-800">
-                        {initials}
-                      </AvatarFallback>
-                    </Avatar>
-
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-semibold text-blue-900">{fullName}</p>
-                      <p className="truncate text-sm text-gray-500">{user?.email ?? "-"}</p>
-                      <span className="mt-2 inline-flex rounded-full bg-orange-100 px-2.5 py-1 text-xs font-semibold text-orange-700">
-                        {member.role}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+      <div className="rounded-xl border border-gray-200 overflow-hidden">
+        {isLoading && (
+          <div className="py-10 text-center text-sm text-gray-400">
+            Loading members…
           </div>
         )}
+        {isError && (
+          <div className="py-10 text-center text-sm text-red-500">
+            Could not load members.
+          </div>
+        )}
+
+        {!isLoading && members.length === 0 && (
+          <div className="py-10 text-center text-sm text-gray-400">
+            No members yet.
+          </div>
+        )}
+
+        {!isLoading &&
+          members.map((member, idx) => {
+            const user = member.user;
+            const name = user?.name ?? "";
+            const surname = user?.surname ?? "";
+            const fullName =
+              `${name} ${surname}`.trim() || `User ${member.userId}`;
+            const initials = getInitials(name, surname);
+            const { bg, text } = getAvatarColor(member.userId);
+            const isMe = currentUser?.id === member.userId;
+            const roleStyle = ROLE_STYLES[member.role] ?? ROLE_STYLES["Member"];
+
+            return (
+              <div
+                key={`${member.projectId}-${member.userId}`}
+                className={`flex items-center gap-3 px-4 py-3 bg-white ${
+                  idx < members.length - 1 ? "border-b border-gray-100" : ""
+                }`}
+              >
+                <div
+                  className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${bg} ${text}`}
+                >
+                  {initials}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-900 truncate">
+                      {fullName}
+                    </span>
+                    {isMe && (
+                      <span className="text-[11px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-400 border border-gray-200 shrink-0">
+                        you
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-400 truncate">
+                    {user?.email ?? "—"}
+                  </p>
+                </div>
+
+                {isProjectAdmin && !isMe ? (
+                  <Select
+                    value={member.role}
+                    onValueChange={(value) =>
+                      updateRoleMutation.mutate({
+                        userId: member.userId,
+                        role: value as ProjectMemberRole,
+                      })
+                    }
+                  >
+                    <SelectTrigger className="w-32 h-8 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {roleOptions.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <span
+                    className={`text-[11px] px-2 py-1 rounded-md font-medium shrink-0 ${roleStyle.badge}`}
+                  >
+                    {roleStyle.icon}
+                    {member.role === "VIEWER" ? "Viewer" : member.role}
+                  </span>
+                )}
+
+                {/* Remove */}
+                {isProjectAdmin && !isMe && (
+                  <button
+                    onClick={() => removeMemberMutation.mutate(member.userId)}
+                    disabled={removeMemberMutation.isPending}
+                    className="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 hover:border-red-200 hover:bg-red-50 hover:text-red-500 transition-colors shrink-0"
+                    aria-label={`Remove ${fullName}`}
+                  >
+                    <X size={13} />
+                  </button>
+                )}
+              </div>
+            );
+          })}
       </div>
 
-      <Card className="border border-orange-100 shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-lg text-blue-900">Add member</CardTitle>
-          <CardDescription>
-            Invite an existing user by email address
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)}>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
+      {/* Invite form — admin only */}
+      {isProjectAdmin ? (
+        <div className="rounded-xl border border-gray-200 overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-100 bg-white">
+            <h2 className="text-sm font-semibold text-gray-900">
+              Invite member
+            </h2>
+            <p className="text-xs text-gray-400 mt-0.5">
+              Enter an email to invite.
+            </p>
+          </div>
+          <div className="px-4 py-3 bg-white">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit((v) => addMemberMutation.mutate(v))}
+                className="space-y-4 w-full"
+              >
+                <div className="flex gap-2 items-end">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <div className="flex flex-col flex-1">
+                        <label className="text-xs font-medium text-gray-500 mb-2">
+                          Email
+                        </label>
+                        <input
                           {...field}
                           type="email"
                           placeholder="member@example.com"
-                          className="border-blue-200 focus-visible:border-blue-400 focus-visible:ring-blue-200/60"
+                          className="h-9 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 text-sm"
                         />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type="submit"
-                  className="bg-orange-500 font-semibold text-white hover:bg-orange-600"
-                  disabled={addMemberMutation.isPending}
-                >
-                  {addMemberMutation.isPending ? "Adding..." : "Add member"}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+                      </div>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="role"
+                    render={({ field }) => (
+                      <div className="flex flex-col w-[120px]">
+                        <label className="text-xs font-medium text-gray-500 mb-2">
+                          Role
+                        </label>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="min-h-[36px] w-full">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {roleOptions.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                  />
+
+                  <button
+                    type="submit"
+                    disabled={addMemberMutation.isPending}
+                    className="h-9 px-4 rounded-lg bg-orange-500 text-white text-sm font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 flex items-center gap-1.5 shrink-0 self-end"
+                  >
+                    <UserPlus size={14} />
+                    {addMemberMutation.isPending ? "Adding…" : "Invite"}
+                  </button>
+                </div>
+              </form>
+            </Form>
+          </div>
+        </div>
+      ) : (
+        <p className="text-xs text-gray-400 text-center py-2">
+          Only admins can invite members or change roles.
+        </p>
+      )}
     </div>
   );
 }
