@@ -16,6 +16,7 @@ import { use } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import toast from "react-hot-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select,
   SelectContent,
@@ -43,15 +44,6 @@ const roleOptions: Array<{ value: ProjectMemberRole; label: string }> = [
   { value: "VIEWER", label: "Viewer" },
 ];
 
-const AVATAR_COLORS = [
-  { bg: "bg-blue-50", text: "text-blue-800" },
-  { bg: "bg-teal-50", text: "text-teal-800" },
-  { bg: "bg-orange-50", text: "text-orange-800" },
-  { bg: "bg-purple-50", text: "text-purple-800" },
-  { bg: "bg-amber-50", text: "text-amber-800" },
-  { bg: "bg-pink-50", text: "text-pink-800" },
-];
-
 const ROLE_STYLES: Record<
   ProjectMemberRole,
   { badge: string; icon: React.ReactNode }
@@ -70,12 +62,15 @@ const ROLE_STYLES: Record<
   },
 };
 
-function getInitials(name?: string, surname?: string) {
-  return `${name?.[0] ?? ""}${surname?.[0] ?? ""}`.toUpperCase() || "?";
-}
-
-function getAvatarColor(userId: number) {
-  return AVATAR_COLORS[userId % AVATAR_COLORS.length];
+function getInitials(name?: string, surname?: string, email?: string) {
+  if (name && surname) {
+    return `${name.charAt(0)}${surname.charAt(0)}`.toUpperCase();
+  }
+  return (
+    name?.charAt(0).toUpperCase() ||
+    email?.charAt(0).toUpperCase() ||
+    "U"
+  );
 }
 
 interface MembersPageProps {
@@ -182,8 +177,7 @@ export default function MembersPage({ params }: MembersPageProps) {
             const surname = user?.surname ?? "";
             const fullName =
               `${name} ${surname}`.trim() || `User ${member.userId}`;
-            const initials = getInitials(name, surname);
-            const { bg, text } = getAvatarColor(member.userId);
+            const initials = getInitials(name, surname, user?.email);
             const isMe = currentUser?.id === member.userId;
             const roleStyle = ROLE_STYLES[member.role] ?? ROLE_STYLES["Member"];
 
@@ -194,11 +188,12 @@ export default function MembersPage({ params }: MembersPageProps) {
                   idx < members.length - 1 ? "border-b border-gray-100" : ""
                 }`}
               >
-                <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${bg} ${text}`}
-                >
-                  {initials}
-                </div>
+                <Avatar className="size-9 transition shrink-0">
+                  <AvatarImage src={(user as any)?.picture?.medium} alt="Avatar image" />
+                  <AvatarFallback className="bg-blue-400 font-medium text-gray-900 flex items-center justify-center text-xs">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

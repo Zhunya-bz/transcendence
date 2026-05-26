@@ -13,11 +13,13 @@ export const signin = async (data: { email: string; password: string }) => {
       credentials: "include",
     });
 
+    const result = await response.json();
+
     if (!response.ok) {
-      throw new Error(`${response.status}: ${response.statusText}`);
+      throw new Error(`${result.message}`);
     }
 
-    const { accessToken } = await response.json();
+    const { accessToken } = result;
 
     (await cookies()).set("token", accessToken, {
       httpOnly: true,
@@ -47,11 +49,14 @@ export const signup = async (data: {
       credentials: "include",
     });
 
+
+    const result = await response.json();
+
     if (!response.ok) {
-      throw new Error(`${response.status}: ${response.statusText}`);
+      throw new Error(`${result.message}`);
     }
 
-    const { accessToken } = await response.json();
+    const { accessToken } = result;
 
     (await cookies()).set("token", accessToken, {
       httpOnly: true,
