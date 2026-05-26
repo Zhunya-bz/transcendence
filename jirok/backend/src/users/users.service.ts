@@ -77,10 +77,11 @@ export class UsersService {
     });
   }
 
-  async createApiKey(userId: number, keyHash: string) {
+  async createApiKey(userId: number, projectId: number, keyHash: string) {
     return this.prisma.apiKey.create({
       data: {
         userId,
+        projectId,
         keyHash,
       },
     });
@@ -89,7 +90,7 @@ export class UsersService {
   async findByApiKeyHash(keyHash: string) {
     const apiKey = await this.prisma.apiKey.findUnique({
       where: { keyHash },
-      include: { user: true },
+      include: { user: true, project: true },
     });
     return apiKey
   }

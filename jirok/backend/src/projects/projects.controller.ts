@@ -24,6 +24,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { AllowApiKey } from '../auth/decorators/allow-api-key.decorator';
 import { ProjectsService } from './services/projects.service';
 import { ProjectMembersService } from './services/project-members.service';
 import { ProjectActivityService } from './services/project-activity.service';
@@ -77,6 +78,7 @@ export class ProjectsController {
     return this.projectsService.create(userId, dto);
   }
 
+  @AllowApiKey()
   @UseGuards(ProjectMemberGuard)
   @ApiOperation({ summary: 'Get one project by ID' })
   @ApiHeader({
@@ -95,6 +97,7 @@ export class ProjectsController {
     return this.projectsService.findOne(projectId);
   }
 
+  @AllowApiKey()
   @UseGuards(ProjectMemberGuard, ProjectAdminGuard)
   @ApiOperation({ summary: 'Update a project' })
   @ApiHeader({
@@ -125,6 +128,7 @@ export class ProjectsController {
     return this.projectsService.update(projectId, dto);
   }
 
+  @AllowApiKey()
   @UseGuards(ProjectMemberGuard, ProjectAdminGuard)
   @ApiOperation({ summary: 'Soft delete a project' })
   @ApiHeader({
@@ -147,6 +151,7 @@ export class ProjectsController {
     return this.projectsService.remove(projectId);
   }
 
+  @AllowApiKey()
   @UseGuards(ProjectMemberGuard)
   @ApiOperation({ summary: 'List project members' })
   @ApiHeader({
@@ -165,6 +170,7 @@ export class ProjectsController {
     return this.membersService.getMembers(projectId);
   }
 
+  @AllowApiKey()
   @UseGuards(ProjectMemberGuard, ProjectAdminGuard)
   @ApiOperation({ summary: 'Add a member to a project' })
   @ApiHeader({
@@ -195,6 +201,7 @@ export class ProjectsController {
     return this.membersService.addMember(projectId, dto);
   }
 
+  @AllowApiKey()
   @UseGuards(ProjectMemberGuard, ProjectAdminGuard)
   @ApiOperation({ summary: 'Update a project member role' })
   @ApiHeader({
@@ -227,6 +234,7 @@ export class ProjectsController {
     return this.membersService.updateRole(projectId, userId, dto);
   }
 
+  @AllowApiKey()
   @UseGuards(ProjectMemberGuard, ProjectAdminGuard)
   @ApiOperation({ summary: 'Remove a member from a project' })
   @ApiHeader({
@@ -257,6 +265,7 @@ export class ProjectsController {
     return this.membersService.removeMember(projectId, userId);
   }
 
+  @AllowApiKey()
   @UseGuards(ProjectMemberGuard)
   @ApiOperation({
     summary: 'Get issue activity grouped by status for a project',

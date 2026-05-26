@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { UsersService } from '../../users/users.service';
 
@@ -20,6 +20,12 @@ export class ApiKeyGuard implements CanActivate {
         if (!apiKey) {
             throw new UnauthorizedException('Invalid API key');
         }
+
+        const projectId = parseInt(request.params.projectId || request.params.id);
+        if (projectId && apiKey.project.id !== projectId) {
+            throw new ForbiddenException('This API key is not authorized for this project');
+        }
+
         request.user = { userId: apiKey.user.id, email: apiKey.user.email };
 
         return true;

@@ -68,10 +68,10 @@ export class AuthService {
         return user;
     }
 
-    async generateApiKey(userId: number) {
+    async generateApiKey(userId: number, projectId: number) {
         const rawKey = crypto.randomBytes(32).toString('hex');
         const keyHash = crypto.createHash('sha256').update(rawKey).digest('hex');
-        await this.userService.createApiKey(userId, keyHash);
+        await this.userService.createApiKey(userId, projectId, keyHash);
         return { apiKey: rawKey };
     }
 

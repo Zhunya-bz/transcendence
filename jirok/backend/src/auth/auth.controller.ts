@@ -35,8 +35,8 @@ export class AuthController {
     }
 
     @Post('api-key')
-    generateApiKey(@Request() req) {
-        return this.authService.generateApiKey(req.user.userId);
+    generateApiKey(@Body() body: { projectId: number }, @Request() req) {
+        return this.authService.generateApiKey(req.user.userId, body.projectId);
     }
 
     //post /auth/logout - protected (requires valid jwt)
