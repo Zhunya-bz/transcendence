@@ -13,6 +13,9 @@ import Link from "next/link";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { getCurrentMe } from "@/actions/current-user";
+import { cookies } from "next/headers";
+import { logout } from "@/actions/auth";
 
 export const UserButton = () => {
   const {
@@ -22,11 +25,8 @@ export const UserButton = () => {
     error,
   } = useQuery({
     queryKey: ["currentUser"],
-    queryFn: () => fetch("http://localhost:3001/auth/me", {
-      credentials: "include",
-    }).then(b => b.json()),
+    queryFn: getCurrentMe,
   });
- 
 
   useEffect(() => {
     if (isError) {
@@ -37,13 +37,11 @@ export const UserButton = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: () => fetch("http://localhost:3001/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    }).then(b => b.json()),
+    mutationFn: logout,
     onSuccess: () => {
       queryClient.clear(); // clear all cached data
-      router.push("/login");
+      router.push("/");
+      toast.success("Logged out successfully");
     },
     onError: () => toast.error("Logout failed"),
   });
@@ -57,22 +55,17 @@ export const UserButton = () => {
         <Loader className="size-4 animate-spin text-muted-foreground" />
       </div>
     );
-  if (!user) return <div>user is null</div>; // todo! make it NULL !
-  // const { name, email } = user;
-  const name = user.name.title;
-  const email = user.email;
+  if (!user) return null;
+  const { name, email } = user;
   const avatarFallback = name
     ? name.charAt(0).toUpperCase()
-    : (email.charAt(0).toUpperCase() ?? "U");
+    : (email?.charAt(0).toUpperCase() ?? "U");
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className="outline-none relative">
         <Avatar size="lg" className="size-10 hover:opacity-85 transition">
-          <AvatarImage
-            src={user?.picture?.medium}
-            alt="Avatar image"
-          />
-          <AvatarFallback className="bg-blue-500 font-medium text-gray-900 flex items-center justify-center">
+          <AvatarImage src={user?.picture?.medium} alt="Avatar image" />
+          <AvatarFallback className="bg-blue-400 font-medium text-gray-900 flex items-center justify-center">
             {avatarFallback}
           </AvatarFallback>
         </Avatar>
@@ -83,12 +76,14 @@ export const UserButton = () => {
         className="w-40"
         sideOffset={10}
       >
-        <DropdownMenuItem>
-          <UserIcon />
-          <Link href="/profile">Profile</Link>
+        <DropdownMenuItem asChild>
+          <Link href="/profile" className="flex items-center gap-1.5 w-full">
+            <UserIcon />
+            Profile
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+        <DropdownMenuItem variant="destructive" onSelect={handleLogout}>
           <LogOutIcon />
           Log out
         </DropdownMenuItem>

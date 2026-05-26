@@ -3,21 +3,12 @@
 import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
 
 export default function Home() {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    fetch('http://localhost:3001/test')
-      .then(res => res.json())
-      .then(data => {console.log(data);setData(data);})
-      .catch(err => console.error('FETCH ERROR', err));
-  }, []);
-
-  return ( <div className='min-h-screen bg-linear-to-br from-blue-100 via-white to-orange-100'>
+  return (
+    <div className='flex min-h-full flex-1 flex-col bg-linear-to-br from-blue-100 via-white to-orange-100'>
       <Navbar/>
-      <main className='max-w-7xl mx-auto px-6 py-16 md:py-24'>
+      <main className='mx-auto w-full max-w-7xl flex-1 px-6 py-16 md:py-24'>
         <div className='flex flex-col md:flex-row items-center justify-between gap-12'>
           
           <div className='flex flex-col gap-6 md:w-1/2'>

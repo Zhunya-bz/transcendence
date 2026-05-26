@@ -25,6 +25,7 @@ import Navbar from "@/components/Navbar";
 import { signup } from "@/actions/auth";
 import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, "Required"),
@@ -37,6 +38,7 @@ const formSchema = z.object({
 });
 
 export default function SignUp() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,7 +49,10 @@ export default function SignUp() {
   });
   const mutation = useMutation({
     mutationFn: signup,
-    onSuccess: () => toast.success("Successful!"),
+    onSuccess: () => {
+      toast.success("Successful!");
+      router.push("/projects");
+    },
     onError: (error) => toast.error(error.message),
   });
 
