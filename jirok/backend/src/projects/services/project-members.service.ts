@@ -4,7 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { AddProjectMemberDto } from '../dto/add-project-member.dto';
+import { AddProjectMemberByIdDto } from '../dto/add-project-member-by-id.dto';
+import { AddProjectMemberByEmailDto } from '../dto/add-project-member-by-email.dto';
 import { UpdateProjectMemberRoleDto } from '../dto/update-project-member-role.dto';
 import { UserRole } from '@prisma/client';
 
@@ -19,11 +20,45 @@ export class ProjectMembersService {
     });
   }
 
-  async addMember(projectId: number, dto: AddProjectMemberDto) {
+  async addMemberById(projectId: number, dto: AddProjectMemberByIdDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: dto.userId },
+    });
+
+    if (!user) throw new NotFoundException('User not found');
+
+    const existing = await this.prisma.userProject.findUnique({
+      where: { userId_projectId: { userId: dto.userId, projectId } },
+    });
+
+    if (existing) throw new BadRequestException('User is already a member');
+
     return this.prisma.userProject.create({
       data: {
         projectId,
-        userId: dto.userId,
+        userId: user.id,
+        role: dto.role,
+      },
+    });
+  }
+
+  async addMemberByEmail(projectId: number, dto: AddProjectMemberByEmailDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (!user) throw new NotFoundException('User not found');
+
+    const existing = await this.prisma.userProject.findUnique({
+      where: { userId_projectId: { userId: user.id, projectId } },
+    });
+
+    if (existing) throw new BadRequestException('User is already a member');
+
+    return this.prisma.userProject.create({
+      data: {
+        projectId,
+        userId: user.id,
         role: dto.role,
       },
     });

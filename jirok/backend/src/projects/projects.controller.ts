@@ -30,7 +30,8 @@ import { ProjectActivityService } from './services/project-activity.service';
 
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { AddProjectMemberDto } from './dto/add-project-member.dto';
+import { AddProjectMemberByIdDto } from './dto/add-project-member-by-id.dto';
+import { AddProjectMemberByEmailDto } from './dto/add-project-member-by-email.dto';
 import { UpdateProjectMemberRoleDto } from './dto/update-project-member-role.dto';
 import {
   ApiErrorResponseDto,
@@ -173,7 +174,7 @@ export class ProjectsController {
     description: 'Current user ID used by project membership guards',
   })
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiBody({ type: AddProjectMemberDto })
+  @ApiBody({ type: AddProjectMemberByIdDto })
   @ApiCreatedResponse({ type: ProjectMemberResponseDto })
   @ApiBadRequestResponse({
     description: 'Validation error in request body',
@@ -188,11 +189,41 @@ export class ProjectsController {
     type: ApiErrorResponseDto,
   })
   @Post(':projectId/members')
-  addMember(
+  addMemberById(
     @Param('projectId', ParseIntPipe) projectId: number,
-    @Body() dto: AddProjectMemberDto,
+    @Body() dto: AddProjectMemberByIdDto,
   ) {
-    return this.membersService.addMember(projectId, dto);
+    return this.membersService.addMemberById(projectId, dto);
+  }
+
+  @UseGuards(ProjectMemberGuard, ProjectAdminGuard)
+  @ApiOperation({ summary: 'Add a member to a project by email' })
+  @ApiHeader({
+    name: 'x-user-id',
+    required: true,
+    description: 'Current user ID used by project membership guards',
+  })
+  @ApiParam({ name: 'projectId', type: Number, example: 12 })
+  @ApiBody({ type: AddProjectMemberByEmailDto })
+  @ApiCreatedResponse({ type: ProjectMemberResponseDto })
+  @ApiBadRequestResponse({
+    description: 'Validation error in request body',
+    type: ApiErrorResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Project not found or user is not a member',
+    type: ApiErrorResponseDto,
+  })
+  @ApiForbiddenResponse({
+    description: 'Admin access required',
+    type: ApiErrorResponseDto,
+  })
+  @Post(':projectId/members/by-email')
+  addMemberByEmail(
+    @Param('projectId', ParseIntPipe) projectId: number,
+    @Body() dto: AddProjectMemberByEmailDto,
+  ) {
+    return this.membersService.addMemberByEmail(projectId, dto);
   }
 
   @UseGuards(ProjectMemberGuard, ProjectAdminGuard)
