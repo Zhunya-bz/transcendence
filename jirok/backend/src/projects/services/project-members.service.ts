@@ -91,11 +91,11 @@ export class ProjectMembersService {
 
     if (!target) throw new NotFoundException();
 
-    if (target.role === UserRole.Admin) {
+    if (target.role === UserRole.ADMIN) {
       const adminCount = await this.prisma.userProject.count({
         where: {
           projectId,
-          role: UserRole.Admin,
+          role: UserRole.ADMIN,
         },
       });
 

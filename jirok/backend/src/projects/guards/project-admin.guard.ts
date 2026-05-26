@@ -12,7 +12,7 @@ export class ProjectAdminGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const membership = request.membership;
 
-    if (membership.role !== UserRole.Admin) {
+    if (membership.role !== UserRole.ADMIN) {
       throw new ForbiddenException('Admin access required');
     }
 

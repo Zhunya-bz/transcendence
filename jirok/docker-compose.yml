@@ -43,6 +43,7 @@ services:
     container_name: jirok_frontend
     ports:
       - "3000:3000"
+    restart: unless-stopped  
     volumes:
       - ./frontend:/app
       - /app/node_modules

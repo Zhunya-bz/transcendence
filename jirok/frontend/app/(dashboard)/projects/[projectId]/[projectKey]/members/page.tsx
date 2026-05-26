@@ -5,6 +5,7 @@ import {
   addProjectMember,
   getProjectMembers,
   removeProjectMember,
+  Role,
   updateProjectMemberRole,
   type ProjectMember,
   type ProjectMemberRole,
@@ -34,25 +35,24 @@ import {
 } from "@/components/ui/form";
 
 const addMemberSchema = z.object({
-  email: z.string().email("Enter a valid email address"),
-  role: z.enum(["Admin", "Member", "VIEWER"]),
+  email: z.email("Enter a valid email address"),
+  role: z.enum([Role.ADMIN, Role.MEMBER, Role.VIEWER]),
 });
 
-const roleOptions: Array<{ value: ProjectMemberRole; label: string }> = [
-  { value: "Member", label: "Member" },
-  { value: "Admin", label: "Admin" },
-  { value: "VIEWER", label: "Viewer" },
+const roleOptions: Array<{ value: Role; label: string }> = [
+  { value: Role.MEMBER, label: "Member" },
+  { value: Role.ADMIN, label: "Admin" },
+  { value: Role.VIEWER, label: "Viewer" },
 ];
 
-const ROLE_STYLES: Record<
-  ProjectMemberRole,
+const ROLE_STYLES: Record<Role,
   { badge: string; icon: React.ReactNode }
 > = {
-  Admin: {
+  ADMIN: {
     badge: "bg-orange-100 text-orange-800 border border-orange-100",
     icon: <Shield size={11} className="inline mr-1 -mt-0.5" />,
   },
-  Member: {
+  MEMBER: {
     badge: "bg-blue-50 text-blue-800 border border-blue-100",
     icon: <Users size={11} className="inline mr-1 -mt-0.5" />,
   },
@@ -83,7 +83,7 @@ export default function MembersPage({ params }: MembersPageProps) {
 
   const form = useForm<z.infer<typeof addMemberSchema>>({
     resolver: zodResolver(addMemberSchema),
-    defaultValues: { email: "", role: "Member" },
+    defaultValues: { email: "", role: Role.MEMBER },
   });
 
   const {
@@ -92,23 +92,22 @@ export default function MembersPage({ params }: MembersPageProps) {
     isError,
   } = useQuery<ProjectMember[]>({
     queryKey: ["project-members", projectId],
-    queryFn: () => getProjectMembers(projectId),
+    queryFn: () => getProjectMembers(currentUser?.id ?? -1, projectId),
   });
 
   const { data: currentUser } = useQuery<{ id: number } | null>({
     queryKey: ["current-user"],
     queryFn: getCurrentMe,
-    retry: false,
   });
 
   const isProjectAdmin =
     currentUser != null &&
-    members.some((m) => m.userId === currentUser.id && m.role === "Admin");
+    members.some((m) => m.userId === currentUser.id && m.role === Role.ADMIN);
 
   // Mutation functions
   const addMemberMutation = useMutation({
     mutationFn: (values: z.infer<typeof addMemberSchema>) =>
-      addProjectMember(projectId, { email: values.email, role: values.role }),
+      addProjectMember(currentUser?.id ?? -1, projectId, { email: values.email, role: values.role }),
     onSuccess: async () => {
       toast.success("Member added!");
       form.reset();
@@ -120,8 +119,8 @@ export default function MembersPage({ params }: MembersPageProps) {
   });
 
   const updateRoleMutation = useMutation({
-    mutationFn: (values: { userId: number; role: ProjectMemberRole }) =>
-      updateProjectMemberRole(projectId, values.userId, values.role),
+    mutationFn: (values: { userId: number; role: Role }) =>
+      updateProjectMemberRole(currentUser?.id ?? -1, projectId, values.userId, values.role),
     onSuccess: async () => {
       toast.success("Role updated");
       await queryClient.invalidateQueries({
@@ -132,7 +131,7 @@ export default function MembersPage({ params }: MembersPageProps) {
   });
 
   const removeMemberMutation = useMutation({
-    mutationFn: (userId: number) => removeProjectMember(projectId, userId),
+    mutationFn: (userId: number) => removeProjectMember(currentUser?.id ?? -1, projectId, userId),
     onSuccess: async () => {
       toast.success("Member removed");
       await queryClient.invalidateQueries({
@@ -179,7 +178,7 @@ export default function MembersPage({ params }: MembersPageProps) {
               `${name} ${surname}`.trim() || `User ${member.userId}`;
             const initials = getInitials(name, surname, user?.email);
             const isMe = currentUser?.id === member.userId;
-            const roleStyle = ROLE_STYLES[member.role] ?? ROLE_STYLES["Member"];
+            const roleStyle = ROLE_STYLES[member.role] ?? ROLE_STYLES[Role.MEMBER];
 
             return (
               <div
@@ -217,7 +216,7 @@ export default function MembersPage({ params }: MembersPageProps) {
                     onValueChange={(value) =>
                       updateRoleMutation.mutate({
                         userId: member.userId,
-                        role: value as ProjectMemberRole,
+                        role: value as Role,
                       })
                     }
                   >
@@ -237,7 +236,7 @@ export default function MembersPage({ params }: MembersPageProps) {
                     className={`text-[11px] px-2 py-1 rounded-md font-medium shrink-0 ${roleStyle.badge}`}
                   >
                     {roleStyle.icon}
-                    {member.role === "VIEWER" ? "Viewer" : member.role}
+                    {member.role === Role.VIEWER ? "Viewer" : member.role}
                   </span>
                 )}
 

@@ -1,6 +1,10 @@
 "use client";
 
-export type ProjectMemberRole = "Admin" | "Member" | "VIEWER";
+export enum Role {
+  ADMIN = 'ADMIN',
+  MEMBER = 'MEMBER',
+  VIEWER = 'VIEWER',
+};
 
 export type ProjectMemberUser = {
   id: number;
@@ -13,81 +17,22 @@ export type ProjectMemberUser = {
 export type ProjectMember = {
   userId: number;
   projectId: number;
-  role: ProjectMemberRole;
+  role: Role;
   joinedAt?: string;
   user?: ProjectMemberUser;
 };
 
-export type MockUser = ProjectMemberUser;
-
-export const MOCK_USERS: MockUser[] = [
-  {
-    id: 1,
-    name: "PAUL",
-    surname: "SMITH",
-    email: "user@student.42.fr",
-    avatarUrl: null,
-  },
-  {
-    id: 2,
-    name: "John",
-    surname: "Doe",
-    email: "user2@student.42.fr",
-    avatarUrl: null,
-  },
-  {
-    id: 3,
-    name: "Bob",
-    surname: "The Builder",
-    email: "user3@student.42.fr",
-    avatarUrl: null,
-  },
-  {
-    id: 4,
-    name: "Adam",
-    surname: "Sandler",
-    email: "user4@student.42.fr",
-    avatarUrl: null,
-  },
-  {
-    id: 5,
-    name: "Charlie",
-    surname: "Chaplin",
-    email: "user5@student.42.fr",
-    avatarUrl: null,
-  },
-];
-
-type MemberPayload = {
-  userId: number;
-  role: ProjectMemberRole;
+export type MemberPayload = {
+  email: string;
+  role?: Role;
 };
-
-async function getCurrentUserId() {
-  const response = await fetch("http://localhost:3001/auth/me", {
-    credentials: "include",
-  });
-
-  if (!response.ok) {
-    throw new Error("Unable to resolve the current user");
-  }
-
-  const currentUser = await response.json();
-
-  if (typeof currentUser?.id !== "number") {
-    throw new Error("Unable to resolve the current user");
-  }
-
-  return currentUser.id;
-}
 
 async function parseError(response: Response, fallbackMessage: string) {
   const message = await response.text();
   return message || `${response.status}: ${response.statusText}` || fallbackMessage;
 }
 
-export async function getProjectMembers(projectId: string): Promise<ProjectMember[]> {
-  const currentUserId = await getCurrentUserId();
+export async function getProjectMembers(currentUserId: number, projectId: string): Promise<ProjectMember[]> {
   const response = await fetch(`http://localhost:3001/projects/${projectId}/members`, {
     credentials: "include",
     headers: {
@@ -100,14 +45,11 @@ export async function getProjectMembers(projectId: string): Promise<ProjectMembe
   return response.json();
 }
 
-export async function getMockUsers(): Promise<MockUser[]> {
-  return MOCK_USERS;
-}
 
-export async function addProjectMember(projectId: string, payload: MemberPayload) {
-  const currentUserId = await getCurrentUserId();
-  const response = await fetch(`http://localhost:3001/projects/${projectId}/members`, {
+export async function addProjectMember(currentUserId: number, projectId: string, payload: MemberPayload) {
+  const response = await fetch(`http://localhost:3001/projects/${projectId}/members/by-email`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       "x-user-id": String(currentUserId),
@@ -122,14 +64,14 @@ export async function addProjectMember(projectId: string, payload: MemberPayload
   return response.json();
 }
 
-export async function updateProjectMemberRole(
+export async function updateProjectMemberRole(currentUserId: number,
   projectId: string,
   userId: number,
-  role: ProjectMemberRole,
+  role: Role,
 ) {
-  const currentUserId = await getCurrentUserId();
   const response = await fetch(`http://localhost:3001/projects/${projectId}/members/${userId}`, {
     method: "PUT",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       "x-user-id": String(currentUserId),
@@ -144,10 +86,10 @@ export async function updateProjectMemberRole(
   return response.json();
 }
 
-export async function removeProjectMember(projectId: string, userId: number) {
-  const currentUserId = await getCurrentUserId();
+export async function removeProjectMember(currentUserId: number, projectId: string, userId: number) {
   const response = await fetch(`http://localhost:3001/projects/${projectId}/members/${userId}`, {
     method: "DELETE",
+    credentials: "include",
     headers: {
       "x-user-id": String(currentUserId),
     },
