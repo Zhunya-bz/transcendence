@@ -2,18 +2,27 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  UnauthorizedException,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import type { Request } from 'express';
 
 @Injectable()
 export class ProjectMemberGuard implements CanActivate {
   constructor(private prisma: PrismaService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const userId = Number(request.headers['x-user-id']);
+    const request = context
+      .switchToHttp()
+      .getRequest<Request & { params: { projectId: string } }>();
+
+    const userId = request.user?.userId;
     const projectId = Number(request.params.projectId);
+
+    if (!userId) {
+      throw new UnauthorizedException('Unauthorized');
+    }
 
     const membership = await this.prisma.userProject.findUnique({
       where: {
@@ -35,3 +44,4 @@ export class ProjectMemberGuard implements CanActivate {
     return true;
   }
 }
+// Memberguard checks that the user is a member of the project and that the project is not deleted. It also attaches the membership record to the request for use in downstream guards/controllers.
