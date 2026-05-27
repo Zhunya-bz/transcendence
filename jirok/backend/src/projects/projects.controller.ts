@@ -22,6 +22,7 @@ import {
   ApiUnauthorizedResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { UserRole } from '@prisma/client';
 
 import { ProjectsService } from './services/projects.service';
 import { ProjectMembersService } from './services/project-members.service';
@@ -34,7 +35,6 @@ import { AddProjectMemberByEmailDto } from './dto/add-project-member-by-email.dt
 import { UpdateProjectMemberRoleDto } from './dto/update-project-member-role.dto';
 import {
   ApiErrorResponseDto,
-  ProjectActivityItemDto,
   ProjectDetailResponseDto,
   ProjectMemberResponseDto,
   ProjectResponseDto,
@@ -183,6 +183,25 @@ export class ProjectsController {
 
   // Get currentuser role endpoint
 
+  @ApiOperation({ summary: 'Get the authenticated user role in a project' })
+  @ApiParam({ name: 'projectId', type: Number, example: 12 })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        role: {
+          type: 'string',
+          enum: Object.values(UserRole),
+          example: UserRole.Member,
+        },
+      },
+      required: ['role'],
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Project not found or user is not a member',
+    type: ApiErrorResponseDto,
+  })
   @UseGuards(ProjectMemberGuard)
   @Get(':projectId/role')
   getMyRole(@Req() request: Request) {
@@ -232,10 +251,37 @@ export class ProjectsController {
   // Activity endpoint
 
   @ApiOperation({
-    summary: 'Get issue activity grouped by status for a project',
+    summary:
+      'Get issue activity counts grouped by status and type for a project',
   })
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiOkResponse({ type: ProjectActivityItemDto, isArray: true })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        statusCounts: {
+          type: 'object',
+          additionalProperties: { type: 'number' },
+          example: {
+            TODO: 4,
+            IN_PROGRESS: 2,
+            IN_REVIEW: 1,
+            DONE: 7,
+          },
+        },
+        typeCounts: {
+          type: 'object',
+          additionalProperties: { type: 'number' },
+          example: {
+            BUG: 3,
+            TASK: 8,
+            STORY: 1,
+          },
+        },
+      },
+      required: ['statusCounts', 'typeCounts'],
+    },
+  })
   @ApiNotFoundResponse({
     description: 'Project not found or user is not a member',
     type: ApiErrorResponseDto,
