@@ -1,6 +1,8 @@
 "use client";
 
-export const getCurrentMe = async () => {
+import type { User } from "@/types/prisma";
+
+export const getCurrentMe = async (): Promise<User> => {
   const response = await fetch("http://localhost:3001/auth/me", {
     credentials: "include",
   });

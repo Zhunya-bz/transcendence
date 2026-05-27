@@ -8,13 +8,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { type TaskItem } from "@/actions/issues";
-import { type ProjectMember } from "@/actions/members";
+import { type UserProject } from "@/types/prisma";
 import { MdBookmark, MdBugReport, MdTaskAlt } from "react-icons/md";
 import Link from "next/link";
 
 interface TasksTableProps {
   tasks: TaskItem[];
-  members: ProjectMember[];
+  members: UserProject[];
   projectId: string;
   projectKey: string;
 }
@@ -26,8 +26,9 @@ export const TasksTable = ({
   projectKey,
 }: TasksTableProps) => {
   const getMemberName = (assigneeId: number) => {
-    const member = members?.find((m) => m.id === assigneeId);
-    return member ? `${member.name} ${member.surname ?? ""}` : "Unassigned";
+    const member = members?.find((m) => m.userId === assigneeId);
+    const user = member?.user;
+    return user ? `${user.name} ${user.surname ?? ""}`.trim() : "Unassigned";
   };
 
   const getTypeClasses = (type: TaskItem["type"]) => {
@@ -116,7 +117,7 @@ export const TasksTable = ({
                 </TableCell>
                 <TableCell>
                   {task.assigneeId &&
-                  members?.find((m) => m.id === task.assigneeId) ? (
+                  members?.find((m) => m.userId === task.assigneeId) ? (
                     <Link
                       href={`/users/${task.assigneeId}`}
                       className="hover:text-blue-900 hover:underline"

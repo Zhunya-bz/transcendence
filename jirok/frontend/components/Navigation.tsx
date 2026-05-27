@@ -13,16 +13,8 @@ import { GoCheckCircle, GoCheckCircleFill } from "react-icons/go";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Separator } from "./ui/separator";
-import { ModalCreateProject } from "./modal-create-project";
 
 const routes = [
-  {
-    label: "Projects",
-    href: "/projects",
-    icon: AiOutlineProject,
-    activeIcon: AiFillProject,
-  },
   {
     label: "Backlog",
     href: "backlog",
@@ -72,9 +64,6 @@ export const Navigation = () => {
 
   return (
     <>
-      <ModalCreateProject projectId={projectId} />
-      <Separator className="my-4" />
-
       <ul className="flex flex-col">
         {routes.map((item) => {
           const href = item.requiresProject
