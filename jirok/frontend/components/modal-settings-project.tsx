@@ -27,6 +27,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { UserRole, type Project } from "@/types/prisma";
+import { Description } from "@radix-ui/react-dialog";
 
 const projectSettingsSchema = z.object({
   name: z.string().trim().min(1, "Required"),
@@ -54,7 +55,7 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
 
   const { data: members = [] } = useQuery({
     queryKey: ["project-members", project.id],
-    queryFn: () => getProjectMembers(currentUserId ?? -1, String(project.id)),
+    queryFn: () => getProjectMembers(String(project.id)),
     enabled: currentUserId != null,
   });
 
@@ -64,7 +65,7 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
 
   const updateMutation = useMutation({
     mutationFn: (nextName: string) =>
-      updateProject(currentUserId ?? -1, project.id, { name: nextName }),
+      updateProject( project.id, { name: nextName }),
     onSuccess: async () => {
       toast.success("Project updated");
       await queryClient.invalidateQueries({ queryKey: ["currentProject"] });
@@ -74,7 +75,7 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: () => deleteProject(currentUserId ?? -1, project.id),
+    mutationFn: () => deleteProject(project.id),
     onSuccess: async () => {
       toast.success("Project deleted");
       await queryClient.invalidateQueries({ queryKey: ["currentProject"] });
@@ -102,6 +103,7 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
         </Button>
       </DialogTrigger>
       <DialogContent>
+        <Description className="hidden"></Description>
         <DialogHeader>
           <DialogTitle>Project settings</DialogTitle>
         </DialogHeader>

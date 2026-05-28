@@ -32,12 +32,12 @@ export default function BacklogPage({ params }: BacklogPageProps) {
 
     const { data: members } = useQuery<UserProject[]>({
     queryKey: ["project-members", projectId],
-    queryFn: () => getProjectMembers(currentUser?.userId ?? -1, projectId),
+    queryFn: () => getProjectMembers(projectId),
   });
 
   const allTasks = data ?? [];
 
-  const currentUserId = currentUser?.userId;
+  const currentUserId = currentUser?.id ?? null;
 
   const filteredTasks =
     assigneeFilter === "me"

@@ -52,7 +52,11 @@ const routes = [
   },
 ];
 
-export const Navigation = () => {
+interface NavigationProps {
+  onNavigate?: () => void;
+}
+
+export const Navigation = ({ onNavigate }: NavigationProps) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const projectIdMatch = pathname.match(/\/projects\/(\d+)\/([^\/]+)/);
@@ -100,7 +104,7 @@ export const Navigation = () => {
           }
 
           return (
-            <Link key={item.href} href={href}>
+            <Link key={item.href} href={href} onClick={onNavigate}>
               <div
                 className={cn(
                   "flex items-center gap-3 p-3 rounded-md font-medium transition text-neutral-500 hover:text-primary",

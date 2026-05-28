@@ -1,18 +1,14 @@
 "use client";
 
+import { User } from "@/types/prisma";
+import { parseError } from "./auth";
+
 export const updateUserProfile = async ({
   id,
   data,
 }: {
   id: number;
-  data: {
-    name?: string;
-    surname?: string;
-    jobTitle?: string;
-    location?: string;
-    jobOrganization?: string;
-    avatarUrl?: string;
-  };
+  data: User,
 }) => {
   try {
     const response = await fetch(`http://localhost:3001/users/${id}`, {
@@ -22,7 +18,7 @@ export const updateUserProfile = async ({
       credentials: "include",
     });
 
-    if (!response.ok) throw new Error("Failed to update profile");
+    if (!response.ok) throw new Error(await parseError(response, "Failed to update profile"));
     return await response.json();
   } catch (error) {
     console.error(error);

@@ -25,11 +25,7 @@ import {
 } from "@/components/ui/select";
 import {
   Form,
-  FormControl,
   FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 
 const addMemberSchema = z.object({
@@ -90,7 +86,7 @@ export default function MembersPage({ params }: MembersPageProps) {
     isError,
   } = useQuery<UserProject[]>({
     queryKey: ["project-members", projectId],
-    queryFn: () => getProjectMembers(currentUser?.id ?? -1, projectId),
+    queryFn: () => getProjectMembers(projectId),
   });
 
   const { data: currentUser } = useQuery<{ id: number } | null>({
@@ -105,7 +101,7 @@ export default function MembersPage({ params }: MembersPageProps) {
   // Mutation functions
   const addMemberMutation = useMutation({
     mutationFn: (values: z.infer<typeof addMemberSchema>) =>
-      addProjectMember(currentUser?.id ?? -1, projectId, { email: values.email, role: values.role }),
+      addProjectMember(projectId, { email: values.email, role: values.role }),
     onSuccess: async () => {
       toast.success("Member added!");
       form.reset();
@@ -118,7 +114,7 @@ export default function MembersPage({ params }: MembersPageProps) {
 
   const updateRoleMutation = useMutation({
     mutationFn: (values: { userId: number; role: UserRole }) =>
-      updateProjectMemberRole(currentUser?.id ?? -1, projectId, values.userId, values.role),
+      updateProjectMemberRole(projectId, values.userId, values.role),
     onSuccess: async () => {
       toast.success("Role updated");
       await queryClient.invalidateQueries({
@@ -129,7 +125,7 @@ export default function MembersPage({ params }: MembersPageProps) {
   });
 
   const removeMemberMutation = useMutation({
-    mutationFn: (userId: number) => removeProjectMember(currentUser?.id ?? -1, projectId, userId),
+    mutationFn: (userId: number) => removeProjectMember(projectId, userId),
     onSuccess: async () => {
       toast.success("Member removed");
       await queryClient.invalidateQueries({
@@ -140,10 +136,10 @@ export default function MembersPage({ params }: MembersPageProps) {
   });
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-6 lg:max-w-4xl xl:max-w-5xl mx-auto">
       <div>
-        <h1 className="text-xl font-semibold text-gray-900">Members</h1>
-        <p className="text-sm text-gray-500 mt-0.5">
+        <h1 className="text-2xl font-semibold text-gray-900">Members</h1>
+        <p className="text-base text-gray-500 mt-0.5">
           {members.length} {members.length === 1 ? "person" : "people"} on{" "}
           <span className="font-medium text-gray-700">{projectKey}</span>
         </p>
@@ -194,16 +190,16 @@ export default function MembersPage({ params }: MembersPageProps) {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-900 truncate">
+                    <span className="text-base font-medium text-gray-900 truncate">
                       {fullName}
                     </span>
                     {isMe && (
-                      <span className="text-[11px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-400 border border-gray-200 shrink-0">
+                      <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-400 border border-gray-200 shrink-0">
                         you
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-400 truncate">
+                  <p className="text-sm text-gray-400 truncate">
                     {user?.email ?? "—"}
                   </p>
                 </div>
@@ -231,7 +227,7 @@ export default function MembersPage({ params }: MembersPageProps) {
                   </Select>
                 ) : (
                   <span
-                    className={`text-[11px] px-2 py-1 rounded-md font-medium shrink-0 ${roleStyle.badge}`}
+                    className={`text-xs px-2 py-1 rounded-md font-medium shrink-0 ${roleStyle.badge}`}
                   >
                     {roleStyle.icon}
                     {member.role === UserRole.VIEWER ? "Viewer" : member.role}
@@ -261,15 +257,15 @@ export default function MembersPage({ params }: MembersPageProps) {
       {/* Invite form — admin only */}
       {isProjectAdmin ? (
         <div className="rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100 bg-white">
-            <h2 className="text-sm font-semibold text-gray-900">
+          <div className="px-4 py-4 border-b border-gray-100 bg-white">
+            <h2 className="text-base font-semibold text-gray-900">
               Invite member
             </h2>
-            <p className="text-xs text-gray-400 mt-0.5">
-              Enter an email to invite.
+            <p className="text-sm text-gray-400 mt-1">
+              Enter an email to invite
             </p>
           </div>
-          <div className="px-4 py-3 bg-white">
+          <div className="px-4 py-4 bg-white">
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit((v) => addMemberMutation.mutate(v))}
@@ -281,14 +277,14 @@ export default function MembersPage({ params }: MembersPageProps) {
                     name="email"
                     render={({ field }) => (
                       <div className="flex flex-col flex-1">
-                        <label className="text-xs font-medium text-gray-500 mb-2">
+                        <label className="text-sm font-medium text-gray-500 mb-2">
                           Email
                         </label>
                         <input
                           {...field}
                           type="email"
                           placeholder="member@example.com"
-                          className="h-9 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 text-sm"
+                          className="h-10 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 text-base"
                         />
                       </div>
                     )}
@@ -298,15 +294,15 @@ export default function MembersPage({ params }: MembersPageProps) {
                     control={form.control}
                     name="role"
                     render={({ field }) => (
-                      <div className="flex flex-col w-30">
-                        <label className="text-xs font-medium text-gray-500 mb-2">
+                      <div className="flex flex-col w-32">
+                        <label className="text-sm font-medium text-gray-500 mb-2">
                           Role
                         </label>
                         <Select
                           value={field.value}
                           onValueChange={field.onChange}
                         >
-                          <SelectTrigger className="min-h-9 w-full">
+                          <SelectTrigger className="min-h-10 w-full text-base">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -324,7 +320,7 @@ export default function MembersPage({ params }: MembersPageProps) {
                   <button
                     type="submit"
                     disabled={addMemberMutation.isPending}
-                    className="h-9 px-4 rounded-lg bg-orange-500 text-white text-sm font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 flex items-center gap-1.5 shrink-0 self-end"
+                    className="h-10 px-4 rounded-lg bg-orange-500 text-white text-base font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 flex items-center gap-1.5 shrink-0 self-end"
                   >
                     <UserPlus size={14} />
                     {addMemberMutation.isPending ? "Adding…" : "Invite"}
@@ -336,7 +332,7 @@ export default function MembersPage({ params }: MembersPageProps) {
         </div>
       ) : (
         <p className="text-xs text-gray-400 text-center py-2">
-          Only admins can invite members or change roles.
+          Only admins can invite members or change roles
         </p>
       )}
     </div>

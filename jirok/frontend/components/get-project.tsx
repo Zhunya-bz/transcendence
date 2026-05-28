@@ -31,16 +31,24 @@ function ProjectRow({ project, currentUserId, dateFormatter }: ProjectRowProps) 
       className="hover:bg-orange-100 transition-colors border-b border-gray-200 cursor-pointer"
       onClick={() => router.push(`/projects/${project.id}/${project.projectKey}/backlog`)}
     >
-      <TableCell className="font-semibold text-blue-600 py-5 px-6">
-        {project.name}
+      <TableCell className="font-semibold text-blue-600 py-2 px-2 sm:py-5 sm:px-6 whitespace-normal break-words">
+        <div className="flex flex-col gap-1">
+          <span>{project.name}</span>
+          <div className="text-xs text-gray-500 sm:hidden">
+            <div className="font-mono font-semibold text-orange-500">
+              {project.projectKey}
+            </div>
+            <div>{dateFormatter.format(new Date(project.createdAt))}</div>
+          </div>
+        </div>
       </TableCell>
-      <TableCell className="text-orange-500 font-mono font-bold py-5 px-6">
+      <TableCell className="hidden sm:table-cell text-orange-500 font-mono font-bold py-5 px-6 whitespace-normal break-words">
         {project.projectKey}
       </TableCell>
-      <TableCell className="text-gray-600 py-5 px-6">
+      <TableCell className="hidden sm:table-cell text-gray-600 py-5 px-6 whitespace-normal break-words">
         {dateFormatter.format(new Date(project.createdAt))}
       </TableCell>
-      <TableCell className="py-5 px-6">
+      <TableCell className="py-2 px-2 sm:py-5 sm:px-6 text-right">
         <div onClick={(event) => event.stopPropagation()}>
           <ModalSettingsProject
             project={project}
@@ -85,24 +93,24 @@ export const GetProject = () => {
   }
 
   return (
-    <div className="w-full px-4 py-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">
+    <div className="w-full px-2 py-3 sm:px-4 sm:py-6 max-w-sm sm:max-w-3xl mx-auto">
+      <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-3">
         A list of your projects
       </h2>
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <Table className="w-full">
+        <Table className="w-full table-fixed">
           <TableHeader>
             <TableRow className="bg-linear-to-r from-blue-600 to-orange-500">
-              <TableHead className="text-white font-bold py-4 px-6 text-left">
+              <TableHead className="text-white font-bold py-3 px-2 sm:px-6 text-left w-40 sm:w-auto">
                 Name
               </TableHead>
-              <TableHead className="text-white font-bold py-4 px-6 text-left">
+              <TableHead className="hidden sm:table-cell text-white font-bold py-4 px-6 text-left">
                 Key
               </TableHead>
-              <TableHead className="text-white font-bold py-4 px-6 text-left">
+              <TableHead className="hidden sm:table-cell text-white font-bold py-4 px-6 text-left">
                 Created
               </TableHead>
-              <TableHead className="text-white font-bold py-4 px-6 text-left">
+              <TableHead className="text-white font-bold py-3 px-2 sm:px-6 text-right w-16 sm:w-32">
                 Actions
               </TableHead>
             </TableRow>

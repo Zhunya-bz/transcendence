@@ -14,6 +14,7 @@ import {
 } from "./ui/dialog";
 import { useQuery } from "@tanstack/react-query";
 import { CreateProject } from "./create-project";
+import { Description } from "@radix-ui/react-dialog";
 interface Props {
   projectId?: string | null;
 }
@@ -69,6 +70,7 @@ export const ModalCreateProject = ({ projectId }: Props) => {
             <DialogTitle></DialogTitle>
           </DialogHeader>
           <DialogContent className="border-none p-0">
+            <Description className="hidden"></Description>
             <CreateProject onProjectCreated={handleProjectCreated} />
           </DialogContent>
         </Dialog>

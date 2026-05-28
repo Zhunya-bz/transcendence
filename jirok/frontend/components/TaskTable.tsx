@@ -77,16 +77,16 @@ export const TasksTable = ({
             <TableHead className="text-orange-900 font-semibold">
               Title
             </TableHead>
-            <TableHead className="text-orange-900 font-semibold">
+            <TableHead className="hidden sm:table-cell text-orange-900 font-semibold">
               Assignee
             </TableHead>
             <TableHead className="text-orange-900 font-semibold">
               Status
             </TableHead>
-            <TableHead className="text-orange-900 font-semibold">
+            <TableHead className="hidden sm:table-cell text-orange-900 font-semibold">
               Priority
             </TableHead>
-            <TableHead className="text-orange-900 font-semibold">
+            <TableHead className="hidden sm:table-cell text-orange-900 font-semibold">
               Created At
             </TableHead>
           </TableRow>
@@ -115,7 +115,7 @@ export const TasksTable = ({
                     </Link>
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   {task.assigneeId &&
                   members?.find((m) => m.userId === task.assigneeId) ? (
                     <Link
@@ -135,14 +135,14 @@ export const TasksTable = ({
                     {getStatusLabel(task.status)}
                   </span>
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   <span
                     className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${getPriorityClasses(task.priority)}`}
                   >
                     {getPriorityLabel(task.priority)}
                   </span>
                 </TableCell>
-                <TableCell>{task.createdAt}</TableCell>
+                <TableCell className="hidden sm:table-cell">{task.createdAt}</TableCell>
               </TableRow>
             );
           })}
