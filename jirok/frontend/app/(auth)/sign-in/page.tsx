@@ -42,7 +42,7 @@ export default function SignIn() {
       toast.success("Successful!");
       router.push("/projects");
     },
-    onError: (error) => toast.error(error.message),
+    onError: (error) => toast.error(error.message || "An error occurred during login"),
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {

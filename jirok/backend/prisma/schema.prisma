@@ -13,8 +13,8 @@ datasource db {
 
 //ENUMS
 enum UserRole {
-  Admin		@map("admin")
-  Member	@map("member")
+  ADMIN		@map("admin")
+  MEMBER	@map("member")
   VIEWER	@map("viewer")
 }
 
@@ -108,7 +108,7 @@ model UserProject {
 model Issue {
 	id				Int			@id @default(autoincrement())
 	projectId		Int			@map("project_id")
-	reporterId		Int			@map("reported_id")
+	reporterId		Int			@map("reporter_id")
 	assigneeId		Int?		@map("assignee_id")
 	changedUserId	Int?		@map("change_user_id")
 	status			IssueStatus

@@ -56,10 +56,10 @@ export const UserButton = () => {
       </div>
     );
   if (!user) return null;
-  const { name, email } = user;
-  const avatarFallback = name
-    ? name.charAt(0).toUpperCase()
-    : (email?.charAt(0).toUpperCase() ?? "U");
+  const { name, surname, email } = user;
+  const avatarFallback = surname
+    ? `${name?.charAt(0).toUpperCase() ?? ""}${surname.charAt(0).toUpperCase()}`
+    : (name?.charAt(0).toUpperCase() ?? email?.charAt(0).toUpperCase() ?? "U");
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className="outline-none relative">

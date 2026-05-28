@@ -53,7 +53,7 @@ export default function SignUp() {
       toast.success("Successful!");
       router.push("/projects");
     },
-    onError: (error) => toast.error(error.message),
+    onError: (error) => toast.error(error.message || "An error occurred during registration"),
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {

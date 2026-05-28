@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IssueStatus, UserRole } from '@prisma/client';
+import { IssueStatus, IssueType, UserRole } from '@prisma/client';
 
 export class ProjectResponseDto {
   @ApiProperty({ example: 12 })
@@ -74,6 +74,36 @@ export class ProjectActivityItemDto {
 
   @ApiProperty({ example: 14 })
   _count!: number;
+}
+
+export class ProjectActivityCountMapDto {
+  @ApiProperty({
+    type: 'object',
+    additionalProperties: { type: 'number' },
+    example: {
+      TODO: 4,
+      IN_PROGRESS: 2,
+      IN_REVIEW: 1,
+      DONE: 7,
+    },
+  })
+  statusCounts!: Record<IssueStatus, number>;
+
+  @ApiProperty({
+    type: 'object',
+    additionalProperties: { type: 'number' },
+    example: {
+      BUG: 3,
+      TASK: 8,
+      STORY: 1,
+    },
+  })
+  typeCounts!: Record<IssueType, number>;
+}
+
+export class ProjectMyRoleResponseDto {
+  @ApiProperty({ enum: UserRole, enumName: 'UserRole' })
+  role!: UserRole;
 }
 
 export class ApiErrorResponseDto {

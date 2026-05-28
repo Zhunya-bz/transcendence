@@ -24,14 +24,14 @@ export default function BacklogPage({ params }: BacklogPageProps) {
     queryFn: () => getBacklogTasks(projectId),
   });
 
-  const { data: members } = useQuery<ProjectMember[]>({
-    queryKey: ["project-members", projectId],
-    queryFn: () => getProjectMembers(projectId),
-  });
-
   const { data: currentUser } = useQuery({
     queryKey: ["current-user"],
     queryFn: getCurrentMe,
+  });
+
+    const { data: members } = useQuery<ProjectMember[]>({
+    queryKey: ["project-members", projectId],
+    queryFn: () => getProjectMembers(currentUser?.userId ?? -1, projectId),
   });
 
   const allTasks = data ?? [];
