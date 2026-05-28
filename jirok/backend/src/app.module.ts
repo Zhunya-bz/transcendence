@@ -8,13 +8,14 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { ProjectsModule } from './projects/projects.module';
-
+import { IssuesModule } from './issues/issues.module';
 @Module({
   imports: [
     PrismaModule,
     UsersModule,
     AuthModule,
     ProjectsModule,
+    IssuesModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,

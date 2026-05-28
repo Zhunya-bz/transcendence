@@ -1,9 +1,14 @@
-import { UserProject } from '../generated/prisma';
+import type { UserProject, Project } from '@prisma/client';
 
 declare global {
   namespace Express {
+    interface User {
+      userId: number;
+    }
+
     interface Request {
-      membership?: UserProject | null;
+      user?: User;
+      membership?: (UserProject & { project: Project }) | null;
     }
   }
 }
