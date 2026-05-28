@@ -44,7 +44,7 @@ function TaskCard({ task }: { task: TaskItem }) {
         className="flex flex-col gap-4 p-4 rounded-md border-2 select-none cursor-pointer hover:bg-blue-100 bg-white"
         draggable
         onDragStart={onDragStart}
-        href="/issue"
+        href={`/projects/1/T/issues/${task.id}`} // todo: get the real project ID!
     >
         <div className="w-full">{task.title}</div>
         <div className="flex flex-row items-center">

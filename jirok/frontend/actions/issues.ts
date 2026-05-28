@@ -17,6 +17,7 @@ export interface TaskItem {
   priority: "LOW" | "MEDIUM" | "HIGH";
   createdAt: string;
   projectId: number;
+  description: string;
 }
 
 export async function getBacklogTasks(projectId: string): Promise<TaskItem[]> {
@@ -27,4 +28,10 @@ export async function getBacklogTasks(projectId: string): Promise<TaskItem[]> {
     throw new Error("Failed to load backlog");
   }
   return await response.json();
+}
+
+export async function getTask(projectId: string, issueId: string): Promise<TaskItem> {
+  return await fetch(`http://localhost:3001/projects/${projectId}/issues/${issueId}`, {
+    credentials: "include"
+  }).then(res => res.json())
 }

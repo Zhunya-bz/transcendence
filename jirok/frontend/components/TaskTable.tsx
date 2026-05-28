@@ -20,40 +20,40 @@ interface TasksTableProps {
 }
 
 export const getTypeClasses = (type: TaskItem["type"]) => {
-  if (type === "bug") return "text-red-600";
-  if (type === "story") return "text-green-600";
+  if (type === "BUG") return "text-red-600";
+  if (type === "STORY") return "text-green-600";
   return "text-blue-600";
 };
 
 export const getTypeIcon = (type: TaskItem["type"]) => {
-  if (type === "bug") return MdBugReport;
-  if (type === "story") return MdBookmark;
+  if (type === "BUG") return MdBugReport;
+  if (type === "STORY") return MdBookmark;
   return MdTaskAlt;
 };
 
 export const getStatusClasses = (status: TaskItem["status"]) => {
-  if (status === "done") return "bg-green-100 text-green-700";
-  if (status === "in_progress") return "bg-orange-100 text-orange-700";
-  if (status === "in_review") return "bg-blue-100 text-blue-700";
+  if (status === "DONE") return "bg-green-100 text-green-700";
+  if (status === "IN_PROGRESS") return "bg-orange-100 text-orange-700";
+  if (status === "IN_REVIEW") return "bg-blue-100 text-blue-700";
   return "bg-gray-100 text-gray-700";
 };
 
 export const getPriorityClasses = (priority: TaskItem["priority"]) => {
-  if (priority === "high") return "bg-orange-100 text-orange-700";
-  if (priority === "medium") return "bg-blue-100 text-blue-700";
+  if (priority === "HIGH") return "bg-orange-100 text-orange-700";
+  if (priority === "MEDIUM") return "bg-blue-100 text-blue-700";
   return "bg-gray-100 text-gray-700";
 };
 
 export const getStatusLabel = (status: TaskItem["status"]) => {
-  if (status === "todo") return "To Do";
-  if (status === "in_progress") return "In Progress";
-  if (status === "in_review") return "In Review";
+  if (status === "TODO") return "To Do";
+  if (status === "IN_PROGRESS") return "In Progress";
+  if (status === "IN_REVIEW") return "In Review";
   return "Done";
 };
 
 export const getPriorityLabel = (priority: TaskItem["priority"]) => {
-  if (priority === "high") return "High";
-  if (priority === "medium") return "Medium";
+  if (priority === "HIGH") return "High";
+  if (priority === "MEDIUM") return "Medium";
   return "Low";
 };
 
