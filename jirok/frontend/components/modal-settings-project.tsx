@@ -28,6 +28,7 @@ import toast from "react-hot-toast";
 import { z } from "zod";
 import { UserRole, type Project } from "@/types/prisma";
 import { Description } from "@radix-ui/react-dialog";
+import { getCurrentUserRole } from "@/actions/current-user";
 
 const projectSettingsSchema = z.object({
   name: z.string().trim().min(1, "Required"),
@@ -53,16 +54,12 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
     form.reset({ name: project.name });
   }, [form, project.name]);
 
-  const { data: members = [] } = useQuery({
-    queryKey: ["project-members", project.id],
-    queryFn: () => getProjectMembers(String(project.id)),
-    enabled: currentUserId != null,
+
+  const {data: userRole} = useQuery({
+    queryKey: ["current-role", project.id],
+    queryFn: () => getCurrentUserRole(String(project.id)),
   });
-
-  const isProjectAdmin =
-    currentUserId != null &&
-    members.some((member) => member.userId === currentUserId && member.role === UserRole.ADMIN);
-
+  
   const updateMutation = useMutation({
     mutationFn: (nextName: string) =>
       updateProject( project.id, { name: nextName }),
@@ -83,6 +80,8 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
     },
     onError: (error: Error) => toast.error(error.message),
   });
+
+  const isProjectAdmin = userRole?.role === UserRole.ADMIN;
 
   if (!isProjectAdmin) {
     return null;

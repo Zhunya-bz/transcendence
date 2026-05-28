@@ -14,3 +14,15 @@ export const getCurrentMe = async (): Promise<User> => {
 
   return response.json();
 };
+
+export const getCurrentUserRole = async (projectId: string) => {
+  const response = await fetch(`http://localhost:3001/projects/${projectId}/role`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response, "Failed to get current user role"));
+  }
+
+  return response.json();
+};
