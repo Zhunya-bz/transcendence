@@ -20,7 +20,6 @@ import {
   ApiCreatedResponse,
   ApiBody,
   ApiParam,
-  ApiHeader,
   ApiBadRequestResponse,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
@@ -55,11 +54,6 @@ export class IssuesController {
 
   @Get()
   @ApiOperation({ summary: 'List issues for a project' })
-  @ApiHeader({
-    name: 'x-user-id',
-    required: true,
-    description: 'Current user ID used by project membership guards',
-  })
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
   @ApiOkResponse({ type: IssueResponseDto, isArray: true })
   @ApiNotFoundResponse({
@@ -72,11 +66,6 @@ export class IssuesController {
 
   @Get(':issueId')
   @ApiOperation({ summary: 'Get one issue by ID' })
-  @ApiHeader({
-    name: 'x-user-id',
-    required: true,
-    description: 'Current user ID used by project membership guards',
-  })
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
   @ApiParam({ name: 'issueId', type: Number, example: 42 })
   @ApiOkResponse({ type: IssueDetailResponseDto })
@@ -94,11 +83,6 @@ export class IssuesController {
   @Post()
   @UseGuards(ProjectWriteGuard)
   @ApiOperation({ summary: 'Create a new issue' })
-  @ApiHeader({
-    name: 'x-user-id',
-    required: true,
-    description: 'Current user ID used by project membership guards',
-  })
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
   @ApiBody({ type: CreateIssueDto })
   @ApiCreatedResponse({ type: IssueResponseDto })
@@ -117,11 +101,6 @@ export class IssuesController {
   @Put(':issueId')
   @UseGuards(ProjectWriteGuard)
   @ApiOperation({ summary: 'Update an issue' })
-  @ApiHeader({
-    name: 'x-user-id',
-    required: true,
-    description: 'Current user ID used by project membership guards',
-  })
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
   @ApiParam({ name: 'issueId', type: Number, example: 42 })
   @ApiBody({ type: UpdateIssueDto })
@@ -173,11 +152,6 @@ export class IssuesController {
   @Delete(':issueId')
   @UseGuards(ProjectWriteGuard)
   @ApiOperation({ summary: 'Soft delete an issue' })
-  @ApiHeader({
-    name: 'x-user-id',
-    required: true,
-    description: 'Current user ID used by project membership guards',
-  })
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
   @ApiParam({ name: 'issueId', type: Number, example: 42 })
   @ApiOkResponse({ type: IssueResponseDto })
