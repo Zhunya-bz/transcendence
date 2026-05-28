@@ -6,6 +6,8 @@ import {
   MdSpaceDashboard,
   MdOutlineLeaderboard,
   MdLeaderboard,
+  MdPeople,
+  MdPeopleAlt,
 } from "react-icons/md";
 import { GoCheckCircle, GoCheckCircleFill } from "react-icons/go";
 import Link from "next/link";
@@ -48,6 +50,13 @@ const routes = [
     requiresProject: true,
     icon: MdOutlineLeaderboard,
     activeIcon: MdLeaderboard,
+  },
+  {
+    label: "Members",
+    href: "members",
+    requiresProject: true,
+    icon: MdPeople,
+    activeIcon: MdPeopleAlt,
   },
 ];
 

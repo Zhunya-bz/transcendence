@@ -34,7 +34,7 @@ export default function ProjectPage() {
     );
   }
 
-  if (!projects) {
+  if (!projects || projects.length === 0) {
     return (
       <div className="p-2">
         <CreateProject />

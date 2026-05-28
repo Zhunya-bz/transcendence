@@ -192,7 +192,7 @@ export class ProjectsController {
         role: {
           type: 'string',
           enum: Object.values(UserRole),
-          example: UserRole.Member,
+          example: UserRole.MEMBER,
         },
       },
       required: ['role'],

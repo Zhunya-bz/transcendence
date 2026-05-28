@@ -13,8 +13,8 @@ datasource db {
 
 //ENUMS
 enum UserRole {
-  Admin		@map("admin")
-  Member	@map("member")
+  ADMIN		@map("admin")
+  MEMBER	@map("member")
   VIEWER	@map("viewer")
 }
 
