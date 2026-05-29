@@ -8,13 +8,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { type TaskItem } from "@/actions/issues";
-import { type ProjectMember } from "@/actions/members";
+import { type UserProject } from "@/types/prisma";
 import { MdBookmark, MdBugReport, MdTaskAlt } from "react-icons/md";
 import Link from "next/link";
 
 interface TasksTableProps {
   tasks: TaskItem[];
-  members: ProjectMember[];
+  members: UserProject[];
   projectId: string;
   projectKey: string;
 }
@@ -71,16 +71,16 @@ export const TasksTable = ({
             <TableHead className="text-orange-900 font-semibold">
               Title
             </TableHead>
-            <TableHead className="text-orange-900 font-semibold">
+            <TableHead className="hidden sm:table-cell text-orange-900 font-semibold">
               Assignee
             </TableHead>
             <TableHead className="text-orange-900 font-semibold">
               Status
             </TableHead>
-            <TableHead className="text-orange-900 font-semibold">
+            <TableHead className="hidden sm:table-cell text-orange-900 font-semibold">
               Priority
             </TableHead>
-            <TableHead className="text-orange-900 font-semibold">
+            <TableHead className="hidden sm:table-cell text-orange-900 font-semibold">
               Created At
             </TableHead>
           </TableRow>
@@ -109,9 +109,9 @@ export const TasksTable = ({
                     </Link>
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   {task.assigneeId &&
-                  members?.find((m) => m.id === task.assigneeId) ? (
+                  members?.find((m) => m.userId === task.assigneeId) ? (
                     <Link
                       href={`/users/${task.assigneeId}`}
                       className="hover:text-blue-900 hover:underline"
@@ -129,14 +129,14 @@ export const TasksTable = ({
                     {getStatusLabel(task.status)}
                   </span>
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   <span
                     className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${getPriorityClasses(task.priority)}`}
                   >
                     {getPriorityLabel(task.priority)}
                   </span>
                 </TableCell>
-                <TableCell>{task.createdAt}</TableCell>
+                <TableCell className="hidden sm:table-cell">{task.createdAt}</TableCell>
               </TableRow>
             );
           })}

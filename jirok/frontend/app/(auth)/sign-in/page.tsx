@@ -39,10 +39,10 @@ export default function SignIn() {
   const mutation = useMutation({
     mutationFn: signin,
     onSuccess: () => {
-      toast.success("Successful!");
+      toast.success("Login successful!");
       router.push("/projects");
     },
-    onError: (error) => toast.error(error.message),
+    onError: (error) => toast.error(error.message || "An error occurred during login"),
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {

@@ -13,7 +13,7 @@ export class AddProjectMemberByIdDto {
   @ApiProperty({
     enum: UserRole,
     enumName: 'UserRole',
-    example: UserRole.Member,
+    example: UserRole.MEMBER,
     description: 'Role assigned to the user in this project',
   })
   @IsEnum(UserRole)

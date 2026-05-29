@@ -13,8 +13,8 @@ export class ProjectWriteGuard implements CanActivate {
     const membership = request.membership;
 
     if (
-      membership.role !== UserRole.Admin &&
-      membership.role !== UserRole.Member
+      membership.role !== UserRole.ADMIN &&
+      membership.role !== UserRole.MEMBER
     ) {
       throw new ForbiddenException('Project write access required');
     }

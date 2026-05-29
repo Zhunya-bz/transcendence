@@ -6,21 +6,15 @@ import {
   MdSpaceDashboard,
   MdOutlineLeaderboard,
   MdLeaderboard,
+  MdPeople,
+  MdPeopleAlt,
 } from "react-icons/md";
 import { GoCheckCircle, GoCheckCircleFill } from "react-icons/go";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Separator } from "./ui/separator";
-import { ModalCreateProject } from "./modal-create-project";
 
 const routes = [
-  {
-    label: "Projects",
-    href: "/projects",
-    icon: AiOutlineProject,
-    activeIcon: AiFillProject,
-  },
   {
     label: "Backlog",
     href: "backlog",
@@ -49,9 +43,20 @@ const routes = [
     icon: MdOutlineLeaderboard,
     activeIcon: MdLeaderboard,
   },
+  {
+    label: "Members",
+    href: "members",
+    requiresProject: true,
+    icon: MdPeople,
+    activeIcon: MdPeopleAlt,
+  },
 ];
 
-export const Navigation = () => {
+interface NavigationProps {
+  onNavigate?: () => void;
+}
+
+export const Navigation = ({ onNavigate }: NavigationProps) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const projectIdMatch = pathname.match(/\/projects\/(\d+)\/([^\/]+)/);
@@ -63,9 +68,6 @@ export const Navigation = () => {
 
   return (
     <>
-      <ModalCreateProject projectId={projectId} />
-      <Separator className="my-4" />
-
       <ul className="flex flex-col">
         {routes.map((item) => {
           const href = item.requiresProject
@@ -102,7 +104,7 @@ export const Navigation = () => {
           }
 
           return (
-            <Link key={item.href} href={href}>
+            <Link key={item.href} href={href} onClick={onNavigate}>
               <div
                 className={cn(
                   "flex items-center gap-3 p-3 rounded-md font-medium transition text-neutral-500 hover:text-primary",

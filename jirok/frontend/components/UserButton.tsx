@@ -1,5 +1,5 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { UserAvatar } from "@/components/UserAvatar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader, LogOutIcon, UserIcon } from "lucide-react";
 import {
@@ -14,7 +14,6 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { getCurrentMe } from "@/actions/current-user";
-import { cookies } from "next/headers";
 import { logout } from "@/actions/auth";
 
 export const UserButton = () => {
@@ -56,19 +55,18 @@ export const UserButton = () => {
       </div>
     );
   if (!user) return null;
-  const { name, email } = user;
-  const avatarFallback = name
-    ? name.charAt(0).toUpperCase()
-    : (email?.charAt(0).toUpperCase() ?? "U");
+  const { name, surname } = user;
+  const avatarSrc = user?.picture?.medium;
+  const displayName = `${name ?? ""} ${surname ?? ""}`.trim() || "User";
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className="outline-none relative">
-        <Avatar size="lg" className="size-10 hover:opacity-85 transition">
-          <AvatarImage src={user?.picture?.medium} alt="Avatar image" />
-          <AvatarFallback className="bg-blue-400 font-medium text-gray-900 flex items-center justify-center">
-            {avatarFallback}
-          </AvatarFallback>
-        </Avatar>
+        <UserAvatar
+          size="lg"
+          className="size-10 hover:opacity-85 transition"
+          src={avatarSrc}
+          alt={displayName}
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"

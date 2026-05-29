@@ -60,7 +60,7 @@ export class ProjectsService {
         data: {
           userId,
           projectId: project.id,
-          role: UserRole.Admin,
+          role: UserRole.ADMIN,
         },
       });
 

@@ -13,8 +13,8 @@ datasource db {
 
 //ENUMS
 enum UserRole {
-  Admin		@map("admin")
-  Member	@map("member")
+  ADMIN		@map("admin")
+  MEMBER	@map("member")
   VIEWER	@map("viewer")
 }
 
@@ -86,6 +86,7 @@ model Project {
 
 	members	UserProject[]
 	issues	Issue[]
+	apiKeys ApiKey[]
 
 	@@map("projects")
 }
@@ -183,10 +184,12 @@ model Notification {
 model ApiKey {
 	id			Int			@id @default(autoincrement())
 	userId		Int			@map("user_id")
+	projectId	Int			@map("project_id")
 	keyHash		String		@unique @map("key_hash")
 	createdAt	DateTime?	@default(now()) @map("created_at")
 
 	user	User	@relation(fields: [userId], references: [id], onDelete: Cascade)
+	project	Project	@relation(fields: [projectId], references: [id], onDelete: Cascade)
 
 	@@map("api_keys")
 }

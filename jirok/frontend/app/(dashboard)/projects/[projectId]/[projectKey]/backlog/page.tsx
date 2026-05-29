@@ -2,11 +2,12 @@
 
 import { getCurrentMe } from "@/actions/current-user";
 import { getBacklogTasks, type TaskItem } from "@/actions/issues";
-import { getProjectMembers, type ProjectMember } from "@/actions/members";
+import { getProjectMembers } from "@/actions/members";
 import { useQuery } from "@tanstack/react-query";
 import { use, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { TasksTable } from "@/components/TaskTable";
+import { type UserProject } from "@/types/prisma";
 
 interface BacklogPageProps {
   params: Promise<{ projectId: string; projectKey: string }>;
@@ -25,19 +26,19 @@ export default function BacklogPage({ params }: BacklogPageProps) {
     queryFn: () => getBacklogTasks(projectId),
   });
 
-  const { data: members } = useQuery<ProjectMember[]>({
-    queryKey: ["project-members", projectId],
-    queryFn: () => getProjectMembers(projectId),
-  });
-
   const { data: currentUser } = useQuery({
     queryKey: ["current-user"],
     queryFn: getCurrentMe,
   });
 
+    const { data: members } = useQuery<UserProject[]>({
+    queryKey: ["project-members", projectId],
+    queryFn: () => getProjectMembers(projectId),
+  });
+
   const allTasks = data ?? [];
 
-  const currentUserId = currentUser?.userId;
+  const currentUserId = currentUser?.id ?? null;
 
   const filteredTasks =
     assigneeFilter === "me"

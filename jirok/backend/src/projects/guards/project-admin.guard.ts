@@ -18,7 +18,7 @@ export class ProjectAdminGuard implements CanActivate {
       throw new NotFoundException('Project not found');
     }
 
-    if (membership.role !== UserRole.Admin) {
+    if (membership.role !== UserRole.ADMIN) {
       throw new ForbiddenException('Admin access required');
     }
 

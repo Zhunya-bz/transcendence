@@ -24,6 +24,7 @@ import {
 } from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
 
+import { AllowApiKey } from '../auth/decorators/allow-api-key.decorator';
 import { ProjectsService } from './services/projects.service';
 import { ProjectMembersService } from './services/project-members.service';
 import { ProjectActivityService } from './services/project-activity.service';
@@ -84,7 +85,7 @@ export class ProjectsController {
   }
 
   // Get one project endpoint
-
+  @AllowApiKey()
   @ApiOperation({ summary: 'Get one project by ID' })
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
   @ApiOkResponse({ type: ProjectDetailResponseDto })
@@ -99,7 +100,7 @@ export class ProjectsController {
   }
 
   // Update project endpoint
-
+  @AllowApiKey()
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
   @ApiOperation({ summary: 'Update a project' })
   @ApiBody({ type: UpdateProjectDto })
@@ -118,7 +119,7 @@ export class ProjectsController {
   }
 
   // Project soft delete endpoint
-
+  @AllowApiKey()
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
   @ApiOperation({ summary: 'Soft delete a project' })
   @ApiOkResponse({ type: ProjectResponseDto })
@@ -129,7 +130,7 @@ export class ProjectsController {
   }
 
   // Project members endpoints
-
+  @AllowApiKey()
   @ApiOperation({ summary: 'List project members' })
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
   @ApiOkResponse({ type: ProjectMemberResponseDto, isArray: true })
@@ -144,8 +145,7 @@ export class ProjectsController {
   }
 
   // Add member by ID endpoint
-
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
+  @AllowApiKey()
   @ApiOperation({ summary: 'Add a member to a project' })
   @ApiBody({ type: AddProjectMemberByIdDto })
   @ApiCreatedResponse({ type: ProjectMemberResponseDto })
@@ -163,7 +163,7 @@ export class ProjectsController {
   }
 
   // Add member by email endpoint
-
+  @AllowApiKey()
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
   @ApiOperation({ summary: 'Add a member to a project by email' })
   @ApiBody({ type: AddProjectMemberByEmailDto })
@@ -182,7 +182,6 @@ export class ProjectsController {
   }
 
   // Get currentuser role endpoint
-
   @ApiOperation({ summary: 'Get the authenticated user role in a project' })
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
   @ApiOkResponse({
@@ -192,7 +191,7 @@ export class ProjectsController {
         role: {
           type: 'string',
           enum: Object.values(UserRole),
-          example: UserRole.Member,
+          example: UserRole.MEMBER,
         },
       },
       required: ['role'],
@@ -209,7 +208,7 @@ export class ProjectsController {
   }
 
   // Update member role endpoint
-
+  @AllowApiKey()
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
   @ApiParam({ name: 'userId', type: Number, example: 5 })
   @ApiOperation({ summary: 'Update a project member role' })
@@ -228,9 +227,9 @@ export class ProjectsController {
   ) {
     return this.membersService.updateRole(projectId, userId, dto);
   }
-
+  
   // Removemember endpoint
-
+  @AllowApiKey()
   @ApiParam({ name: 'projectId', type: Number, example: 12 })
   @ApiParam({ name: 'userId', type: Number, example: 5 })
   @ApiOperation({ summary: 'Remove a member from a project' })
@@ -249,7 +248,7 @@ export class ProjectsController {
   }
 
   // Activity endpoint
-
+  @AllowApiKey()
   @ApiOperation({
     summary:
       'Get issue activity counts grouped by status and type for a project',

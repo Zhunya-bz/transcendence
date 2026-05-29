@@ -17,8 +17,8 @@ export const MobileSidebar = () => {
     const pathname = usePathname();
     
     useEffect(() => {
-        setIsOpen(false);
-    }, []);
+      setIsOpen(false);
+    }, [pathname]);
   return (
     <Sheet modal={true} open={isOpen} onOpenChange={setIsOpen} >
       <SheetTrigger asChild>
@@ -39,7 +39,7 @@ export const MobileSidebar = () => {
         <SheetHeader className="hidden">
           <SheetTitle></SheetTitle>
         </SheetHeader>
-        <Sidebar />
+        <Sidebar onNavigate={() => setIsOpen(false)} />
       </SheetContent>
     </Sheet>
   );
