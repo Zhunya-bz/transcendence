@@ -2,6 +2,11 @@
 
 import { cookies } from "next/headers";
 
+export const parseError = async (response: Response, fallbackMessage: string) => {
+  const message = await response.json();
+  return message.message ? message.message : `${response.status}: ${response.statusText}` || fallbackMessage;
+};
+
 export const signin = async (data: { email: string; password: string }) => {
   try {
     const response = await fetch("http://backend:3001/auth/login", {
@@ -13,13 +18,11 @@ export const signin = async (data: { email: string; password: string }) => {
       credentials: "include",
     });
 
-    const result = await response.json();
-
     if (!response.ok) {
-      throw new Error(`${result.message}`);
+      throw new Error(await parseError(response, "Failed to login"));
     }
 
-    const { accessToken } = result;
+    const { accessToken } = await response.json();
 
     (await cookies()).set("token", accessToken, {
       httpOnly: true,
@@ -50,13 +53,12 @@ export const signup = async (data: {
     });
 
 
-    const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(`${result.message}`);
+      throw new Error(await parseError(response, "Failed to sign up"));
     }
 
-    const { accessToken } = result;
+    const { accessToken } = await response.json();
 
     (await cookies()).set("token", accessToken, {
       httpOnly: true,

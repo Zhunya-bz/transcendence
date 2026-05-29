@@ -1,58 +1,25 @@
 "use client";
 
-export enum Role {
-  ADMIN = 'ADMIN',
-  MEMBER = 'MEMBER',
-  VIEWER = 'VIEWER',
-};
+import type { MemberPayload, UserProject, UserRole } from "@/types/prisma";
+import { parseError } from "./auth";
 
-export type ProjectMemberUser = {
-  id: number;
-  name: string;
-  surname?: string | null;
-  email: string;
-  avatarUrl?: string | null;
-};
-
-export type ProjectMember = {
-  userId: number;
-  projectId: number;
-  role: Role;
-  joinedAt?: string;
-  user?: ProjectMemberUser;
-};
-
-export type MemberPayload = {
-  email: string;
-  role?: Role;
-};
-
-async function parseError(response: Response, fallbackMessage: string) {
-  const message = await response.text();
-  return message || `${response.status}: ${response.statusText}` || fallbackMessage;
-}
-
-export async function getProjectMembers(currentUserId: number, projectId: string): Promise<ProjectMember[]> {
+export async function getProjectMembers(projectId: string): Promise<UserProject[]> {
   const response = await fetch(`http://localhost:3001/projects/${projectId}/members`, {
     credentials: "include",
-    headers: {
-      "x-user-id": String(currentUserId),
-    },
   });
   if (!response.ok) {
-    throw new Error("Failed to load project members");
+    throw new Error(await parseError(response, "Failed to load project members"));
   }
   return response.json();
 }
 
 
-export async function addProjectMember(currentUserId: number, projectId: string, payload: MemberPayload) {
+export async function addProjectMember(projectId: string, payload: MemberPayload) {
   const response = await fetch(`http://localhost:3001/projects/${projectId}/members/by-email`, {
     method: "POST",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      "x-user-id": String(currentUserId),
     },
     body: JSON.stringify(payload),
   });
@@ -64,17 +31,16 @@ export async function addProjectMember(currentUserId: number, projectId: string,
   return response.json();
 }
 
-export async function updateProjectMemberRole(currentUserId: number,
+export async function updateProjectMemberRole(
   projectId: string,
   userId: number,
-  role: Role,
+  role: UserRole,
 ) {
   const response = await fetch(`http://localhost:3001/projects/${projectId}/members/${userId}`, {
     method: "PUT",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      "x-user-id": String(currentUserId),
     },
     body: JSON.stringify({ role }),
   });
@@ -86,13 +52,10 @@ export async function updateProjectMemberRole(currentUserId: number,
   return response.json();
 }
 
-export async function removeProjectMember(currentUserId: number, projectId: string, userId: number) {
+export async function removeProjectMember(projectId: string, userId: number) {
   const response = await fetch(`http://localhost:3001/projects/${projectId}/members/${userId}`, {
     method: "DELETE",
     credentials: "include",
-    headers: {
-      "x-user-id": String(currentUserId),
-    },
   });
 
   if (!response.ok) {

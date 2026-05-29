@@ -14,7 +14,6 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { getCurrentMe } from "@/actions/current-user";
-import { cookies } from "next/headers";
 import { logout } from "@/actions/auth";
 
 export const UserButton = () => {
