@@ -14,7 +14,8 @@ import { use } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import toast from "react-hot-toast";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
+import { UserAvatar } from "@/components/UserAvatar";
 import { UserRole, type UserProject } from "@/types/prisma";
 import {
   Select,
@@ -55,17 +56,6 @@ const ROLE_STYLES: Record<UserRole,
     icon: <Eye size={11} className="inline mr-1 -mt-0.5" />,
   },
 };
-
-function getInitials(name?: string, surname?: string, email?: string) {
-  if (name && surname) {
-    return `${name.charAt(0)}${surname.charAt(0)}`.toUpperCase();
-  }
-  return (
-    name?.charAt(0).toUpperCase() ||
-    email?.charAt(0).toUpperCase() ||
-    "U"
-  );
-}
 
 interface MembersPageProps {
   params: Promise<{ projectId: string; projectKey: string }>;
@@ -170,7 +160,6 @@ export default function MembersPage({ params }: MembersPageProps) {
             const surname = user?.surname ?? "";
             const fullName =
               `${name} ${surname}`.trim() || `User ${member.userId}`;
-            const initials = getInitials(name, surname, user?.email);
             const isMe = currentUser?.id === member.userId;
             const roleStyle = ROLE_STYLES[member.role] ?? ROLE_STYLES[UserRole.MEMBER];
 
@@ -181,18 +170,20 @@ export default function MembersPage({ params }: MembersPageProps) {
                   idx < members.length - 1 ? "border-b border-gray-100" : ""
                 }`}
               >
-                <Avatar className="size-9 transition shrink-0">
-                  <AvatarImage src={(user as any)?.picture?.medium} alt="Avatar image" />
-                  <AvatarFallback className="bg-blue-400 font-medium text-gray-900 flex items-center justify-center text-xs">
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
+                <UserAvatar
+                  className="size-9 transition shrink-0"
+                  src={(user as any)?.picture?.medium}
+                  alt={fullName}
+                />
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-base font-medium text-gray-900 truncate">
+                    <Link
+                      href={`/projects/${projectId}/${projectKey}/profile/${member.userId}`}
+                      className="text-base font-medium text-gray-900 truncate hover:text-blue-700 transition"
+                    >
                       {fullName}
-                    </span>
+                    </Link>
                     {isMe && (
                       <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-400 border border-gray-200 shrink-0">
                         you
@@ -335,6 +326,7 @@ export default function MembersPage({ params }: MembersPageProps) {
           Only admins can invite members or change roles
         </p>
       )}
+
     </div>
   );
 }
