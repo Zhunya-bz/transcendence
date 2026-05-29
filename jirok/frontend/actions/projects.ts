@@ -1,7 +1,7 @@
 "use client";
 
 import type { Project } from "@/types/prisma";
-import { parseError } from "./auth";
+import { parseError } from "./issues";
 
 export const createProject = async (data: { name: string }): Promise<Project> => {
   const response = await fetch("http://localhost:3001/projects", {

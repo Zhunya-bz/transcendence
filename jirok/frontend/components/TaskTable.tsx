@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { type TaskItem } from "@/actions/issues";
-import { type UserProject } from "@/types/prisma";
+import { IssuePriority, IssueStatus, IssueType, type UserProject } from "@/types/prisma";
 import { MdBookmark, MdBugReport, MdTaskAlt } from "react-icons/md";
 import Link from "next/link";
 
@@ -32,42 +32,49 @@ export const TasksTable = ({
   };
 
   const getTypeClasses = (type: TaskItem["type"]) => {
-    if (type === "bug") return "text-red-600";
-    if (type === "story") return "text-green-600";
+    if (type === IssueType.BUG) return "text-red-600";
+    if (type === IssueType.STORY) return "text-green-600";
     return "text-blue-600";
   };
 
   const getTypeIcon = (type: TaskItem["type"]) => {
-    if (type === "bug") return MdBugReport;
-    if (type === "story") return MdBookmark;
+    if (type === IssueType.BUG) return MdBugReport;
+    if (type === IssueType.STORY) return MdBookmark;
     return MdTaskAlt;
   };
 
   const getStatusClasses = (status: TaskItem["status"]) => {
-    if (status === "done") return "bg-green-100 text-green-700";
-    if (status === "in_progress") return "bg-orange-100 text-orange-700";
-    if (status === "in_review") return "bg-blue-100 text-blue-700";
+    if (status === IssueStatus.DONE) return "bg-green-100 text-green-700";
+    if (status === IssueStatus.IN_PROGRESS) return "bg-orange-50 text-orange-700";
+    if (status === IssueStatus.IN_REVIEW) return "bg-blue-50 text-blue-700";
     return "bg-gray-100 text-gray-700";
   };
 
   const getPriorityClasses = (priority: TaskItem["priority"]) => {
-    if (priority === "high") return "bg-orange-100 text-orange-700";
-    if (priority === "medium") return "bg-blue-100 text-blue-700";
-    return "bg-gray-100 text-gray-700";
+    if (priority === IssuePriority.HIGH) return "bg-red-50 text-red-700";
+    if (priority === IssuePriority.MEDIUM) return "bg-violet-50 text-violet-600";
+    return "bg-lime-50 text-lime-700";
   };
 
   const getStatusLabel = (status: TaskItem["status"]) => {
-    if (status === "todo") return "To Do";
-    if (status === "in_progress") return "In Progress";
-    if (status === "in_review") return "In Review";
+    if (status === IssueStatus.TODO) return "To Do";
+    if (status === IssueStatus.IN_PROGRESS) return "In Progress";
+    if (status === IssueStatus.IN_REVIEW) return "In Review";
     return "Done";
   };
 
   const getPriorityLabel = (priority: TaskItem["priority"]) => {
-    if (priority === "high") return "High";
-    if (priority === "medium") return "Medium";
+    if (priority === IssuePriority.HIGH) return "High";
+    if (priority === IssuePriority.MEDIUM) return "Medium";
     return "Low";
   };
+
+  const dateFormatter = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 
   return (
     <div className="rounded-lg border-2 bg-white shadow-md overflow-hidden">
@@ -102,7 +109,7 @@ export const TasksTable = ({
                 <TableCell className="max-w-[320px] truncate">
                   <div className="flex items-baseline gap-2">
                     <TypeIcon
-                      className={`size-4 ${getTypeClasses(task.type)}`}
+                      className={`size-5 shrink-0 ${getTypeClasses(task.type)}`}
                     />
                     <span className="inline-flex items-baseline px-2 py-0.5 text-xs font-mono text-blue-700">
                       {projectKey}-{task.id}
@@ -142,7 +149,9 @@ export const TasksTable = ({
                     {getPriorityLabel(task.priority)}
                   </span>
                 </TableCell>
-                <TableCell className="hidden sm:table-cell">{task.createdAt}</TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  {dateFormatter.format(new Date(task.created))}
+                </TableCell>
               </TableRow>
             );
           })}

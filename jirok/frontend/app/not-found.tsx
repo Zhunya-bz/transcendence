@@ -4,37 +4,46 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-950 via-blue-900 to-slate-950 text-white">
-      <main className="max-w-7xl mx-auto px-6 py-16 md:py-24 lg:px-16 xl:px-24 lg:py-28">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-12">
-          <div className="flex flex-col gap-6 md:w-1/2">
-            <h1 className="text-5xl font-extrabold tracking-tight">
+    <div className="h-screen overflow-hidden bg-linear-to-br from-slate-300 via-blue-50 to-blue-500 text-white">
+      <main className="mx-auto flex h-full max-w-7xl items-center px-6 py-8 md:px-16 md:py-12 lg:px-24">
+        <div className="flex w-full flex-col items-center justify-between gap-8 md:flex-row md:gap-12">
+          <div className="flex flex-col gap-4 md:w-1/2 md:gap-6">
+            <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
               404 <span className="text-orange-400">not found</span>
             </h1>
-            <p className="text-lg text-blue-100/80 leading-relaxed">
+            <p className="text-base leading-relaxed text-gray-900 sm:text-lg">
               This page does not exist
             </p>
-            <div>
+            <div className="flex flex-col gap-3 sm:flex-row">
               <Button
                 variant="ghost"
                 size="lg"
-                className="text-base sm:text-lg bg-orange-400 hover:bg-orange-300"
+                className="bg-orange-400 text-base hover:bg-orange-300 sm:text-lg"
               >
                 <Link href="/" className="text-black">
                   Back to home
                 </Link>
               </Button>
+              <Button
+                variant="ghost"
+                size="lg"
+                className="bg-blue-500 text-base text-white hover:bg-blue-600 sm:text-lg"
+              >
+                <Link href="/projects" className="text-white">
+                  Back to projects
+                </Link>
+              </Button>
             </div>
           </div>
 
-          <div className="flex w-full justify-center md:w-1/2 md:justify-end">
-            <div className="relative w-full max-w-xs sm:max-w-sm">
+          <div className="hidden w-full justify-center md:flex md:w-1/2 md:justify-end">
+            <div className="relative w-full max-w-45 sm:max-w-55 md:max-w-72 lg:max-w-96">
               <div className="relative h-auto">
                 <Image
                   src="/sad-mascot.png"
                   width={800}
                   height={800}
-                  className="w-full h-auto object-cover"
+                  className="h-auto w-full object-contain"
                   alt="Sad mascot"
                   priority
                 />

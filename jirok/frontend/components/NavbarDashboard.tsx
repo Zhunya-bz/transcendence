@@ -1,10 +1,9 @@
 "use client";
 import Image from "next/image";
-import { Button } from "./ui/button";
 import Link from "next/link";
 import { UserButton } from "./UserButton";
-import { FaPlus } from "react-icons/fa6";
 import { MobileSidebar } from "./MobileSidebar";
+import { ModalCreateTask } from "./modal-create-task";
 
 export default function Navbar() {
   return (
@@ -23,13 +22,7 @@ export default function Navbar() {
           <span className="text-xl font-bold text-gray-900">Jirok</span>
         </div>
         <div>
-          <Button
-            size="lg"
-            className="text-base px-6 py-4 font-semibold text-center sm:text-lg bg-blue-600 hover:bg-blue-800"
-          >
-            <FaPlus />
-            Create
-          </Button>
+          <ModalCreateTask />
         </div>
         <div className="flex items-center space-x-2 sm:space-x-4">
           <UserButton />
