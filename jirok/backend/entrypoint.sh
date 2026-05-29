@@ -8,4 +8,4 @@ echo "Running Prisma Migration........"
 npx prisma migrate deploy
 
 echo "Starting App......"
-npm run start:dev
+node dist/main.js
