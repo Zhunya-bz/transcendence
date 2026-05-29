@@ -10,12 +10,13 @@ import { FaPlus, FaStar } from "react-icons/fa6";
 import { MdBookmark, MdBugReport, MdTaskAlt } from "react-icons/md";
 import toast from "react-hot-toast";
 
-import { getCurrentMe } from "@/actions/current-user";
+import { getCurrentMe, getCurrentUserRole } from "@/actions/current-user";
 import { getProjectMembers } from "@/actions/members";
 import {
   IssueType,
   IssuePriority,
   IssueStatus,
+  UserRole,
   type UserProject,
   Issue,
 } from "@/types/prisma";
@@ -87,6 +88,14 @@ export const ModalCreateTask = () => {
     enabled: Boolean(projectId),
   });
 
+  const { data: currentUserRole, isLoading: isRoleLoading } = useQuery({
+    queryKey: ["current-role", projectId],
+    queryFn: () => getCurrentUserRole(projectId ?? ""),
+    enabled: Boolean(projectId),
+  });
+
+  const isViewer = currentUserRole?.role === UserRole.VIEWER;
+
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
@@ -142,6 +151,7 @@ export const ModalCreateTask = () => {
       <DialogTrigger asChild>
         <Button
           size="lg"
+          disabled={!projectId || isRoleLoading || isViewer}
           className="text-base px-6 py-4 font-semibold text-center sm:text-lg bg-blue-600 hover:bg-blue-800"
         >
           <FaPlus />

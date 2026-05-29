@@ -1,11 +1,17 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { UserButton } from "./UserButton";
 import { MobileSidebar } from "./MobileSidebar";
 import { ModalCreateTask } from "./modal-create-task";
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const isProjectsPage = pathname === "/projects";
+  const isProfilePage = pathname === "/profile" || pathname.includes("/profile/");
+  const hideCreateTaskButton = isProjectsPage || isProfilePage;
+
   return (
     <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
@@ -21,9 +27,7 @@ export default function Navbar() {
           </Link>
           <span className="text-xl font-bold text-gray-900">Jirok</span>
         </div>
-        <div>
-          <ModalCreateTask />
-        </div>
+        <div>{!hideCreateTaskButton && <ModalCreateTask />}</div>
         <div className="flex items-center space-x-2 sm:space-x-4">
           <UserButton />
         </div>
