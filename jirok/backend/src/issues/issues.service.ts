@@ -48,7 +48,7 @@ export class IssuesService {
     return issue;
   }
 
-  async createIssue(projectId: number, dto: CreateIssueDto, userId: number) {
+  async createIssue(projectId: number, dto: CreateIssueDto) {
     if (dto.assigneeId) {
       await this.validateAssignee(projectId, dto.assigneeId);
     }
@@ -57,7 +57,6 @@ export class IssuesService {
       data: {
         ...dto,
         projectId,
-        reporterId: userId,
       },
     });
   }

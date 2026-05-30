@@ -8,38 +8,35 @@ import {
   Patch,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 
 import {
   ApiBearerAuth,
   ApiTags,
   ApiUnauthorizedResponse,
-  ApiOperation,
-  ApiOkResponse,
-  ApiCreatedResponse,
-  ApiBody,
-  ApiParam,
-  ApiBadRequestResponse,
-  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 
 import { IssuesService } from './issues.service';
 
-import { ProjectMemberGuard } from '../projects/guards/project-member.guard';
-import { ProjectWriteGuard } from './guards/project-write.guard';
+import { ProjectMemberOnly } from '../projects/decorators/project-member-only.decorator';
+import { ProjectWriteOnly } from '../projects/decorators/project-write-only.decorator';
 
 import { CreateIssueDto } from './dto/create-issue.dto';
 import { UpdateIssueDto } from './dto/update-issue.dto';
 import { UpdateIssueStatusDto } from './dto/update-issue-status.dto';
 import { AssignIssueDto } from './dto/assign-issue.dto';
-import {
-  ApiErrorResponseDto,
-  IssueResponseDto,
-  IssueDetailResponseDto,
-} from './dto/issues-swagger.dto';
+import { ApiErrorResponseDto } from './dto/issues-swagger.dto';
 
 import { CurrentUser } from '../projects/decorators/current-user.decorator';
+import {
+  ApiAssignIssue,
+  ApiCreateIssue,
+  ApiDeleteIssue,
+  ApiGetIssue,
+  ApiGetProjectIssues,
+  ApiUpdateIssue,
+  ApiUpdateIssueStatus,
+} from './decorators/issue-swagger.decorator';
 
 @ApiTags('Issues')
 @ApiBearerAuth('bearer')
@@ -48,31 +45,18 @@ import { CurrentUser } from '../projects/decorators/current-user.decorator';
   type: ApiErrorResponseDto,
 })
 @Controller('projects/:projectId/issues')
-@UseGuards(ProjectMemberGuard)
+@ProjectMemberOnly
 export class IssuesController {
   constructor(private readonly issuesService: IssuesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List issues for a project' })
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiOkResponse({ type: IssueResponseDto, isArray: true })
-  @ApiNotFoundResponse({
-    description: 'Project not found or user is not a member',
-    type: ApiErrorResponseDto,
-  })
+  @ApiGetProjectIssues
   getProjectIssues(@Param('projectId', ParseIntPipe) projectId: number) {
     return this.issuesService.getProjectIssues(projectId);
   }
 
   @Get(':issueId')
-  @ApiOperation({ summary: 'Get one issue by ID' })
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiParam({ name: 'issueId', type: Number, example: 42 })
-  @ApiOkResponse({ type: IssueDetailResponseDto })
-  @ApiNotFoundResponse({
-    description: 'Issue not found or user is not a member',
-    type: ApiErrorResponseDto,
-  })
+  @ApiGetIssue
   getIssue(
     @Param('projectId', ParseIntPipe) projectId: number,
     @Param('issueId', ParseIntPipe) issueId: number,
@@ -81,38 +65,18 @@ export class IssuesController {
   }
 
   @Post()
-  @UseGuards(ProjectWriteGuard)
-  @ApiOperation({ summary: 'Create a new issue' })
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiBody({ type: CreateIssueDto })
-  @ApiCreatedResponse({ type: IssueResponseDto })
-  @ApiBadRequestResponse({
-    description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
-  })
+  @ProjectWriteOnly
+  @ApiCreateIssue
   createIssue(
     @Param('projectId', ParseIntPipe) projectId: number,
     @Body() dto: CreateIssueDto,
-    @CurrentUser() userId: number,
   ) {
-    return this.issuesService.createIssue(projectId, dto, userId);
+    return this.issuesService.createIssue(projectId, dto);
   }
 
   @Put(':issueId')
-  @UseGuards(ProjectWriteGuard)
-  @ApiOperation({ summary: 'Update an issue' })
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiParam({ name: 'issueId', type: Number, example: 42 })
-  @ApiBody({ type: UpdateIssueDto })
-  @ApiOkResponse({ type: IssueResponseDto })
-  @ApiBadRequestResponse({
-    description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
-  })
-  @ApiNotFoundResponse({
-    description: 'Issue not found or user is not a member',
-    type: ApiErrorResponseDto,
-  })
+  @ProjectWriteOnly
+  @ApiUpdateIssue
   updateIssue(
     @Param('projectId', ParseIntPipe) projectId: number,
     @Param('issueId', ParseIntPipe) issueId: number,
@@ -123,7 +87,8 @@ export class IssuesController {
   }
 
   @Patch(':issueId/status')
-  @UseGuards(ProjectWriteGuard)
+  @ProjectWriteOnly
+  @ApiUpdateIssueStatus
   updateIssueStatus(
     @Param('projectId', ParseIntPipe) projectId: number,
     @Param('issueId', ParseIntPipe) issueId: number,
@@ -139,7 +104,8 @@ export class IssuesController {
   }
 
   @Patch(':issueId/assign')
-  @UseGuards(ProjectWriteGuard)
+  @ProjectWriteOnly
+  @ApiAssignIssue
   assignIssue(
     @Param('projectId', ParseIntPipe) projectId: number,
     @Param('issueId', ParseIntPipe) issueId: number,
@@ -150,15 +116,8 @@ export class IssuesController {
   }
 
   @Delete(':issueId')
-  @UseGuards(ProjectWriteGuard)
-  @ApiOperation({ summary: 'Soft delete an issue' })
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiParam({ name: 'issueId', type: Number, example: 42 })
-  @ApiOkResponse({ type: IssueResponseDto })
-  @ApiNotFoundResponse({
-    description: 'Issue not found or user is not a member',
-    type: ApiErrorResponseDto,
-  })
+  @ProjectWriteOnly
+  @ApiDeleteIssue
   deleteIssue(
     @Param('projectId', ParseIntPipe) projectId: number,
     @Param('issueId', ParseIntPipe) issueId: number,
