@@ -61,3 +61,21 @@ export async function deleteProject(projectId: number) {
 
   return response.json();
 }
+
+export async function generateProjectApiKey(projectId: number): Promise<string> {
+  const response = await fetch("http://localhost:3001/auth/api-key", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ projectId }),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response, "Failed to generate API key"));
+  }
+
+  const { apiKey } = await response.json();
+  return apiKey;
+}

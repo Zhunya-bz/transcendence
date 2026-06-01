@@ -1,7 +1,6 @@
 "use client";
 
-import { deleteProject, updateProject } from "@/actions/projects";
-import { getProjectMembers } from "@/actions/members";
+import { deleteProject, generateProjectApiKey, updateProject } from "@/actions/projects";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -27,7 +26,6 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { UserRole, type Project } from "@/types/prisma";
-import { Description } from "@radix-ui/react-dialog";
 import { getCurrentUserRole } from "@/actions/current-user";
 
 const projectSettingsSchema = z.object({
@@ -42,6 +40,7 @@ interface Props {
 export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [generatedApiKey, setGeneratedApiKey] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof projectSettingsSchema>>({
     resolver: zodResolver(projectSettingsSchema),
@@ -53,6 +52,12 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
   useEffect(() => {
     form.reset({ name: project.name });
   }, [form, project.name]);
+
+  useEffect(() => {
+    if (!open) {
+      setGeneratedApiKey(null);
+    }
+  }, [open]);
 
 
   const {data: userRole} = useQuery({
@@ -81,6 +86,15 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
     onError: (error: Error) => toast.error(error.message),
   });
 
+  const apiKeyMutation = useMutation({
+    mutationFn: () => generateProjectApiKey(project.id),
+    onSuccess: (apiKey) => {
+      setGeneratedApiKey(apiKey);
+      toast.success("API key generated");
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
   const isProjectAdmin = userRole?.role === UserRole.ADMIN;
 
   if (!isProjectAdmin) {
@@ -101,11 +115,43 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
           Settings
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <Description className="hidden"></Description>
+      <DialogContent className="sm:max-w-2xl lg:max-w-3xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Project settings</DialogTitle>
         </DialogHeader>
+
+        <div className="space-y-3 rounded-lg border bg-muted/40 p-4">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className="font-medium">Project API key</h3>
+              <p className="text-sm text-orange-600">
+                API key is generated only once and shown only once.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Click generate to create a new key for this project. If you generate another one, the old value should no longer be used.
+              </p>
+            </div>
+            <Button
+              type="button"
+              className="bg-blue-600 text-white hover:bg-blue-700"
+              onClick={() => apiKeyMutation.mutate()}
+              disabled={apiKeyMutation.isPending}
+            >
+              {apiKeyMutation.isPending ? "Generating..." : "Generate API key"}
+            </Button>
+          </div>
+
+          {generatedApiKey && (
+            <div className="rounded-md border border-orange-200 bg-orange-50 p-3">
+              <p className="text-xs uppercase tracking-wide text-orange-700">
+                Copy this now
+              </p>
+              <code className="mt-2 block break-all font-mono text-sm text-orange-900">
+                {generatedApiKey}
+              </code>
+            </div>
+          )}
+        </div>
 
         <Form {...form}>
           <form
