@@ -120,7 +120,6 @@ export class ProjectActivityCountMapDto {
       LOW: 2,
       MEDIUM: 5,
       HIGH: 1,
-      URGENT: 0,
     },
   })
   priorityCounts!: Record<IssuePriority, number>;
