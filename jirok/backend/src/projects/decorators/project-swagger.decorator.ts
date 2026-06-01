@@ -119,7 +119,7 @@ export const ApiRemoveProjectMember = applyDecorators(
 export const ApiGetProjectActivity = applyDecorators(
   ApiOperation({
     summary:
-      'Get issue activity counts grouped by status and type for a project',
+      'Get issue activity counts grouped by status, type, priority, and assignee for a project',
   }),
   ApiParam({ name: 'projectId', type: Number, example: 12 }),
   ApiOkResponse({ type: ProjectActivityCountMapDto }),
