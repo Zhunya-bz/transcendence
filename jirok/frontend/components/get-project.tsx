@@ -95,7 +95,7 @@ export const GetProject = () => {
   return (
     <div className="w-full px-2 py-3 sm:px-4 sm:py-6 max-w-sm sm:max-w-3xl mx-auto">
       <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-3">
-        A list of your projects
+        List of your projects
       </h2>
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <Table className="w-full table-fixed">
