@@ -33,6 +33,11 @@ export class CreateIssueDto {
   @IsEnum(IssueType)
   type!: IssueType;
 
+  @ApiProperty({ example: 7 })
+  @IsInt()
+  @IsNotEmpty()
+  reporterId!: number;
+
   @ApiPropertyOptional({ example: 5, nullable: true })
   @IsOptional()
   @IsInt()

@@ -7,22 +7,13 @@ import {
   ParseIntPipe,
   Post,
   Put,
-  UseGuards,
   Req,
 } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiBody,
-  ApiCreatedResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
   ApiUnauthorizedResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserRole } from '@prisma/client';
 
 import { AllowApiKey } from '../auth/decorators/allow-api-key.decorator';
 import { ProjectsService } from './services/projects.service';
@@ -34,16 +25,25 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { AddProjectMemberByIdDto } from './dto/add-project-member-by-id.dto';
 import { AddProjectMemberByEmailDto } from './dto/add-project-member-by-email.dto';
 import { UpdateProjectMemberRoleDto } from './dto/update-project-member-role.dto';
-import {
-  ApiErrorResponseDto,
-  ProjectDetailResponseDto,
-  ProjectMemberResponseDto,
-  ProjectResponseDto,
-} from './dto/projects-swagger.dto';
+import { ApiErrorResponseDto } from './dto/projects-swagger.dto';
 
 import { CurrentUser } from './decorators/current-user.decorator';
 import { ProjectAdminOnly } from './decorators/project-admin-only.decorator';
-import { ProjectMemberGuard } from './guards/project-member.guard';
+import { ProjectMemberOnly } from './decorators/project-member-only.decorator';
+import {
+  ApiAddProjectMemberByEmail,
+  ApiAddProjectMemberById,
+  ApiCreateProject,
+  ApiFindAllProjects,
+  ApiGetProject,
+  ApiGetProjectActivity,
+  ApiGetProjectMembers,
+  ApiGetProjectMyRole,
+  ApiRemoveProject,
+  ApiRemoveProjectMember,
+  ApiUpdateProject,
+  ApiUpdateProjectMemberRole,
+} from './decorators/project-swagger.decorator';
 
 import type { Request } from 'express';
 
@@ -63,8 +63,7 @@ export class ProjectsController {
 
   // List projects endpoint
 
-  @ApiOperation({ summary: 'List projects for the authenticated user' })
-  @ApiOkResponse({ type: ProjectResponseDto, isArray: true })
+  @ApiFindAllProjects
   @Get()
   findAll(@CurrentUser() userId: number) {
     return this.projectsService.findAll(userId);
@@ -72,13 +71,7 @@ export class ProjectsController {
 
   // Create project endpoint
 
-  @ApiOperation({ summary: 'Create a new project' })
-  @ApiBody({ type: CreateProjectDto })
-  @ApiCreatedResponse({ type: ProjectResponseDto })
-  @ApiBadRequestResponse({
-    description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
-  })
+  @ApiCreateProject
   @Post()
   create(@CurrentUser() userId: number, @Body() dto: CreateProjectDto) {
     return this.projectsService.create(userId, dto);
@@ -86,14 +79,8 @@ export class ProjectsController {
 
   // Get one project endpoint
   @AllowApiKey()
-  @ApiOperation({ summary: 'Get one project by ID' })
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiOkResponse({ type: ProjectDetailResponseDto })
-  @ApiNotFoundResponse({
-    description: 'Project not found or user is not a member',
-    type: ApiErrorResponseDto,
-  })
-  @UseGuards(ProjectMemberGuard)
+  @ApiGetProject
+  @ProjectMemberOnly
   @Get(':projectId')
   findOne(@Param('projectId', ParseIntPipe) projectId: number) {
     return this.projectsService.findOne(projectId);
@@ -101,14 +88,7 @@ export class ProjectsController {
 
   // Update project endpoint
   @AllowApiKey()
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiOperation({ summary: 'Update a project' })
-  @ApiBody({ type: UpdateProjectDto })
-  @ApiOkResponse({ type: ProjectResponseDto })
-  @ApiBadRequestResponse({
-    description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
-  })
+  @ApiUpdateProject
   @ProjectAdminOnly
   @Put(':projectId')
   update(
@@ -120,9 +100,7 @@ export class ProjectsController {
 
   // Project soft delete endpoint
   @AllowApiKey()
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiOperation({ summary: 'Soft delete a project' })
-  @ApiOkResponse({ type: ProjectResponseDto })
+  @ApiRemoveProject
   @ProjectAdminOnly
   @Delete(':projectId')
   remove(@Param('projectId', ParseIntPipe) projectId: number) {
@@ -131,14 +109,8 @@ export class ProjectsController {
 
   // Project members endpoints
   @AllowApiKey()
-  @ApiOperation({ summary: 'List project members' })
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiOkResponse({ type: ProjectMemberResponseDto, isArray: true })
-  @ApiNotFoundResponse({
-    description: 'Project not found or user is not a member',
-    type: ApiErrorResponseDto,
-  })
-  @UseGuards(ProjectMemberGuard)
+  @ApiGetProjectMembers
+  @ProjectMemberOnly
   @Get(':projectId/members')
   getMembers(@Param('projectId', ParseIntPipe) projectId: number) {
     return this.membersService.getMembers(projectId);
@@ -146,13 +118,7 @@ export class ProjectsController {
 
   // Add member by ID endpoint
   @AllowApiKey()
-  @ApiOperation({ summary: 'Add a member to a project' })
-  @ApiBody({ type: AddProjectMemberByIdDto })
-  @ApiCreatedResponse({ type: ProjectMemberResponseDto })
-  @ApiBadRequestResponse({
-    description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
-  })
+  @ApiAddProjectMemberById
   @ProjectAdminOnly
   @Post(':projectId/members')
   addMemberById(
@@ -164,14 +130,7 @@ export class ProjectsController {
 
   // Add member by email endpoint
   @AllowApiKey()
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiOperation({ summary: 'Add a member to a project by email' })
-  @ApiBody({ type: AddProjectMemberByEmailDto })
-  @ApiCreatedResponse({ type: ProjectMemberResponseDto })
-  @ApiBadRequestResponse({
-    description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
-  })
+  @ApiAddProjectMemberByEmail
   @ProjectAdminOnly
   @Post(':projectId/members/by-email')
   addMemberByEmail(
@@ -182,26 +141,8 @@ export class ProjectsController {
   }
 
   // Get currentuser role endpoint
-  @ApiOperation({ summary: 'Get the authenticated user role in a project' })
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiOkResponse({
-    schema: {
-      type: 'object',
-      properties: {
-        role: {
-          type: 'string',
-          enum: Object.values(UserRole),
-          example: UserRole.MEMBER,
-        },
-      },
-      required: ['role'],
-    },
-  })
-  @ApiNotFoundResponse({
-    description: 'Project not found or user is not a member',
-    type: ApiErrorResponseDto,
-  })
-  @UseGuards(ProjectMemberGuard)
+  @ApiGetProjectMyRole
+  @ProjectMemberOnly
   @Get(':projectId/role')
   getMyRole(@Req() request: Request) {
     return { role: request.membership!.role };
@@ -209,15 +150,7 @@ export class ProjectsController {
 
   // Update member role endpoint
   @AllowApiKey()
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiParam({ name: 'userId', type: Number, example: 5 })
-  @ApiOperation({ summary: 'Update a project member role' })
-  @ApiBody({ type: UpdateProjectMemberRoleDto })
-  @ApiOkResponse({ type: ProjectMemberResponseDto })
-  @ApiBadRequestResponse({
-    description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
-  })
+  @ApiUpdateProjectMemberRole
   @ProjectAdminOnly
   @Put(':projectId/members/:userId')
   updateMemberRole(
@@ -227,17 +160,10 @@ export class ProjectsController {
   ) {
     return this.membersService.updateRole(projectId, userId, dto);
   }
-  
+
   // Removemember endpoint
   @AllowApiKey()
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiParam({ name: 'userId', type: Number, example: 5 })
-  @ApiOperation({ summary: 'Remove a member from a project' })
-  @ApiOkResponse({ type: ProjectMemberResponseDto })
-  @ApiBadRequestResponse({
-    description: 'Cannot remove the last admin from project',
-    type: ApiErrorResponseDto,
-  })
+  @ApiRemoveProjectMember
   @ProjectAdminOnly
   @Delete(':projectId/members/:userId')
   removeMember(
@@ -249,43 +175,8 @@ export class ProjectsController {
 
   // Activity endpoint
   @AllowApiKey()
-  @ApiOperation({
-    summary:
-      'Get issue activity counts grouped by status and type for a project',
-  })
-  @ApiParam({ name: 'projectId', type: Number, example: 12 })
-  @ApiOkResponse({
-    schema: {
-      type: 'object',
-      properties: {
-        statusCounts: {
-          type: 'object',
-          additionalProperties: { type: 'number' },
-          example: {
-            TODO: 4,
-            IN_PROGRESS: 2,
-            IN_REVIEW: 1,
-            DONE: 7,
-          },
-        },
-        typeCounts: {
-          type: 'object',
-          additionalProperties: { type: 'number' },
-          example: {
-            BUG: 3,
-            TASK: 8,
-            STORY: 1,
-          },
-        },
-      },
-      required: ['statusCounts', 'typeCounts'],
-    },
-  })
-  @ApiNotFoundResponse({
-    description: 'Project not found or user is not a member',
-    type: ApiErrorResponseDto,
-  })
-  @UseGuards(ProjectMemberGuard)
+  @ApiGetProjectActivity
+  @ProjectMemberOnly
   @Get(':projectId/activity')
   getActivity(@Param('projectId', ParseIntPipe) projectId: number) {
     return this.activityService.getActivity(projectId);

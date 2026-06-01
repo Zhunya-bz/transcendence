@@ -6,7 +6,7 @@ import { IssuesService } from './issues.service';
 import { PrismaModule } from '../prisma/prisma.module';
 
 import { ProjectMemberGuard } from '../projects/guards/project-member.guard';
-import { ProjectWriteGuard } from './guards/project-write.guard';
+import { ProjectWriteGuard } from '../projects/guards/project-write.guard';
 
 @Module({
   imports: [PrismaModule],

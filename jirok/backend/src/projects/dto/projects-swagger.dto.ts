@@ -1,5 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IssueStatus, IssueType, UserRole } from '@prisma/client';
+import {
+  IssuePriority,
+  IssueStatus,
+  IssueType,
+  UserRole,
+} from '@prisma/client';
 
 export class ProjectResponseDto {
   @ApiProperty({ example: 12 })
@@ -51,6 +56,14 @@ export class ProjectMemberUserDto {
   avatarUrl?: string | null;
 }
 
+export class ProjectAssigneeCountItemDto {
+  @ApiPropertyOptional({ type: ProjectMemberUserDto, nullable: true })
+  user?: ProjectMemberUserDto | null;
+
+  @ApiProperty({ example: 5 })
+  count!: number;
+}
+
 export class ProjectMemberResponseDto {
   @ApiProperty({ example: 5 })
   userId!: number;
@@ -99,6 +112,41 @@ export class ProjectActivityCountMapDto {
     },
   })
   typeCounts!: Record<IssueType, number>;
+
+  @ApiProperty({
+    type: 'object',
+    additionalProperties: { type: 'number' },
+    example: {
+      LOW: 2,
+      MEDIUM: 5,
+      HIGH: 1,
+    },
+  })
+  priorityCounts!: Record<IssuePriority, number>;
+
+  @ApiProperty({
+    type: ProjectAssigneeCountItemDto,
+    isArray: true,
+    description:
+      'First entry is the count of unassigned issues. Remaining entries are counts per project member.',
+    example: [
+      {
+        user: null,
+        count: 3,
+      },
+      {
+        user: {
+          id: 5,
+          name: 'Alexis',
+          surname: 'Lopez',
+          email: 'alexis@example.com',
+          avatarUrl: null,
+        },
+        count: 7,
+      },
+    ],
+  })
+  assigneeCounts!: ProjectAssigneeCountItemDto[];
 }
 
 export class ProjectMyRoleResponseDto {

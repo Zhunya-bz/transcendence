@@ -9,6 +9,7 @@ import { ProjectActivityService } from './services/project-activity.service';
 
 import { ProjectMemberGuard } from './guards/project-member.guard';
 import { ProjectAdminGuard } from './guards/project-admin.guard';
+import { ProjectWriteGuard } from './guards/project-write.guard';
 
 @Module({
   controllers: [ProjectsController],
@@ -19,6 +20,7 @@ import { ProjectAdminGuard } from './guards/project-admin.guard';
     ProjectActivityService,
     ProjectMemberGuard,
     ProjectAdminGuard,
+    ProjectWriteGuard,
   ],
 })
 export class ProjectsModule {}
