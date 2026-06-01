@@ -1,7 +1,7 @@
 "use client";
 
 import type { User } from "@/types/prisma";
-import { parseError } from "./auth";
+import { parseError } from "./issues";
 
 export const getCurrentMe = async (): Promise<User> => {
   const response = await fetch("http://localhost:3001/auth/me", {

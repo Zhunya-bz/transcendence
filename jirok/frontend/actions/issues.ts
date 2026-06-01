@@ -1,36 +1,56 @@
 "use client";
 
-export type TaskStatus = "TODO" | "IN_PROGRESS" | "IN_REVIEW" | "DONE";
+import { Issue } from "@/types/prisma";
 
-export const DEFAULT: Partial<TaskItem> = {
-  status: "TODO",
-  priority: "MEDIUM",
-  type: "TASK",
-}
-
-export interface TaskItem {
-  id: number;
-  type: "BUG" | "TASK" | "STORY";
-  title: string;
-  assigneeId: number;
-  status: TaskStatus;
-  priority: "LOW" | "MEDIUM" | "HIGH";
-  createdAt: string;
+type CreateIssueInput = {
   projectId: number;
-  description: string;
+  title: string;
+  status: string;
+  description?: string;
+  type: string;
+  priority: string;
+  assigneeId?: number | null;
+  reporterId: number;
+};
+
+export const parseError = async (response: Response, fallbackMessage: string) => {
+  const message = await response.json();
+  return message.message ? message.message : `${response.status}: ${response.statusText}` || fallbackMessage;
+};
+
+export async function getBacklogTasks(projectId: string): Promise<Issue[]> {
+    const response = await fetch(`http://localhost:3001/projects/${projectId}/issues`, {
+      credentials: "include",
+    });
+    if (!response.ok) {
+      throw new Error(await parseError(response, "Failed to fetch backlog tasks"));
+    }
+    return await response.json();
 }
 
-export async function getBacklogTasks(projectId: string): Promise<TaskItem[]> {
-  const response = await fetch(`http://localhost:3001/projects/${projectId}/issues`, {
-    credentials: "include"
-  });
-  if (!response.ok) {
-    throw new Error("Failed to load backlog");
+export async function createIssue(data: CreateIssueInput): Promise<Issue> {
+  try {
+    const response = await fetch(`http://localhost:3001/projects/${data.projectId}/issues`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error(await parseError(response, "Failed to create issue"));
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-  return await response.json();
 }
 
-export async function getTask(projectId: string, issueId: string): Promise<TaskItem> {
+export async function getTask(projectId: string, issueId: string): Promise<Issue> {
   return await fetch(`http://localhost:3001/projects/${projectId}/issues/${issueId}`, {
     credentials: "include"
   }).then(res => res.json())

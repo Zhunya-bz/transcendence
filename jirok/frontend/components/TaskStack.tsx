@@ -1,12 +1,20 @@
-import { DEFAULT, type TaskItem, type TaskStatus } from "@/actions/issues";
 import { getTypeIcon, getTypeClasses, getStatusLabel, getPriorityLabel, getStatusClasses, getPriorityClasses } from "./TaskTable"
+import { Issue, IssuePriority, IssueStatus, IssueType } from "@/types/prisma";
+
+export const DEFAULT: Partial<Issue> = {
+    status: IssueStatus.TODO,
+    type: IssueType.TASK,
+    priority: IssuePriority.MEDIUM,
+};
 
 export function TaskStack({
     status,
     tasks,
     setTask,
+    projectId,
+    projectKey,
     showAdd = true,
-}: { status: TaskStatus, tasks: TaskItem[], setTask: (task: Partial<TaskItem>) => void, showAdd?: boolean }) {
+}: { status: IssueStatus, tasks: Issue[], setTask: (task: Partial<Issue>) => void, projectId: string, projectKey: string, showAdd?: boolean }) {
     const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         const data = e.dataTransfer?.getData('text');
@@ -28,13 +36,13 @@ export function TaskStack({
         onDragOver={onDragOver}
     >
         <h1 className="pl-4 font-bold">{status.replaceAll("_", " ").toUpperCase()} <span>({tasks.length})</span></h1>
-        {tasks.map(task => <TaskCard key={task.id} task={task} />)}
+        {tasks.map(task => <TaskCard key={task.id} task={task} projectId={projectId} projectKey={projectKey} />)}
         {showAdd && <TaskAdd status={status} setTask={setTask} />}
     </div>
 }
 
 
-function TaskCard({ task }: { task: TaskItem }) {
+function TaskCard({ task, projectId, projectKey }: { task: Issue, projectId: string, projectKey: string }) {
     const onDragStart = (e: React.DragEvent<HTMLAnchorElement>) => {
         e.dataTransfer.setData("text", task.id.toString());
     }
@@ -44,13 +52,13 @@ function TaskCard({ task }: { task: TaskItem }) {
         className="flex flex-col gap-4 p-4 rounded-md border-2 select-none cursor-pointer hover:bg-blue-100 bg-white"
         draggable
         onDragStart={onDragStart}
-        href={`/projects/1/T/issues/${task.id}`} // todo: get the real project ID!
+        href={`/projects/${projectId}/${projectKey}/issues/${task.id}`}
     >
         <div className="w-full">{task.title}</div>
         <div className="flex flex-row items-center">
             <TypeIcon className={`size-4 ${getTypeClasses(task.type)}`} />
             <span className="inline-flex items-baseline px-2 py-0.5 text-xs font-mono text-blue-700">
-                t-{task.id} {/* todo: use the real project key */}
+                {projectKey}-{task.id}
             </span>
             <div className="text-gray-500 flex-1">Unassigned</div>
             <span
@@ -62,16 +70,19 @@ function TaskCard({ task }: { task: TaskItem }) {
     </a>
 }
 
-function TaskAdd({ setTask, status }: { status: TaskStatus, setTask: (task: Partial<TaskItem>) => void }) {
+function TaskAdd({ setTask, status }: { status: IssueStatus, setTask: (task: Partial<Issue>) => void }) {
     const onMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-        const text = e.target.querySelector('#task-add-text')?.innerText;
+        const taskAddText = e.currentTarget.querySelector('#task-add-text') as HTMLDivElement | null;
+        const text = taskAddText?.innerText;
         if (text) {
             setTask({
                 ...DEFAULT,
                 title: text,
                 status
             })
-            e.target.innerText = ""
+            if (taskAddText) {
+                taskAddText.innerText = ""
+            }
         }
     }
 

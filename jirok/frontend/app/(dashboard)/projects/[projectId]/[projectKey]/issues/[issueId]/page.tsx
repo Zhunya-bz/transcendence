@@ -1,8 +1,9 @@
 "use client"
 
-import { use, useCallback, useState } from "react";
-import { getTask, type TaskItem, type TaskStatus } from "@/actions/issues";
+import { use, useCallback} from "react";
+import { getTask } from "@/actions/issues";
 import { useQuery } from "@tanstack/react-query";
+import { Issue, IssuePriority, IssueStatus, IssueType } from "@/types/prisma";
 
 interface DashboardPageProps {
     params: Promise<{ projectId: string; projectKey: string, issueId: string; }>;
@@ -11,12 +12,12 @@ interface DashboardPageProps {
 export default function IssuePage({ params }: DashboardPageProps) {
     const { projectId, issueId } = use(params);
 
-    const { data, refetch, isFetched } = useQuery<TaskItem>({
+    const { data, refetch, isFetched } = useQuery<Issue>({
         queryKey: ["backlog", projectId, issueId],
         queryFn: () => getTask(projectId, issueId),
     });
 
-    const update = useCallback(async (task: Partial<TaskItem>) => {
+    const update = useCallback(async (task: Partial<Issue>) => {
         if (!data) return;
 
         await fetch(`http://localhost:3001/projects/${projectId}/issues/${data.id}`, {
@@ -61,9 +62,9 @@ export default function IssuePage({ params }: DashboardPageProps) {
                         })}
                         defaultValue={data.type}
                     >
-                        <option value="BUG">Bug</option>
-                        <option value="TASK">Task</option>
-                        <option value="STORY">Story</option>
+                        <option value={IssueType.BUG}>Bug</option>
+                        <option value={IssueType.TASK}>Task</option>
+                        <option value={IssueType.STORY}>Story</option>
                     </select>
                 </div>
 
@@ -76,9 +77,9 @@ export default function IssuePage({ params }: DashboardPageProps) {
                         })}
                         defaultValue={data.priority}
                     >
-                        <option value="LOW">Low</option>
-                        <option value="MEDIUM">Medium</option>
-                        <option value="HIGH">High</option>
+                        <option value={IssuePriority.LOW}>Low</option>
+                        <option value={IssuePriority.MEDIUM}>Medium</option>
+                        <option value={IssuePriority.HIGH}>High</option>
                     </select>
                 </div>
 
@@ -91,10 +92,10 @@ export default function IssuePage({ params }: DashboardPageProps) {
                         })}
                         defaultValue={data.status}
                     >
-                        <option value="TODO">Todo</option>
-                        <option value="IN_PROGRESS">In Progress</option>
-                        <option value="IN_REVIEW">In Review</option>
-                        <option value="DONE">Done</option>
+                        <option value={IssueStatus.TODO}>Todo</option>
+                        <option value={IssueStatus.IN_PROGRESS}>In Progress</option>
+                        <option value={IssueStatus.IN_REVIEW}>In Review</option>
+                        <option value={IssueStatus.DONE}>Done</option>
                     </select>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import type { MemberPayload, UserProject, UserRole } from "@/types/prisma";
-import { parseError } from "./auth";
+import { parseError } from "./issues";
 
 export async function getProjectMembers(projectId: string): Promise<UserProject[]> {
   const response = await fetch(`http://localhost:3001/projects/${projectId}/members`, {

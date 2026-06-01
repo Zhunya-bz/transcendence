@@ -1,7 +1,7 @@
 "use client";
 
 import { User } from "@/types/prisma";
-import { parseError } from "./auth";
+import { parseError } from "./issues";
 
 export const updateUserProfile = async ({
   id,
