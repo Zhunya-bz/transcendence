@@ -43,7 +43,4 @@ export class CreateIssueDto {
   @IsInt()
   assigneeId?: number;
 
-  @ApiProperty({ example: 3 })
-  @IsInt()
-  reporterId!: number;
 }
