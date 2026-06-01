@@ -23,13 +23,13 @@ export class UserResponseDto {
   @ApiProperty({ example: 'alexis@example.com' })
   email!: string;
 
-  @ApiPropertyOptional({ example: 'Engineer' })
+  @ApiPropertyOptional({ example: 'Engineer', nullable: true })
   jobTitle?: string | null;
 
-  @ApiPropertyOptional({ example: 'ACME Corp' })
+  @ApiPropertyOptional({ example: 'ACME Corp', nullable: true })
   jobOrganization?: string | null;
 
-  @ApiPropertyOptional({ example: 'Berlin, Germany' })
+  @ApiPropertyOptional({ example: 'Berlin, Germany', nullable: true })
   location?: string | null;
 
   @ApiPropertyOptional({ example: null, nullable: true })
