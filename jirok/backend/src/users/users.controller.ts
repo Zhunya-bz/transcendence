@@ -5,6 +5,7 @@ import { UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/comm
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiOkResponse, ApiBadRequestResponse } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -39,6 +40,22 @@ export class UsersController {
     return this.usersService.update(+id, updateUserDto);
   }
 
+  @ApiOperation({summary: 'Upload user avatar'})
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Avatar file (jpg, jpeg, png) max 4MB',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiOkResponse({ description: 'Avatar uploaded successfully' })
+  @ApiBadRequestResponse({ description: 'Invalid file type or no file provided' })
   @Put(':id/avatar')
   @UseInterceptors(
     FileInterceptor('file', {
