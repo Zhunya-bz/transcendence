@@ -19,6 +19,44 @@ interface TasksTableProps {
   projectKey: string;
 }
 
+  export const getTypeClasses = (type: TaskItem["type"]) => {
+    if (type === IssueType.BUG) return "text-red-600";
+    if (type === IssueType.STORY) return "text-green-600";
+    return "text-blue-600";
+  };
+
+  export const getTypeIcon = (type: TaskItem["type"]) => {
+    if (type === IssueType.BUG) return MdBugReport;
+    if (type === IssueType.STORY) return MdBookmark;
+    return MdTaskAlt;
+  };
+
+  export const getStatusClasses = (status: TaskItem["status"]) => {
+    if (status === IssueStatus.DONE) return "bg-green-100 text-green-700";
+    if (status === IssueStatus.IN_PROGRESS) return "bg-orange-50 text-orange-700";
+    if (status === IssueStatus.IN_REVIEW) return "bg-blue-50 text-blue-700";
+    return "bg-gray-100 text-gray-700";
+  };
+
+  export const getPriorityClasses = (priority: TaskItem["priority"]) => {
+    if (priority === IssuePriority.HIGH) return "bg-red-50 text-red-700";
+    if (priority === IssuePriority.MEDIUM) return "bg-violet-50 text-violet-600";
+    return "bg-lime-50 text-lime-700";
+  };
+
+  export const getStatusLabel = (status: TaskItem["status"]) => {
+    if (status === IssueStatus.TODO) return "To Do";
+    if (status === IssueStatus.IN_PROGRESS) return "In Progress";
+    if (status === IssueStatus.IN_REVIEW) return "In Review";
+    return "Done";
+  };
+
+  export const getPriorityLabel = (priority: TaskItem["priority"]) => {
+    if (priority === IssuePriority.HIGH) return "High";
+    if (priority === IssuePriority.MEDIUM) return "Medium";
+    return "Low";
+  };
+
 export const TasksTable = ({
   tasks,
   members,
@@ -29,44 +67,6 @@ export const TasksTable = ({
     const member = members?.find((m) => m.userId === assigneeId);
     const user = member?.user;
     return user ? `${user.name} ${user.surname ?? ""}`.trim() : "Unassigned";
-  };
-
-  const getTypeClasses = (type: TaskItem["type"]) => {
-    if (type === IssueType.BUG) return "text-red-600";
-    if (type === IssueType.STORY) return "text-green-600";
-    return "text-blue-600";
-  };
-
-  const getTypeIcon = (type: TaskItem["type"]) => {
-    if (type === IssueType.BUG) return MdBugReport;
-    if (type === IssueType.STORY) return MdBookmark;
-    return MdTaskAlt;
-  };
-
-  const getStatusClasses = (status: TaskItem["status"]) => {
-    if (status === IssueStatus.DONE) return "bg-green-100 text-green-700";
-    if (status === IssueStatus.IN_PROGRESS) return "bg-orange-50 text-orange-700";
-    if (status === IssueStatus.IN_REVIEW) return "bg-blue-50 text-blue-700";
-    return "bg-gray-100 text-gray-700";
-  };
-
-  const getPriorityClasses = (priority: TaskItem["priority"]) => {
-    if (priority === IssuePriority.HIGH) return "bg-red-50 text-red-700";
-    if (priority === IssuePriority.MEDIUM) return "bg-violet-50 text-violet-600";
-    return "bg-lime-50 text-lime-700";
-  };
-
-  const getStatusLabel = (status: TaskItem["status"]) => {
-    if (status === IssueStatus.TODO) return "To Do";
-    if (status === IssueStatus.IN_PROGRESS) return "In Progress";
-    if (status === IssueStatus.IN_REVIEW) return "In Review";
-    return "Done";
-  };
-
-  const getPriorityLabel = (priority: TaskItem["priority"]) => {
-    if (priority === IssuePriority.HIGH) return "High";
-    if (priority === IssuePriority.MEDIUM) return "Medium";
-    return "Low";
   };
 
   const dateFormatter = new Intl.DateTimeFormat("en-US", {

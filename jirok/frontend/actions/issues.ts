@@ -49,3 +49,9 @@ export async function createIssue(data: CreateIssueInput): Promise<Issue> {
     throw error;
   }
 }
+
+export async function getTask(projectId: string, issueId: string): Promise<Issue> {
+  return await fetch(`http://localhost:3001/projects/${projectId}/issues/${issueId}`, {
+    credentials: "include"
+  }).then(res => res.json())
+}
