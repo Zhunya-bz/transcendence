@@ -99,6 +99,7 @@ export class UsersService {
     return this.prisma.user.update({
       where: { id: userId },
       data: { avatarUrl: filePath },
+      select: { avatarUrl: true },
     });
   }
 }
