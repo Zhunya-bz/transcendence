@@ -1,104 +1,190 @@
-"use client"
+"use client";
 
-import { use, useCallback} from "react";
-import { getTask } from "@/actions/issues";
+import { use, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Issue, IssuePriority, IssueStatus, IssueType } from "@/types/prisma";
+
+import { getTask } from "@/actions/issues";
+import { getProjectMembers } from "@/actions/members";
+import {
+  issueFieldLabelClassName,
+  issuePriorityOptions,
+  issueSelectTriggerClassName,
+  issueStatusOptions,
+  issueTypeOptions,
+} from "@/components/modal-create-task";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Issue, IssuePriority, IssueStatus, IssueType, type UserProject } from "@/types/prisma";
 
 interface DashboardPageProps {
-    params: Promise<{ projectId: string; projectKey: string, issueId: string; }>;
+  params: Promise<{ projectId: string; projectKey: string; issueId: string }>;
 }
 
 export default function IssuePage({ params }: DashboardPageProps) {
-    const { projectId, issueId } = use(params);
+  const { projectId, issueId } = use(params);
 
-    const { data, refetch, isFetched } = useQuery<Issue>({
-        queryKey: ["backlog", projectId, issueId],
-        queryFn: () => getTask(projectId, issueId),
-    });
+  const { data, refetch, isFetched } = useQuery<Issue>({
+    queryKey: ["backlog", projectId, issueId],
+    queryFn: () => getTask(projectId, issueId),
+  });
 
-    const update = useCallback(async (task: Partial<Issue>) => {
-        if (!data) return;
+  const { data: members = [] } = useQuery<UserProject[]>({
+    queryKey: ["project-members", projectId],
+    queryFn: () => getProjectMembers(projectId),
+    enabled: Boolean(projectId),
+  });
 
-        await fetch(`http://localhost:3001/projects/${projectId}/issues/${data.id}`, {
-            body: JSON.stringify(task),
-            method: "PUT",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json"
+  const update = useCallback(
+    async (task: Partial<Issue>) => {
+      if (!data) return;
+
+      await fetch(`http://localhost:3001/projects/${projectId}/issues/${data.id}`, {
+        body: JSON.stringify(task),
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      await refetch();
+    },
+    [data, projectId, refetch],
+  );
+
+  if (!isFetched || !data) {
+    return <div>loading...</div>;
+  }
+
+  return (
+    <div className="flex flex-row gap-4 width-full flex-1">
+      <div className="flex flex-col gap-4 width-full flex-1">
+        <Input
+          className="h-11 bg-white text-xl"
+          defaultValue={data.title}
+          onChange={(e) =>
+            update({
+              title: e.target.value,
+            })
+          }
+        />
+        <Textarea
+          className="min-h-32 resize-y bg-white"
+          defaultValue={data.description ?? ""}
+          placeholder="description"
+          onChange={(e) =>
+            update({
+              description: e.target.value,
+            })
+          }
+        />
+      </div>
+      <div className="flex min-w-[320px] flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <label className={issueFieldLabelClassName}>Type</label>
+          <Select
+            defaultValue={data.type}
+            onValueChange={(value) =>
+              update({
+                type: value as IssueType,
+              })
             }
-        })
-    }, []);
-
-    if (!isFetched || !data) {
-        return <div>loading...</div>
-    }
-
-    return (
-        <div className="flex flex-row gap-4 width-full flex-1">
-            <div className="flex flex-col gap-4 width-full flex-1">
-                <input
-                    className="text-xl bold"
-                    defaultValue={data.title}
-                    onChange={(e) => update({
-                        title: e.target.value
-                    })}
-                />
-                <textarea
-                    defaultValue={data.description}
-                    placeholder="description"
-                    onChange={(e) => update({
-                        description: e.target.value
-                    })}
-                />
-            </div>
-            <div>
-                <div className="flex flex-row gap-4">
-                    <label>Type</label>
-                    <select
-                        className="flex-1"
-                        onChange={e => update({
-                            type: e.target.value
-                        })}
-                        defaultValue={data.type}
-                    >
-                        <option value={IssueType.BUG}>Bug</option>
-                        <option value={IssueType.TASK}>Task</option>
-                        <option value={IssueType.STORY}>Story</option>
-                    </select>
-                </div>
-
-                <div className="flex flex-row gap-4">
-                    <label>Priority</label>
-                    <select
-                        className="flex-1"
-                        onChange={e => update({
-                            priority: e.target.value
-                        })}
-                        defaultValue={data.priority}
-                    >
-                        <option value={IssuePriority.LOW}>Low</option>
-                        <option value={IssuePriority.MEDIUM}>Medium</option>
-                        <option value={IssuePriority.HIGH}>High</option>
-                    </select>
-                </div>
-
-                <div className="flex flex-row gap-4">
-                    <label>Status</label>
-                    <select
-                        className="flex-1"
-                        onChange={e => update({
-                            status: e.target.value
-                        })}
-                        defaultValue={data.status}
-                    >
-                        <option value={IssueStatus.TODO}>Todo</option>
-                        <option value={IssueStatus.IN_PROGRESS}>In Progress</option>
-                        <option value={IssueStatus.IN_REVIEW}>In Review</option>
-                        <option value={IssueStatus.DONE}>Done</option>
-                    </select>
-                </div>
-            </div>
+          >
+            <SelectTrigger className={issueSelectTriggerClassName}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {issueTypeOptions.map((option) => {
+                const Icon = option.icon;
+                return (
+                  <SelectItem key={option.value} value={option.value}>
+                    <span className="inline-flex items-center gap-2">
+                      <Icon className={option.iconClassName} />
+                      {option.label}
+                    </span>
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
         </div>
-    )
+
+        <div className="flex flex-col gap-2">
+          <label className={issueFieldLabelClassName}>Priority</label>
+          <Select
+            defaultValue={data.priority}
+            onValueChange={(value) =>
+              update({
+                priority: value as IssuePriority,
+              })
+            }
+          >
+            <SelectTrigger className={issueSelectTriggerClassName}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {issuePriorityOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className={issueFieldLabelClassName}>Status</label>
+          <Select
+            defaultValue={data.status}
+            onValueChange={(value) =>
+              update({
+                status: value as IssueStatus,
+              })
+            }
+          >
+            <SelectTrigger className={issueSelectTriggerClassName}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {issueStatusOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className={issueFieldLabelClassName}>Assignee</label>
+          <Select
+            defaultValue={data.assigneeId ? String(data.assigneeId) : "unassigned"}
+            onValueChange={(value) =>
+              update({
+                assigneeId: value === "unassigned" ? null : Number(value),
+              })
+            }
+          >
+            <SelectTrigger className={issueSelectTriggerClassName}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="unassigned">Unassigned</SelectItem>
+              {members.map((member) => {
+                const user = member.user;
+                const name = `${user?.name ?? ""} ${user?.surname ?? ""}`.trim();
+                const label = name || `User ${member.userId}`;
+                return (
+                  <SelectItem key={member.userId} value={String(member.userId)}>
+                    {label}
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+    </div>
+  );
 }
