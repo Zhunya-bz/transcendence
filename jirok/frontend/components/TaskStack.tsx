@@ -54,7 +54,7 @@ function TaskCard({ task, projectId, projectKey }: { task: Issue, projectId: str
         onDragStart={onDragStart}
         href={`/projects/${projectId}/${projectKey}/issues/${task.id}`}
     >
-        <div className="w-full">{task.title}</div>
+        <div className="w-full break-all">{task.title}</div>
         <div className="flex flex-row items-center">
             <TypeIcon className={`size-4 ${getTypeClasses(task.type)}`} />
             <span className="inline-flex items-baseline px-2 py-0.5 text-xs font-mono text-blue-700">
