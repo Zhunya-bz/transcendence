@@ -1,5 +1,6 @@
-import { getTypeIcon, getTypeClasses, getStatusLabel, getPriorityLabel, getStatusClasses, getPriorityClasses } from "./TaskTable"
+import { getTypeClasses, getPriorityLabel, getPriorityClasses } from "./TaskTable"
 import { Issue, IssuePriority, IssueStatus, IssueType } from "@/types/prisma";
+import { MdBookmark, MdBugReport, MdTaskAlt } from "react-icons/md";
 
 export const DEFAULT: Partial<Issue> = {
     status: IssueStatus.TODO,
@@ -47,7 +48,14 @@ function TaskCard({ task, projectId, projectKey }: { task: Issue, projectId: str
         e.dataTransfer.setData("text", task.id.toString());
     }
 
-    const TypeIcon = getTypeIcon(task.type)
+    const assigneeLabel = task.assignee
+        ? `${task.assignee.name ?? ""} ${task.assignee.surname ?? ""}`.trim() || "Unassigned"
+        : "Unassigned";
+    const typeIcon = task.type === IssueType.BUG
+        ? <MdBugReport className={`size-4 ${getTypeClasses(task.type)}`} />
+        : task.type === IssueType.STORY
+            ? <MdBookmark className={`size-4 ${getTypeClasses(task.type)}`} />
+            : <MdTaskAlt className={`size-4 ${getTypeClasses(task.type)}`} />;
     return <a
         className="flex flex-col gap-4 p-4 rounded-md border-2 select-none cursor-pointer hover:bg-blue-100 bg-white"
         draggable
@@ -56,11 +64,11 @@ function TaskCard({ task, projectId, projectKey }: { task: Issue, projectId: str
     >
         <div className="w-full break-all">{task.title}</div>
         <div className="flex flex-row items-center">
-            <TypeIcon className={`size-4 ${getTypeClasses(task.type)}`} />
+            {typeIcon}
             <span className="inline-flex items-baseline px-2 py-0.5 text-xs font-mono text-blue-700">
                 {projectKey}-{task.id}
             </span>
-            <div className="text-gray-500 flex-1">Unassigned</div>
+            <div className="text-gray-500 flex-1">{assigneeLabel}</div>
             <span
                 className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${getPriorityClasses(task.priority)}`}
             >
