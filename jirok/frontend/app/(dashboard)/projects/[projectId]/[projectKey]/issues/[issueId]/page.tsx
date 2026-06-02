@@ -1,9 +1,11 @@
 "use client";
 
 import { use, useCallback } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
-import { getTask } from "@/actions/issues";
+import { deleteTask, getTask } from "@/actions/issues";
 import { getProjectMembers } from "@/actions/members";
 import {
   issueFieldLabelClassName,
@@ -12,6 +14,7 @@ import {
   issueStatusOptions,
   issueTypeOptions,
 } from "@/components/modal-create-task";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,7 +25,9 @@ interface DashboardPageProps {
 }
 
 export default function IssuePage({ params }: DashboardPageProps) {
-  const { projectId, issueId } = use(params);
+  const { projectId, projectKey, issueId } = use(params);
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { data, refetch, isFetched } = useQuery<Issue>({
     queryKey: ["backlog", projectId, issueId],
@@ -52,6 +57,16 @@ export default function IssuePage({ params }: DashboardPageProps) {
     },
     [data, projectId, refetch],
   );
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteTask(projectId, issueId),
+    onSuccess: async () => {
+      toast.success("Issue deleted");
+      await queryClient.invalidateQueries({ queryKey: ["backlog", projectId] });
+      router.replace(`/projects/${projectId}/${projectKey}/backlog`);
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
 
   if (!isFetched || !data) {
     return <div>loading...</div>;
@@ -184,6 +199,20 @@ export default function IssuePage({ params }: DashboardPageProps) {
             </SelectContent>
           </Select>
         </div>
+
+        <Button
+          type="button"
+          variant="destructive"
+          className="mt-2 w-full"
+          onClick={() => {
+            if (window.confirm("Delete this issue?")) {
+              deleteMutation.mutate();
+            }
+          }}
+          disabled={deleteMutation.isPending}
+        >
+          {deleteMutation.isPending ? "Deleting..." : "Delete issue"}
+        </Button>
       </div>
     </div>
   );
