@@ -1,4 +1,5 @@
-import { getTypeIcon, getTypeClasses, getStatusLabel, getPriorityLabel, getStatusClasses, getPriorityClasses } from "./TaskTable"
+import { getTypeClasses, getPriorityLabel, getPriorityClasses } from "./TaskTable"
+import { MdBookmark, MdBugReport, MdTaskAlt } from "react-icons/md";
 import { Issue, IssuePriority, IssueStatus, IssueType } from "@/types/prisma";
 
 export const DEFAULT: Partial<Issue> = {
@@ -31,7 +32,7 @@ export function TaskStack({
     }
 
     return <div
-        className="flex-1 flex flex-col gap-1 min-w-[90px] p-1 pt-3 rounded-md bg-[rgba(255,184,106,0.1)]"
+        className="flex-1 flex flex-col gap-1 min-w-[90px] p-1 pt-3 rounded-md border border-border bg-muted/40"
         onDrop={onDrop}
         onDragOver={onDragOver}
     >
@@ -47,16 +48,21 @@ function TaskCard({ task, projectId, projectKey }: { task: Issue, projectId: str
         e.dataTransfer.setData("text", task.id.toString());
     }
 
-    const TypeIcon = getTypeIcon(task.type)
     return <a
-        className="flex flex-col gap-4 p-4 rounded-md border-2 select-none cursor-pointer hover:bg-blue-100 bg-white"
+        className="flex flex-col gap-4 rounded-md border border-border bg-card p-4 text-card-foreground shadow-sm transition-colors select-none cursor-pointer hover:bg-muted/60"
         draggable
         onDragStart={onDragStart}
         href={`/projects/${projectId}/${projectKey}/issues/${task.id}`}
     >
         <div className="w-full">{task.title}</div>
         <div className="flex flex-row items-center">
-            <TypeIcon className={`size-4 ${getTypeClasses(task.type)}`} />
+            {task.type === IssueType.BUG ? (
+                <MdBugReport className={`size-4 ${getTypeClasses(task.type)}`} />
+            ) : task.type === IssueType.STORY ? (
+                <MdBookmark className={`size-4 ${getTypeClasses(task.type)}`} />
+            ) : (
+                <MdTaskAlt className={`size-4 ${getTypeClasses(task.type)}`} />
+            )}
             <span className="inline-flex items-baseline px-2 py-0.5 text-xs font-mono text-blue-700">
                 {projectKey}-{task.id}
             </span>
@@ -87,7 +93,7 @@ function TaskAdd({ setTask, status }: { status: IssueStatus, setTask: (task: Par
     }
 
     return <h1
-        className="opacity-0 hover:opacity-50 bg-blue-50 p-2 rounded-md border-2"
+        className="opacity-0 hover:opacity-50 bg-muted p-2 rounded-md border border-border"
         onMouseLeave={onMouseLeave}
     >
         <div

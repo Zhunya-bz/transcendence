@@ -9,16 +9,10 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import { Sidebar } from "./Siderbar";
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export const MobileSidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const pathname = usePathname();
-    
-    useEffect(() => {
-      setIsOpen(false);
-    }, [pathname]);
   return (
     <Sheet modal={true} open={isOpen} onOpenChange={setIsOpen} >
       <SheetTrigger asChild>
@@ -32,9 +26,8 @@ export const MobileSidebar = () => {
       </SheetTrigger>
       <SheetContent
         side="left"
-        overlayClassName="z-40 bg-black/10 backdrop-blur-md"
-        className=" z-40 max-w-none bg-white border-r shadow-none data-[side=left]:w-full
-  sm:data-[side=left]:w-[40vw] data-[side=left]:top-16 data-[side=left]:bottom-0 data-[side=left]:h-auto"
+        overlayClassName="z-40 bg-black/10 backdrop-blur-md dark:bg-black/30"
+        className="z-40 max-w-none border-r border-border bg-background shadow-none data-[side=left]:w-full sm:data-[side=left]:w-[40vw] data-[side=left]:top-16 data-[side=left]:bottom-0 data-[side=left]:h-auto"
       >
         <SheetHeader className="hidden">
           <SheetTitle></SheetTitle>

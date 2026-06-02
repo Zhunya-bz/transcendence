@@ -34,10 +34,9 @@ const projectSettingsSchema = z.object({
 
 interface Props {
   project: Project;
-  currentUserId: number | null;
 }
 
-export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
+export const ModalSettingsProject = ({ project }: Props) => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [generatedApiKey, setGeneratedApiKey] = useState<string | null>(null);
@@ -52,13 +51,6 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
   useEffect(() => {
     form.reset({ name: project.name });
   }, [form, project.name]);
-
-  useEffect(() => {
-    if (!open) {
-      setGeneratedApiKey(null);
-    }
-  }, [open]);
-
 
   const {data: userRole} = useQuery({
     queryKey: ["current-role", project.id],
@@ -102,7 +94,15 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (!nextOpen) {
+          setGeneratedApiKey(null);
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button
           type="button"
@@ -115,16 +115,16 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
           Settings
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl lg:max-w-3xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-h-[85vh] overflow-y-auto border border-border bg-background sm:max-w-2xl lg:max-w-3xl">
         <DialogHeader>
           <DialogTitle>Project settings</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-3 rounded-lg border bg-muted/40 p-4">
+        <div className="space-y-3 rounded-lg border border-border bg-muted/40 p-4">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h3 className="font-medium">Project API key</h3>
-              <p className="text-sm text-orange-600">
+              <h3 className="font-medium text-foreground">Project API key</h3>
+              <p className="text-sm text-orange-600 dark:text-orange-300">
                 API key is generated only once and shown only once.
               </p>
               <p className="text-sm text-muted-foreground">
@@ -133,7 +133,7 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
             </div>
             <Button
               type="button"
-              className="bg-blue-600 text-white hover:bg-blue-700"
+              className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
               onClick={() => apiKeyMutation.mutate()}
               disabled={apiKeyMutation.isPending}
             >
@@ -142,11 +142,11 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
           </div>
 
           {generatedApiKey && (
-            <div className="rounded-md border border-orange-200 bg-orange-50 p-3">
-              <p className="text-xs uppercase tracking-wide text-orange-700">
+            <div className="rounded-md border border-orange-200 bg-orange-50 p-3 dark:border-orange-500/20 dark:bg-orange-500/10">
+              <p className="text-xs uppercase tracking-wide text-orange-700 dark:text-orange-300">
                 Copy this now
               </p>
-              <code className="mt-2 block break-all font-mono text-sm text-orange-900">
+              <code className="mt-2 block break-all font-mono text-sm text-orange-900 dark:text-orange-100">
                 {generatedApiKey}
               </code>
             </div>
@@ -169,7 +169,7 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Project name</FormLabel>
+                <FormLabel>Project name</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="Enter project name" />
                   </FormControl>
@@ -194,7 +194,7 @@ export const ModalSettingsProject = ({ project, currentUserId }: Props) => {
 
               <Button
                 type="submit"
-                className="bg-orange-500 text-white hover:bg-orange-600"
+                className="bg-orange-500 text-white hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500"
                 disabled={updateMutation.isPending}
               >
                 Save name

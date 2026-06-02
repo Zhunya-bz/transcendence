@@ -18,7 +18,6 @@ import {
   IssueStatus,
   UserRole,
   type UserProject,
-  Issue,
 } from "@/types/prisma";
 import { Button } from "@/components/ui/button";
 import {
@@ -109,10 +108,10 @@ export const ModalCreateTask = () => {
     },
   });
   useEffect(() => {
-  if (currentUser?.id) {
-    form.setValue("reporterId", String(currentUser.id));
-  }
-}, [currentUser?.id]);
+    if (currentUser?.id) {
+      form.setValue("reporterId", String(currentUser.id));
+    }
+  }, [currentUser?.id, form]);
 
   const mutation = useMutation({
     mutationFn: createIssue,
@@ -158,12 +157,12 @@ export const ModalCreateTask = () => {
           Create
         </Button>
       </DialogTrigger>
-      <DialogContent className="flex max-h-[calc(100vh-2rem)] flex-col overflow-y-auto border-none bg-linear-to-b from-orange-50 via-blue-50/30 to-blue-100/60 shadow-2xl sm:max-w-xl md:max-w-2xl">
+      <DialogContent className="flex max-h-[calc(100vh-2rem)] flex-col overflow-y-auto border border-border bg-background shadow-2xl sm:max-w-xl md:max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-xl text-blue-900">
+          <DialogTitle className="text-xl text-foreground">
             Create task
           </DialogTitle>
-          <DialogDescription className="text-gray-600">
+          <DialogDescription className="text-muted-foreground">
             Fill in the details to add a new task to the project
           </DialogDescription>
         </DialogHeader>
@@ -178,13 +177,13 @@ export const ModalCreateTask = () => {
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-blue-700">
+                    <FormLabel className="text-foreground">
                       Work type
                       <FaStar color="red" size={10} />
                     </FormLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
-                        <SelectTrigger className="h-11 w-full bg-white">
+                        <SelectTrigger className="h-11 w-full bg-background">
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
@@ -219,10 +218,10 @@ export const ModalCreateTask = () => {
                 name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-blue-700">Status</FormLabel>
+                    <FormLabel className="text-foreground">Status</FormLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
-                        <SelectTrigger className="h-11 w-full bg-white">
+                        <SelectTrigger className="h-11 w-full bg-background">
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
@@ -247,14 +246,14 @@ export const ModalCreateTask = () => {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-blue-700">
+                  <FormLabel className="text-foreground">
                     Summary
                     <FaStar color="red" size={10} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      className="h-11 bg-white"
+                      className="h-11 bg-background"
                       placeholder="Add a short summary"
                     />
                   </FormControl>
@@ -268,11 +267,11 @@ export const ModalCreateTask = () => {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-blue-700">Description</FormLabel>
+                  <FormLabel className="text-foreground">Description</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
-                      className="h-32 max-h-32 resize-none overflow-y-auto bg-white"
+                      className="h-32 max-h-32 resize-none overflow-y-auto bg-background"
                       value={field.value ?? ""}
                       placeholder="Describe the task details"
                     />
@@ -288,10 +287,10 @@ export const ModalCreateTask = () => {
                 name="assigneeId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-blue-700">Assignee</FormLabel>
+                    <FormLabel className="text-foreground">Assignee</FormLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
-                        <SelectTrigger className="h-11 w-full bg-white">
+                        <SelectTrigger className="h-11 w-full bg-background">
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
@@ -323,10 +322,10 @@ export const ModalCreateTask = () => {
                 name="priority"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-blue-700">Priority</FormLabel>
+                    <FormLabel className="text-foreground">Priority</FormLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
-                        <SelectTrigger className="h-11 w-full bg-white">
+                        <SelectTrigger className="h-11 w-full bg-background">
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
@@ -349,7 +348,7 @@ export const ModalCreateTask = () => {
               name="reporterId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-blue-700">
+                  <FormLabel className="text-foreground">
                     Reporter
                     <FaStar color="red" size={10} />
                   </FormLabel>
@@ -358,7 +357,7 @@ export const ModalCreateTask = () => {
                     onValueChange={field.onChange}
                   >
                     <FormControl>
-                      <SelectTrigger className="h-11 w-full bg-white">
+                      <SelectTrigger className="h-11 w-full bg-background">
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
@@ -386,7 +385,7 @@ export const ModalCreateTask = () => {
               )}
             />
 
-            <DialogFooter className="bg-blue-100/60">
+            <DialogFooter className="border-t border-border bg-muted/40">
               <Button
                 type="button"
                 variant="outline"

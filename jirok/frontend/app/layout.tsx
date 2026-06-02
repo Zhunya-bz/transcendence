@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { QueryProvider } from "@/lib/queryProvider";
-import { Toaster } from "react-hot-toast";
+import { Providers } from "@/components/providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,14 +19,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <QueryProvider>
-      <Toaster position="bottom-right" reverseOrder={false} />
-      <html
-        lang="en"
-        className={`${inter.variable}  h-full antialiased`}
-      >
-        <body className="min-h-screen flex flex-col bg-blue-50">{children}</body>
-      </html>
-    </QueryProvider>
+    <html
+      lang="en"
+      className={`${inter.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-screen flex flex-col bg-background text-foreground">
+        <Providers>{children}</Providers>
+      </body>
+    </html>
   );
 }

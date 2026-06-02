@@ -14,7 +14,7 @@ export const Sidebar = ({ onNavigate }: SidebarProps) => {
     const projectId = projectIdMatch?.[1] ?? null;
 
     return (
-        <aside className="h-full bg-white p-4 pt-12 w-full">
+        <aside className="h-full w-full bg-background p-4 pt-12">
             <ModalCreateProject projectId={projectId} />
             <Navigation onNavigate={onNavigate} />
         </aside>
