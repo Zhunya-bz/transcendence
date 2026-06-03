@@ -1,7 +1,6 @@
 "use server"
 
 import { cookies } from "next/headers";
-import { getBackendUrl } from "./backend";
 
 type ApiRequest = RequestInit & {
     headers?: Record<string, string>;
@@ -15,7 +14,7 @@ export async function api(path: string, init: ApiRequest={}) {
         headers['Cookie'] = token.value;
     }
 
-    return fetch(getBackendUrl(path), {
+    return fetch(`http://backend:3000/${path}`, {
         ...init,
         headers,
     })
