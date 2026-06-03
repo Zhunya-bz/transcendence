@@ -187,7 +187,6 @@ function MetricCard({
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className={`mb-4 h-1 w-16 rounded-full bg-linear-to-r ${toneClasses[tone]}`} />
       <p className="text-sm font-medium text-slate-500">{title}</p>
       <p className="mt-2 text-3xl font-bold text-slate-900">{value}</p>
       <p className="mt-2 text-sm text-slate-500">{subtitle}</p>
