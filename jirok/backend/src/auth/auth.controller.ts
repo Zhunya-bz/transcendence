@@ -5,12 +5,17 @@ import {
   Body,
   Request,
   ParseIntPipe,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { Throttle } from '@nestjs/throttler';
 import { Public } from './decorators/public.decorator';
+import { Response } from 'express';
+import { FortyTwoAuthGuard } from './guards/forty-two-auth.guard';
 import {
   ApiTags,
   ApiOperation,
@@ -25,7 +30,7 @@ import {
   AuthTokensResponseDto,
   ApiKeyResponseDto,
   UserResponseDto,
-  ApiErrorResponseDto,
+  AuthApiErrorResponseDto,
 } from './dto/auth-swagger.dto';
 
 @ApiTags('Auth')
@@ -41,7 +46,7 @@ export class AuthController {
   @ApiCreatedResponse({ type: AuthTokensResponseDto })
   @ApiBadRequestResponse({
     description: 'Validation error',
-    type: ApiErrorResponseDto,
+    type: AuthApiErrorResponseDto,
   })
   @Post('signup')
   signup(@Body() signupDto: SignupDto) {
@@ -56,7 +61,7 @@ export class AuthController {
   @ApiOkResponse({ type: AuthTokensResponseDto })
   @ApiUnauthorizedResponse({
     description: 'Invalid credentials',
-    type: ApiErrorResponseDto,
+    type: AuthApiErrorResponseDto,
   })
   @Post('login')
   login(@Body() loginDto: LoginDto) {
@@ -69,7 +74,7 @@ export class AuthController {
   @ApiOkResponse({ type: UserResponseDto })
   @ApiUnauthorizedResponse({
     description: 'Missing or invalid JWT token',
-    type: ApiErrorResponseDto,
+    type: AuthApiErrorResponseDto,
   })
   @Get('me')
   getMe(@Request() req) {
@@ -92,7 +97,7 @@ export class AuthController {
   @ApiOkResponse({ type: ApiKeyResponseDto })
   @ApiUnauthorizedResponse({
     description: 'Missing or invalid JWT token',
-    type: ApiErrorResponseDto,
+    type: AuthApiErrorResponseDto,
   })
   @Post('api-key')
   generateApiKey(
@@ -119,5 +124,18 @@ export class AuthController {
     //jwt is stateless - the server doesn't store tokens.
     //logout is handled client-side (frontend deletes the token)
     return { message: 'Logged out successfully' };
+  }
+
+  @Public()
+  @Get('42')
+  @UseGuards(FortyTwoAuthGuard)
+  login42() {}
+
+  @Public()
+  @Get('42/callback')
+  @UseGuards(FortyTwoAuthGuard)
+  async fortyTwoCallback(@Req() req, @Res() res: Response) {
+    const redirect = await this.authService.handle42Callback(req.user);
+    return res.redirect(redirect);
   }
 }

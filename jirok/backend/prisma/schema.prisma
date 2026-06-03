@@ -55,7 +55,8 @@ model User {
 	name					String
 	surname					String?
 	email					String			@unique
-	passwordHash			String			@map("password_hash")
+	passwordHash			String?			@map("password_hash")
+	fortyTwoId				String?			@unique @map("forty_two_id")
 	jobTitle				String?			@map("job_title")
 	jobOrganization			String?			@map("job_organization")
 	location				String?
