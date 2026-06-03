@@ -41,7 +41,7 @@ const TYPE_COLORS: Record<IssueType, string> = {
 export default function OverviewPage({ params }: OverviewPageProps) {
   const { projectId, projectKey } = use(params);
 
-  const { data: activity, isLoading: activityLoading } = useQuery({
+  const { data: activity} = useQuery({
     queryKey: ["project-activity", projectId],
     queryFn: () => getProjectActivity(projectId),
   });
@@ -84,17 +84,16 @@ export default function OverviewPage({ params }: OverviewPageProps) {
     })
     .sort((left, right) => right.count - left.count);
 
-  const loading = activityLoading;
 
   return (
     <div className="flex flex-col gap-6 pb-8">
         <h1 className="text-2xl font-semibold text-slate-900 sm:text-3xl">Overview</h1>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard title="Created tasks" value={totalTasks} subtitle="All tasks in this project" tone="blue" />
-        <MetricCard title="Done tasks" value={doneTasks} subtitle="Tasks already completed" tone="green" />
-        <MetricCard title="Members" value={memberCount} subtitle="Project team size" tone="orange" />
-        <MetricCard title="Work done" value={`${completionPercent}%`} subtitle="Percent of tasks completed" tone="violet" />
+        <MetricCard title="Created tasks" value={totalTasks} subtitle="All tasks in this project"  />
+        <MetricCard title="Done tasks" value={doneTasks} subtitle="Tasks already completed"  />
+        <MetricCard title="Members" value={memberCount} subtitle="Project team size"  />
+        <MetricCard title="Work done" value={`${completionPercent}%`} subtitle="Percent of tasks completed"  />
       </section>
 
       <section className="grid gap-6 xl:grid-cols-2">
@@ -170,20 +169,13 @@ export default function OverviewPage({ params }: OverviewPageProps) {
 function MetricCard({
   title,
   value,
-  subtitle,
-  tone,
+  subtitle
 }: {
   title: string;
   value: string | number;
   subtitle: string;
   tone: "blue" | "green" | "orange" | "violet";
 }) {
-  const toneClasses = {
-    blue: "from-blue-500 to-blue-700",
-    green: "from-emerald-500 to-emerald-700",
-    orange: "from-orange-500 to-orange-700",
-    violet: "from-violet-500 to-violet-700",
-  };
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">

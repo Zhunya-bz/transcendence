@@ -1,20 +1,14 @@
 "use client";
 
-import type { Project } from "@/types/prisma";
+import type { Project, User, IssueStatus, IssueType, IssuePriority } from "@/types/prisma";
 import { parseError } from "./issues";
 
 type ProjectActivityResponse = {
-  statusCounts: Record<string, number>;
-  typeCounts: Record<string, number>;
-  priorityCounts: Record<string, number>;
+  statusCounts: Record<IssueStatus, number>;
+  typeCounts: Record<IssueType, number>;
+  priorityCounts: Record<IssuePriority, number>;
   assigneeCounts: Array<{
-    user: {
-      id: number;
-      name: string;
-      surname?: string | null;
-      email: string;
-      avatarUrl?: string | null;
-    } | null;
+    user: User | null;
     count: number;
   }>;
 };
