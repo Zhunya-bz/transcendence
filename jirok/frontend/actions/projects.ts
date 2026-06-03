@@ -1,5 +1,6 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend";
 import type { Project, User, IssueStatus, IssueType, IssuePriority } from "@/types/prisma";
 import { parseError } from "./issues";
 
@@ -14,7 +15,7 @@ type ProjectActivityResponse = {
 };
 
 export const createProject = async (data: { name: string }): Promise<Project> => {
-  const response = await fetch("http://localhost:3001/projects", {
+  const response = await fetch(getBackendUrl("/projects"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -30,7 +31,7 @@ export const createProject = async (data: { name: string }): Promise<Project> =>
 };
 
 export async function getCurrentProject(): Promise<Project[]> {
-  const response = await fetch("http://localhost:3001/projects", {
+  const response = await fetch(getBackendUrl("/projects"), {
     credentials: "include",
   });
   if (!response.ok) {
@@ -43,7 +44,7 @@ export async function updateProject(
   projectId: number,
   data: { name: string },
 ) {
-  const response = await fetch(`http://localhost:3001/projects/${projectId}`, {
+  const response = await fetch(getBackendUrl(`/projects/${projectId}`), {
     method: "PUT",
     credentials: "include",
     headers: {
@@ -60,7 +61,7 @@ export async function updateProject(
 }
 
 export async function deleteProject(projectId: number) {
-  const response = await fetch(`http://localhost:3001/projects/${projectId}`, {
+  const response = await fetch(getBackendUrl(`/projects/${projectId}`), {
     method: "DELETE",
     credentials: "include",
   });
@@ -73,7 +74,7 @@ export async function deleteProject(projectId: number) {
 }
 
 export async function getProjectActivity(projectId: string): Promise<ProjectActivityResponse> {
-  const response = await fetch(`http://localhost:3001/projects/${projectId}/activity`, {
+  const response = await fetch(getBackendUrl(`/projects/${projectId}/activity`), {
     credentials: "include",
   });
 
@@ -85,7 +86,7 @@ export async function getProjectActivity(projectId: string): Promise<ProjectActi
 }
 
 export async function generateProjectApiKey(projectId: number): Promise<string> {
-  const response = await fetch("http://localhost:3001/auth/api-key", {
+  const response = await fetch(getBackendUrl("/auth/api-key"), {
     method: "POST",
     credentials: "include",
     headers: {

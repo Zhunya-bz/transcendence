@@ -56,7 +56,7 @@ export const UserButton = () => {
     );
   if (!user) return null;
   const { name, surname } = user;
-  const avatarSrc = user?.picture?.medium;//'https://media.sproutsocial.com/uploads/2022/06/profile-picture.jpeg'; //
+  const avatarSrc = user?.avatarUrl;
   const displayName = `${name ?? ""} ${surname ?? ""}`.trim() || "User";
   return (
     <DropdownMenu modal={false}>

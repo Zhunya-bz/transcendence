@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 import { deleteTask, getTask } from "@/actions/issues";
+import { getBackendUrl } from "@/lib/backend";
 import { getProjectMembers } from "@/actions/members";
 import {
   issueFieldLabelClassName,
@@ -44,7 +45,7 @@ export default function IssuePage({ params }: DashboardPageProps) {
     async (task: Partial<Issue>) => {
       if (!data) return;
 
-      await fetch(`http://localhost:3001/projects/${projectId}/issues/${data.id}`, {
+      await fetch(getBackendUrl(`/projects/${projectId}/issues/${data.id}`), {
         body: JSON.stringify(task),
         method: "PUT",
         credentials: "include",
