@@ -1,6 +1,5 @@
 "use server";
 
-import { getBackendUrl } from "@/lib/backend";
 import { cookies } from "next/headers";
 
 export const parseError = async (response: Response, fallbackMessage: string) => {
@@ -10,7 +9,7 @@ export const parseError = async (response: Response, fallbackMessage: string) =>
 
 export const signin = async (data: { email: string; password: string }) => {
   try {
-    const response = await fetch(getBackendUrl("/auth/login"), {
+    const response = await fetch("http://backend:3001/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,7 +43,7 @@ export const signup = async (data: {
   password: string;
 }) => {
   try {
-    const response = await fetch(getBackendUrl("/auth/signup"), {
+    const response = await fetch("http://backend:3001/auth/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
