@@ -2,6 +2,7 @@
 
 import { use, useCallback } from "react";
 import { getBacklogTasks } from "@/actions/issues";
+import { getBackendUrl } from "@/lib/backend";
 import { useQuery } from "@tanstack/react-query";
 import { TaskStack } from "@/components/TaskStack";
 import { Issue, IssueStatus } from "@/types/prisma";
@@ -26,7 +27,7 @@ export default function DashboardPage({ params }: DashboardPageProps) {
 
     // There is an id, so we're updating a task
     if ("id" in task) {
-      await fetch(`http://localhost:3001/projects/${projectId}/issues/${task.id}`, {
+      await fetch(getBackendUrl(`/projects/${projectId}/issues/${task.id}`), {
         body: JSON.stringify(task),
         method: "PUT",
         credentials: "include",
@@ -40,7 +41,7 @@ export default function DashboardPage({ params }: DashboardPageProps) {
     
     // No id, so we are creating a new task
     else {
-      await fetch(`http://localhost:3001/projects/${projectId}/issues`, {
+      await fetch(getBackendUrl(`/projects/${projectId}/issues`), {
         body: JSON.stringify(task),
         method: "POST",
         credentials: "include",

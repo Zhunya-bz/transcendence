@@ -44,6 +44,8 @@ services:
     ports:
       - "3000:3000"
     restart: unless-stopped  
+    env_file:
+      - .env
     volumes:
       - ./frontend:/app
       - /app/node_modules
