@@ -3,8 +3,9 @@ import {
   Injectable,
   UnauthorizedException,
   ConflictException,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
-import { Injectable, UnauthorizedException, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
@@ -19,7 +20,6 @@ type FortyTwoProfile = {
   first_name: string;
   last_name: string;
 };
-import { LoginDto} from './dto/login.dto';
 import { authenticator } from 'otplib';
 import * as QRCode from 'qrcode';
 import { PrismaService } from '../prisma/prisma.service';
@@ -30,12 +30,8 @@ export class AuthService {
     private userService: UsersService,
     private jwtService: JwtService,
     private httpService: HttpService,
+    private prisma: PrismaService,
   ) {}
-    constructor(
-        private userService: UsersService,
-        private jwtService: JwtService,
-        private prisma: PrismaService,
-    ) {}
 
   //signup
   async signup(signupDto: SignupDto) {
@@ -181,10 +177,12 @@ export class AuthService {
 
     //2FA
     async generateTwoFactorSecret(userId: number) {
+      console.log("Generating 2FA secret for user ID:", userId);
         const user = await this.userService.findOne(userId);
         if (!user) {
             throw new NotFoundException('User not found');
         }
+        console.log("Generating 2FA secret for user:", user.email);
 
         const secret = authenticator.generateSecret();
 
@@ -196,6 +194,8 @@ export class AuthService {
         const otpauthUrl = authenticator.keyuri(user.email, 'Jirok', secret);
 
         const qrCodeDataUrl = await QRCode.toDataURL(otpauthUrl);
+        console.log("Generated 2FA secret:", secret);
+        console.log("QR Code Data URL:", qrCodeDataUrl);
 
         return { qrCodeDataUrl, secret };
     }
@@ -256,7 +256,7 @@ export class AuthService {
             throw new BadRequestException('Invalid 2FA code');
         }
 
-        const accessToken = this.generateToken(user.id, user.email);
+        const accessToken = this.generateToken(user);
         return { accessToken };
     }
 }

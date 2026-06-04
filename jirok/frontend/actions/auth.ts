@@ -78,3 +78,5 @@ export const signup = async (data: {
 export const logout = async () => {
     (await cookies()).delete("token");
   };
+
+

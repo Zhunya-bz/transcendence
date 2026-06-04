@@ -154,7 +154,7 @@ export class AuthController {
   })
   @ApiUnauthorizedResponse({
     description: 'Missing or invalid JWT token',
-    type: ApiErrorResponseDto,
+    type: AuthApiErrorResponseDto,
   })
   @Post('2fa/generate')
   generateTwoFactor(@Request() req) {
@@ -182,7 +182,7 @@ export class AuthController {
   })
   @ApiBadRequestResponse({
     description: 'Invalid 2FA code or code not generated',
-    type: ApiErrorResponseDto,
+    type: AuthApiErrorResponseDto,
   })
   @Post('2fa/enable')
   enableTwoFactor(@Request() req, @Body('code') code: string) {
@@ -203,7 +203,7 @@ export class AuthController {
   @ApiOkResponse({ type: AuthTokensResponseDto, description: 'Login successful after 2FA verification' })
   @ApiBadRequestResponse({
     description: 'Invalid 2FA code',
-    type: ApiErrorResponseDto,
+    type: AuthApiErrorResponseDto,
   })
   @Public()
   @Post('2fa/verify')
