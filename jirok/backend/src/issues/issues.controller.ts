@@ -19,6 +19,7 @@ import {
 import { IssuesService } from './issues.service';
 
 import { ProjectMemberOnly } from '../projects/decorators/project-member-only.decorator';
+import { ProjectAdminOnly } from '../projects/decorators/project-admin-only.decorator';
 import { ProjectWriteOnly } from '../projects/decorators/project-write-only.decorator';
 
 import { CreateIssueDto } from './dto/create-issue.dto';
@@ -117,6 +118,7 @@ export class IssuesController {
 
   @Delete(':issueId')
   @ProjectWriteOnly
+  @ProjectAdminOnly
   @ApiDeleteIssue
   deleteIssue(
     @Param('projectId', ParseIntPipe) projectId: number,

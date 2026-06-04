@@ -31,21 +31,28 @@ export class AuthService {
   async signup(signupDto: SignupDto) {
     // check if email already exists
     const existingUser = await this.userService.findByEmail(signupDto.email);
-    if (existingUser) {
+    if (existingUser && existingUser.passwordHash) {
       throw new ConflictException('Email already in use');
     }
 
     // Hash the string password, the 10 is the standard the salt rounds - how many times bcrypt re-hashes.
     const hashedPassword = await bcrypt.hash(signupDto.password, 10);
 
-    // create the user in database, pass the passwordHash and not the plain password
 
-    const user = await this.userService.create({
-      name: signupDto.name,
-      email: signupDto.email,
-      passwordHash: hashedPassword,
-      surname: signupDto.surname,
-    });
+    // create the user in database, pass the passwordHash and not the plain password
+    let user;
+    if (!existingUser) {
+      user = await this.userService.create({
+        name: signupDto.name,
+        email: signupDto.email,
+        passwordHash: hashedPassword,
+        surname: signupDto.surname,
+      });
+    } else {
+      user = await this.userService.update(existingUser.id, {
+        passwordHash: hashedPassword,
+      });
+    }
 
     // generate a jwt token to login user immidiately
     const token = this.generateToken(user);

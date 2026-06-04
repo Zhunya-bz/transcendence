@@ -108,7 +108,6 @@ export class UsersService {
     });
   }
 
-
   async findByFortyTwoId(fortyTwoId: string) {
     return this.prisma.user.findFirst({
       where: {
