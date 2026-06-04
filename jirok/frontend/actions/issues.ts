@@ -55,3 +55,14 @@ export async function getTask(projectId: string, issueId: string): Promise<Issue
     credentials: "include"
   }).then(res => res.json())
 }
+
+export async function deleteTask(projectId: string, issueId: string): Promise<void> {
+  const response = await fetch(`http://localhost:3001/projects/${projectId}/issues/${issueId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response, "Failed to delete issue"));
+  }
+}

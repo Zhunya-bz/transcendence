@@ -100,6 +100,15 @@ export class UsersService {
     return apiKey;
   }
 
+  async updateAvatarUrl(userId: number, filePath: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl: filePath },
+      select: { avatarUrl: true },
+    });
+  }
+
+
   async findByFortyTwoId(fortyTwoId: string) {
     return this.prisma.user.findFirst({
       where: {
