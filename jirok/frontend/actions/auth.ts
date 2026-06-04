@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-const isProd = process.env.NODE_ENV === "production";
 
 export const parseError = async (response: Response, fallbackMessage: string) => {
   const message = await response.json();
@@ -27,7 +26,7 @@ export const signin = async (data: { email: string; password: string }) => {
 
     (await cookies()).set("token", accessToken, {
       httpOnly: true,
-      secure: isProd,
+      secure: false, // true if you're using HTTPS
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 days
@@ -63,7 +62,7 @@ export const signup = async (data: {
 
     (await cookies()).set("token", accessToken, {
       httpOnly: true,
-      secure: isProd,
+      secure: false, // true if you're using HTTPS
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 days

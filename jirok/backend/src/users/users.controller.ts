@@ -54,6 +54,7 @@ export class UsersController {
       },
     },
   })
+  
   @ApiOkResponse({ description: 'Avatar uploaded successfully' })
   @ApiBadRequestResponse({ description: 'Invalid file type or no file provided' })
   @Put(':id/avatar')
