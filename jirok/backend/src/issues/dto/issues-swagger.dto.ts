@@ -67,7 +67,7 @@ export class IssueDetailResponseDto extends IssueResponseDto {
   changedUser?: IssueUserDto | null;
 }
 
-export class ApiErrorResponseDto {
+export class IssueApiErrorResponseDto {
   @ApiProperty({ example: 404 })
   statusCode!: number;
 

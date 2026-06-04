@@ -25,7 +25,7 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { AddProjectMemberByIdDto } from './dto/add-project-member-by-id.dto';
 import { AddProjectMemberByEmailDto } from './dto/add-project-member-by-email.dto';
 import { UpdateProjectMemberRoleDto } from './dto/update-project-member-role.dto';
-import { ApiErrorResponseDto } from './dto/projects-swagger.dto';
+import { ProjectApiErrorResponseDto } from './dto/projects-swagger.dto';
 
 import { CurrentUser } from './decorators/current-user.decorator';
 import { ProjectAdminOnly } from './decorators/project-admin-only.decorator';
@@ -51,7 +51,7 @@ import type { Request } from 'express';
 @ApiBearerAuth('bearer')
 @ApiUnauthorizedResponse({
   description: 'Missing or invalid JWT token',
-  type: ApiErrorResponseDto,
+  type: ProjectApiErrorResponseDto,
 })
 @Controller('projects')
 export class ProjectsController {

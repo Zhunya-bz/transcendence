@@ -29,7 +29,7 @@ export class UsersService {
 
   async findAll(page: number = 1, limit: number = 20) {
     return this.prisma.user.findMany({
-      where : { deletedAt: null },
+      where: { deletedAt: null },
       select: USER_SELECT,
       skip: (page - 1) * limit,
       take: limit,
@@ -49,25 +49,24 @@ export class UsersService {
     });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    console.log("Updating user with ID:", id);
+  async remove(id: number) {
     return this.prisma.user.update({
-      where: { id: id},
-      data: updateUserDto,
+      where: { id: id },
+      data: { deletedAt: new Date() },
     });
   }
 
-  async remove(id: number) {
-  return this.prisma.user.update({
-    where: { id: id},
-    data: { deletedAt: new Date() },
-  });
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    return this.prisma.user.update({
+      where: { id },
+      data: updateUserDto,
+    });
   }
 
   async findUserProjects(id: number) {
     return this.prisma.userProject.findMany({
       where: { userId: id },
-      include : { project: true },
+      include: { project: true },
     });
   }
 
@@ -98,7 +97,7 @@ export class UsersService {
       where: { keyHash },
       include: { user: true, project: true },
     });
-    return apiKey
+    return apiKey;
   }
 
   async updateAvatarUrl(userId: number, filePath: string) {
@@ -106,6 +105,41 @@ export class UsersService {
       where: { id: userId },
       data: { avatarUrl: filePath },
       select: { avatarUrl: true },
+    });
+  }
+
+
+  async findByFortyTwoId(fortyTwoId: string) {
+    return this.prisma.user.findFirst({
+      where: {
+        fortyTwoId,
+        deletedAt: null,
+      },
+    });
+  }
+
+  async linkFortyTwoAccount(userId: number, fortyTwoId: string) {
+    return this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        fortyTwoId,
+      },
+    });
+  }
+
+  async createOAuthUser(data: {
+    fortyTwoId: string;
+    email: string;
+    name: string;
+    surname?: string;
+  }) {
+    return this.prisma.user.create({
+      data: {
+        ...data,
+        passwordHash: null,
+      },
     });
   }
 }

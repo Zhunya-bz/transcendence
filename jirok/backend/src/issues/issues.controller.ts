@@ -25,7 +25,7 @@ import { CreateIssueDto } from './dto/create-issue.dto';
 import { UpdateIssueDto } from './dto/update-issue.dto';
 import { UpdateIssueStatusDto } from './dto/update-issue-status.dto';
 import { AssignIssueDto } from './dto/assign-issue.dto';
-import { ApiErrorResponseDto } from './dto/issues-swagger.dto';
+import { IssueApiErrorResponseDto } from './dto/issues-swagger.dto';
 
 import { CurrentUser } from '../projects/decorators/current-user.decorator';
 import {
@@ -42,7 +42,7 @@ import {
 @ApiBearerAuth('bearer')
 @ApiUnauthorizedResponse({
   description: 'Missing or invalid JWT token',
-  type: ApiErrorResponseDto,
+  type: IssueApiErrorResponseDto,
 })
 @Controller('projects/:projectId/issues')
 @ProjectMemberOnly
