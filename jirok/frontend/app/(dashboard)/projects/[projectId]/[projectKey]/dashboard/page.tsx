@@ -2,10 +2,11 @@
 
 import { use, useCallback, useEffect } from "react";
 import { getBacklogTasks } from "@/actions/issues";
+import { getProjectMembers } from "@/actions/members";
 import { getBackendUrl } from "@/lib/backend";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { TaskStack } from "@/components/TaskStack";
-import { Issue, IssueStatus } from "@/types/prisma";
+import { Issue, IssueStatus, type UserProject } from "@/types/prisma";
 import {
   applyIssueEvent,
   getProjectRealtimeUrl,
@@ -25,6 +26,12 @@ export default function DashboardPage({ params }: DashboardPageProps) {
     queryKey: ["backlog", projectId],
     queryFn: () => getBacklogTasks(projectId),
     placeholderData: [],
+  });
+
+  useQuery<UserProject[]>({
+    queryKey: ["project-members", projectId],
+    queryFn: () => getProjectMembers(projectId),
+    enabled: Boolean(projectId),
   });
 
   useEffect(() => {
@@ -59,8 +66,13 @@ export default function DashboardPage({ params }: DashboardPageProps) {
           return;
         }
 
+        const members = queryClient.getQueryData<UserProject[]>([
+          "project-members",
+          projectId,
+        ]);
+
         queryClient.setQueryData<Issue[]>(["backlog", projectId], (current = []) =>
-          applyIssueEvent(current, event),
+          applyIssueEvent(current, event, members ?? []),
         );
       };
 
@@ -125,7 +137,7 @@ export default function DashboardPage({ params }: DashboardPageProps) {
         }
       })
     }
-  }, [projectId]);
+  }, [projectId, currentUser]);
 
   return (
     <div className="flex flex-row gap-4 width-full flex-1">

@@ -1,4 +1,5 @@
 import { Issue } from "@/types/prisma";
+import type { User, UserProject } from "@/types/prisma";
 
 export type ProjectRealtimeEventType =
   | "project.created"
@@ -40,6 +41,7 @@ export function getProjectRealtimeUrl() {
 export function applyIssueEvent(
   current: Issue[],
   event: ProjectRealtimeEvent<Issue>,
+  members: UserProject[] = [],
 ) {
   if (!event.type.startsWith("issue.")) {
     return current;
@@ -49,7 +51,33 @@ export function applyIssueEvent(
     return current.filter((issue) => issue.id !== event.data.id);
   }
 
+  const memberById = new Map<number, User | undefined>(
+    members.map((member) => [member.userId, member.user]),
+  );
+  const previousIssue = current.find((issue) => issue.id === event.data.id);
+  const hasAssigneeId = Object.prototype.hasOwnProperty.call(
+    event.data,
+    "assigneeId",
+  );
+  const hasAssignee = Object.prototype.hasOwnProperty.call(
+    event.data,
+    "assignee",
+  );
+  const assigneeId = hasAssigneeId
+    ? event.data.assigneeId ?? null
+    : previousIssue?.assigneeId ?? null;
+  const assignee = hasAssignee
+    ? event.data.assignee ?? null
+    : assigneeId === null
+      ? null
+      : memberById.get(assigneeId) ?? previousIssue?.assignee ?? null;
+
   const next = current.filter((issue) => issue.id !== event.data.id);
-  next.push(event.data);
+  next.push({
+    ...previousIssue,
+    ...event.data,
+    assigneeId,
+    assignee,
+  });
   return next;
 }
