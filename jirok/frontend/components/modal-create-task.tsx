@@ -187,7 +187,7 @@ export const ModalCreateTask = () => {
       <DialogTrigger asChild>
         <Button
           size="lg"
-          disabled={!projectId || isRoleLoading || isViewer}
+          disabled={false}
           className="text-base px-6 py-4 font-semibold text-center sm:text-lg bg-blue-600 hover:bg-blue-800"
         >
           <FaPlus />

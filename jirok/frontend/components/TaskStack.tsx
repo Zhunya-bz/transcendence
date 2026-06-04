@@ -57,7 +57,7 @@ function TaskCard({ task, projectId, projectKey }: { task: Issue, projectId: str
             ? <MdBookmark className={`size-4 ${getTypeClasses(task.type)}`} />
             : <MdTaskAlt className={`size-4 ${getTypeClasses(task.type)}`} />;
     return <a
-        className="flex flex-col gap-4 p-4 rounded-md border-2 select-none cursor-pointer hover:bg-blue-100 bg-white"
+        className="flex flex-col gap-4 p-4 rounded-md border-2 select-none cursor-pointer hover:bg-blue-100 bg-white overflow-x-hidden"
         draggable
         onDragStart={onDragStart}
         href={`/projects/${projectId}/${projectKey}/issues/${task.id}`}
