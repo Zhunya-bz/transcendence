@@ -19,13 +19,14 @@ import {
 import { IssuesService } from './issues.service';
 
 import { ProjectMemberOnly } from '../projects/decorators/project-member-only.decorator';
+import { ProjectAdminOnly } from '../projects/decorators/project-admin-only.decorator';
 import { ProjectWriteOnly } from '../projects/decorators/project-write-only.decorator';
 
 import { CreateIssueDto } from './dto/create-issue.dto';
 import { UpdateIssueDto } from './dto/update-issue.dto';
 import { UpdateIssueStatusDto } from './dto/update-issue-status.dto';
 import { AssignIssueDto } from './dto/assign-issue.dto';
-import { ApiErrorResponseDto } from './dto/issues-swagger.dto';
+import { IssueApiErrorResponseDto } from './dto/issues-swagger.dto';
 
 import { CurrentUser } from '../projects/decorators/current-user.decorator';
 import {
@@ -42,7 +43,7 @@ import {
 @ApiBearerAuth('bearer')
 @ApiUnauthorizedResponse({
   description: 'Missing or invalid JWT token',
-  type: ApiErrorResponseDto,
+  type: IssueApiErrorResponseDto,
 })
 @Controller('projects/:projectId/issues')
 @ProjectMemberOnly
@@ -117,6 +118,7 @@ export class IssuesController {
 
   @Delete(':issueId')
   @ProjectWriteOnly
+  @ProjectAdminOnly
   @ApiDeleteIssue
   deleteIssue(
     @Param('projectId', ParseIntPipe) projectId: number,

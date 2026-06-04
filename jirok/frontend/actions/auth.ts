@@ -7,6 +7,7 @@ export const parseError = async (response: Response, fallbackMessage: string) =>
   return message.message ? message.message : `${response.status}: ${response.statusText}` || fallbackMessage;
 };
 
+
 export const signin = async (data: { email: string; password: string }) => {
   try {
     const response = await fetch("http://backend:3001/auth/login", {
