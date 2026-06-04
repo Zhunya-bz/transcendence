@@ -154,7 +154,7 @@ export class ProjectMyRoleResponseDto {
   role!: UserRole;
 }
 
-export class ApiErrorResponseDto {
+export class ProjectApiErrorResponseDto {
   @ApiProperty({ example: 404 })
   statusCode!: number;
 

@@ -45,7 +45,7 @@ export class UserResponseDto {
   deletedAt?: Date | null;
 }
 
-export class ApiErrorResponseDto {
+export class AuthApiErrorResponseDto {
   @ApiProperty({ example: 404 })
   statusCode!: number;
 

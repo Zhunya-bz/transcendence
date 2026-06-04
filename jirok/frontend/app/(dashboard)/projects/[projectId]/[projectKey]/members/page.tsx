@@ -172,7 +172,7 @@ export default function MembersPage({ params }: MembersPageProps) {
               >
                 <UserAvatar
                   className="size-9 transition shrink-0"
-                  src={(user as any)?.picture?.medium}
+                  src={(user as any)?.avatarUrl}
                   alt={fullName}
                 />
 

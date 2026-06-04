@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -38,6 +39,7 @@ export const MobileSidebar = () => {
       >
         <SheetHeader className="hidden">
           <SheetTitle></SheetTitle>
+          <SheetDescription className="hidden"></SheetDescription>
         </SheetHeader>
         <Sidebar onNavigate={() => setIsOpen(false)} />
       </SheetContent>

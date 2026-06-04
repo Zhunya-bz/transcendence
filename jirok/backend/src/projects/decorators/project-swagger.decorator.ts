@@ -9,7 +9,7 @@ import {
 } from '@nestjs/swagger';
 
 import {
-  ApiErrorResponseDto,
+  ProjectApiErrorResponseDto,
   ProjectActivityCountMapDto,
   ProjectDetailResponseDto,
   ProjectMemberResponseDto,
@@ -33,7 +33,7 @@ export const ApiCreateProject = applyDecorators(
   ApiCreatedResponse({ type: ProjectResponseDto }),
   ApiBadRequestResponse({
     description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
+    type: ProjectApiErrorResponseDto,
   }),
 );
 
@@ -50,7 +50,7 @@ export const ApiUpdateProject = applyDecorators(
   ApiOkResponse({ type: ProjectResponseDto }),
   ApiBadRequestResponse({
     description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
+    type: ProjectApiErrorResponseDto,
   }),
 );
 
@@ -72,7 +72,7 @@ export const ApiAddProjectMemberById = applyDecorators(
   ApiCreatedResponse({ type: ProjectMemberResponseDto }),
   ApiBadRequestResponse({
     description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
+    type: ProjectApiErrorResponseDto,
   }),
 );
 
@@ -83,7 +83,7 @@ export const ApiAddProjectMemberByEmail = applyDecorators(
   ApiCreatedResponse({ type: ProjectMemberResponseDto }),
   ApiBadRequestResponse({
     description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
+    type: ProjectApiErrorResponseDto,
   }),
 );
 
@@ -101,7 +101,7 @@ export const ApiUpdateProjectMemberRole = applyDecorators(
   ApiOkResponse({ type: ProjectMemberResponseDto }),
   ApiBadRequestResponse({
     description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
+    type: ProjectApiErrorResponseDto,
   }),
 );
 
@@ -112,7 +112,7 @@ export const ApiRemoveProjectMember = applyDecorators(
   ApiOkResponse({ type: ProjectMemberResponseDto }),
   ApiBadRequestResponse({
     description: 'Cannot remove the last admin from project',
-    type: ApiErrorResponseDto,
+    type: ProjectApiErrorResponseDto,
   }),
 );
 
