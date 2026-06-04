@@ -1,7 +1,6 @@
 "use server"
 
 import { cookies } from "next/headers";
-import { getBackendUrl } from "./backend";
 
 type ApiRequest = RequestInit & {
     headers?: Record<string, string>;
