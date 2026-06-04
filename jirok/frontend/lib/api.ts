@@ -15,11 +15,7 @@ export async function api(path: string, init: ApiRequest={}) {
         headers['Cookie'] = token.value;
     }
 
-<<<<<<< HEAD
     return fetch(`http://backend:3001${path}`, {
-=======
-    return fetch(getBackendUrl(path), {
->>>>>>> parent of 36d443b (revert changes to backend endpoinnt for auth (BFF))
         ...init,
         headers,
     })
