@@ -68,11 +68,11 @@ export default function SignUp() {
             <CardTitle className="text-2xl">Sign Up</CardTitle>
             <CardDescription>
               By signin up, you agree to our{" "}
-              <Link href="/files/privacy-policy.txt">
+              <Link href="/files/Privacy_Policy.pdf" target="_blank">
                 <span className="text-blue-700">Privacy Policy</span>
               </Link>{" "}
               and{" "}
-              <Link href="/files/terms.txt">
+              <Link href="/files/Terms_of_Service.pdf" target="_blank">
                 <span className="text-blue-700">Terms of Service</span>
               </Link>
             </CardDescription>
