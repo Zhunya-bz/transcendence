@@ -18,7 +18,7 @@ export default function BacklogPage({ params }: BacklogPageProps) {
   const searchParams = useSearchParams();
   const assigneeFilter = searchParams.get("assignee");
 
-  const LIMIT = 3; //todo make 20
+  const LIMIT = 10;
   const [visible, setVisible] = useState(LIMIT);
 
   const { data, isLoading, isError } = useQuery<TaskItem[]>({
