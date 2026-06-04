@@ -115,7 +115,7 @@ export default function Setup2FA() {
                 />
 
                 <Button
-                  className="w-full"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                   onClick={handleSubmit}
                   disabled={enableMutation.isPending}
                 >

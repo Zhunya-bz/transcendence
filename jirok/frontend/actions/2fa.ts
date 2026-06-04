@@ -1,9 +1,10 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend";
 import { parseError } from "./issues";
 
 export async function generate2FA() {
-  const response = await fetch(`http://localhost:3001/auth/2fa/generate`,
+  const response = await fetch(getBackendUrl(`/auth/2fa/generate`),
     {
       method: "POST",
       credentials: "include",
@@ -19,7 +20,7 @@ export async function generate2FA() {
 
 export async function enable2FA(code: string) {
   const response = await fetch(
-    `http://localhost:3001/auth/2fa/enable`,
+    getBackendUrl(`/auth/2fa/enable`),
     {
       method: "POST",
       credentials: "include",
@@ -38,3 +39,33 @@ export async function enable2FA(code: string) {
 
   return response.json();
 }  
+
+
+export async function verify2FA({
+  code,
+  tempToken,
+}: {
+  code: string;
+  tempToken: string;
+}) {
+  const response = await fetch(
+    getBackendUrl(`/auth/2fa/verify`),
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tempToken}`,
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        code,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(await parseError(response, "Failed to verify 2FA code"));
+  }
+
+  return response.json();
+}
