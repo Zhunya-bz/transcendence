@@ -28,6 +28,7 @@ const formSchema = z.object({
 
 export default function SignIn() {
   const router = useRouter();
+  const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3001";
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
