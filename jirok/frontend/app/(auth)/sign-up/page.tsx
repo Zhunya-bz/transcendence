@@ -52,7 +52,7 @@ export default function SignUp() {
     mutationFn: signup,
     onSuccess: () => {
       toast.success("Sign up successful!");
-      router.push("/projects");
+      router.replace("/projects");
     },
     onError: (error) => toast.error(error.message || "An error occurred during registration"),
   });

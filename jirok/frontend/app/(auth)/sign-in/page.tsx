@@ -41,7 +41,7 @@ export default function SignIn() {
     mutationFn: signin,
     onSuccess: () => {
       toast.success("Login successful!");
-      router.push("/projects");
+      router.replace("/projects");
     },
     onError: (error) => toast.error(error.message || "An error occurred during login"),
   });
