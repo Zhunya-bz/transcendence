@@ -9,6 +9,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { ProjectsModule } from './projects/projects.module';
 import { IssuesModule } from './issues/issues.module';
+import { ProjectRealtimeModule } from './realtime/project-realtime.module';
+
 @Module({
   imports: [
     PrismaModule,
@@ -16,6 +18,7 @@ import { IssuesModule } from './issues/issues.module';
     AuthModule,
     ProjectsModule,
     IssuesModule,
+    ProjectRealtimeModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
