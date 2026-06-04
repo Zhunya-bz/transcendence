@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
-import { Camera, Pencil, Upload } from "lucide-react";
+import { Pencil } from "lucide-react";
 import toast from "react-hot-toast";
 
-import { updateUserAvatar, updateUserProfile } from "@/actions/profile";
+import { updateUserProfile } from "@/actions/profile";
 import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +34,6 @@ export function ProfileContent({
   const [jobTitle, setJobTitle] = useState("");
   const [location, setLocation] = useState("");
   const [jobOrganization, setJobOrganization] = useState("");
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -52,16 +51,6 @@ export function ProfileContent({
       onUpdated?.();
     },
     onError: () => toast.error("Failed to update profile"),
-  });
-
-  const avatarMutation = useMutation({
-    mutationFn: updateUserAvatar,
-    onSuccess: () => {
-      toast.success("Avatar updated");
-      setAvatarFile(null);
-      onUpdated?.();
-    },
-    onError: () => toast.error("Failed to update avatar"),
   });
 
   const canEdit = editable && Boolean(user?.id);
@@ -119,13 +108,6 @@ export function ProfileContent({
     jobTitle !== (user?.jobTitle ?? "") ||
     location !== (user?.location ?? "") ||
     jobOrganization !== (user?.jobOrganization ?? "");
-  const canUploadAvatar = Boolean(user?.id && avatarFile);
-
-  const handleAvatarUpload = () => {
-    if (!user?.id || !avatarFile) return;
-
-    avatarMutation.mutate({ id: user.id, file: avatarFile });
-  };
 
   return (
     <div className="w-full min-h-screen">
@@ -161,59 +143,18 @@ export function ProfileContent({
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                {canEdit && !editingName && (
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="border-blue-300 text-blue-700 hover:bg-blue-50"
-                    onClick={() => setEditingName(true)}
-                  >
-                    <Pencil />
-                    Edit
-                  </Button>
-                )}
-              </div>
+              {canEdit && !editingName && (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                  onClick={() => setEditingName(true)}
+                >
+                  <Pencil />
+                  Edit
+                </Button>
+              )}
             </div>
-
-            {canEdit && (
-              <div className="mt-4 rounded-xl border border-dashed border-blue-200 bg-blue-50/50 p-4">
-                <div className="flex flex-wrap items-center gap-3">
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-blue-300 bg-white px-3 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-50">
-                    <Camera className="size-4" />
-                    Choose avatar
-                    <Input
-                      type="file"
-                      onChange={(event) => {
-                        setAvatarFile(event.target.files?.[0] ?? null);
-                      }}
-                      className="hidden"
-                    />
-                  </label>
-                  <p className="text-sm text-gray-500">
-                    {avatarFile ? avatarFile.name : "No file selected"}
-                  </p>
-                  <Button
-                    size="lg"
-                    className="bg-blue-600 text-white hover:bg-blue-700"
-                    onClick={handleAvatarUpload}
-                    disabled={!canUploadAvatar || avatarMutation.isPending}
-                  >
-                    <Upload />
-                    {avatarMutation.isPending ? "Uploading..." : "Upload"}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="border-orange-300 text-orange-700 hover:bg-orange-50"
-                    onClick={() => setAvatarFile(null)}
-                    disabled={!avatarFile || avatarMutation.isPending}
-                  >
-                    Clear
-                  </Button>
-                </div>
-              </div>
-            )}
 
             {canEdit && editingName && (
               <div className="mt-4 grid gap-3">

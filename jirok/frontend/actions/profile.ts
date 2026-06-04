@@ -1,17 +1,17 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend";
-import type { User } from "@/types/prisma";
+import { User } from "@/types/prisma";
 import { parseError } from "./issues";
+
 export const updateUserProfile = async ({
   id,
   data,
 }: {
   id: number;
-  data: Partial<User>;
+  data: User,
 }) => {
   try {
-    const response = await fetch(getBackendUrl(`/users/${id}`), {
+    const response = await fetch(`http://localhost:3001/users/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -19,34 +19,6 @@ export const updateUserProfile = async ({
     });
 
     if (!response.ok) throw new Error(await parseError(response, "Failed to update profile"));
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const updateUserAvatar = async ({
-  id,
-  file,
-}: {
-  id: number;
-  file: File;
-}) => {
-  try {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await fetch(getBackendUrl(`/users/${id}/avatar`), {
-      method: "PUT",
-      body: formData,
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      throw new Error(await parseError(response, "Failed to update avatar"));
-    }
-
     return await response.json();
   } catch (error) {
     console.error(error);

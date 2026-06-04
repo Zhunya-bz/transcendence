@@ -14,7 +14,7 @@ export async function api(path: string, init: ApiRequest={}) {
         headers['Cookie'] = token.value;
     }
 
-    return fetch(`http://backend:3000/${path}`, {
+    return fetch(`http://backend:3001${path}`, {
         ...init,
         headers,
     })

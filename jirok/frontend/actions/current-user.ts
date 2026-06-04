@@ -1,11 +1,10 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend";
 import type { User } from "@/types/prisma";
 import { parseError } from "./issues";
 
 export const getCurrentMe = async (): Promise<User> => {
-  const response = await fetch(getBackendUrl("/auth/me"), {
+  const response = await fetch("http://localhost:3001/auth/me", {
     credentials: "include",
   });
 
@@ -17,7 +16,7 @@ export const getCurrentMe = async (): Promise<User> => {
 };
 
 export const getCurrentUserRole = async (projectId: string) => {
-  const response = await fetch(getBackendUrl(`/projects/${projectId}/role`), {
+  const response = await fetch(`http://localhost:3001/projects/${projectId}/role`, {
     credentials: "include",
   });
 

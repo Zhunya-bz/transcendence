@@ -3,7 +3,6 @@
 import { User } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getBackendUrl } from "@/lib/backend";
 import { cn } from "@/lib/utils";
 
 interface UserAvatarProps {
@@ -19,12 +18,11 @@ export function UserAvatar({
   size = "default",
   className,
 }: UserAvatarProps) {
-  const avatarSrc = src ? getBackendUrl(src) : "";
-  const hasImage = Boolean(avatarSrc);
+  const hasImage = Boolean(src);
 
   return (
     <Avatar size={size} className={cn("relative", className)}>
-      {hasImage ? <AvatarImage src={avatarSrc} alt={alt} /> : null}
+      {hasImage ? <AvatarImage src={src ?? ""} alt={alt} /> : null}
       <AvatarFallback className="bg-blue-100 text-blue-600">
         <User
           aria-hidden="true"

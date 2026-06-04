@@ -1,6 +1,5 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend";
 import { Issue } from "@/types/prisma";
 
 type CreateIssueInput = {
@@ -20,7 +19,7 @@ export const parseError = async (response: Response, fallbackMessage: string) =>
 };
 
 export async function getBacklogTasks(projectId: string): Promise<Issue[]> {
-  const response = await fetch(getBackendUrl(`/projects/${projectId}/issues`), {
+    const response = await fetch(`http://localhost:3001/projects/${projectId}/issues`, {
       credentials: "include",
     });
     if (!response.ok) {
@@ -31,7 +30,7 @@ export async function getBacklogTasks(projectId: string): Promise<Issue[]> {
 
 export async function createIssue(data: CreateIssueInput): Promise<Issue> {
   try {
-    const response = await fetch(getBackendUrl(`/projects/${data.projectId}/issues`), {
+    const response = await fetch(`http://localhost:3001/projects/${data.projectId}/issues`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -52,13 +51,13 @@ export async function createIssue(data: CreateIssueInput): Promise<Issue> {
 }
 
 export async function getTask(projectId: string, issueId: string): Promise<Issue> {
-  return await fetch(getBackendUrl(`/projects/${projectId}/issues/${issueId}`), {
+  return await fetch(`http://localhost:3001/projects/${projectId}/issues/${issueId}`, {
     credentials: "include"
   }).then(res => res.json())
 }
 
 export async function deleteTask(projectId: string, issueId: string): Promise<void> {
-  const response = await fetch(getBackendUrl(`/projects/${projectId}/issues/${issueId}`), {
+  const response = await fetch(`http://localhost:3001/projects/${projectId}/issues/${issueId}`, {
     method: "DELETE",
     credentials: "include",
   });
