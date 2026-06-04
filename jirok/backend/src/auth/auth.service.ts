@@ -1,16 +1,20 @@
 import * as crypto from 'crypto';
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto} from './dto/login.dto';
+import { authenticator } from 'otplib';
+import * as QRCode from 'qrcode';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private userService: UsersService,
         private jwtService: JwtService,
+        private prisma: PrismaService,
     ) {}
 
     //signup
@@ -53,6 +57,14 @@ export class AuthService {
             throw new UnauthorizedException('Invalid credentials');
         }
 
+        if (user.isTwoFactorEnabled) {
+            const tempToken = this.jwtService.sign(
+                { sub: user.id, email: user.email, isTwoFactor: true },
+                {secret: (process.env.JWT_SECRET || 'fallback-secret') + '-2fa-temp', expiresIn: '5m'},
+            );
+            return { require2FA: true, tempToken };
+        }
+
         // if password matches generate and return a JWT
         const token = this.generateToken(user.id, user.email);
 
@@ -82,5 +94,86 @@ export class AuthService {
         // sub holds the user id this is what JwtStrategy.validate() reads back
         const payload = { sub: userId, email: email };
         return this.jwtService.sign(payload);
+    }
+
+    //2FA
+    async generateTwoFactorSecret(userId: number) {
+        const user = await this.userService.findOne(userId);
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        const secret = authenticator.generateSecret();
+
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: { twoFactorSecret: secret },
+        });
+
+        const otpauthUrl = authenticator.keyuri(user.email, 'Jirok', secret);
+
+        const qrCodeDataUrl = await QRCode.toDataURL(otpauthUrl);
+
+        return { qrCodeDataUrl, secret };
+    }
+
+    async enableTwoFactorAuth(userId: number, code:string) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+        });
+
+        if (!user || !user.twoFactorSecret) {
+            throw new BadRequestException('2FA secret not generated yet');
+        }
+
+        const isValid = authenticator.verify({
+            token: code,
+            secret: user.twoFactorSecret,
+        });
+
+        if (!isValid) {
+            throw new BadRequestException('Invalid 2FA code');
+        }
+
+        await this.prisma.user.update({
+            where: { id:userId },
+            data: { isTwoFactorEnabled: true },
+        });
+
+        return { message: '2FA enabled successfully' };
+    }
+
+    //verify 2FA code for login
+    async verifyTwoFactorCode(token: string, code: string) {
+        let payload: any;
+        try {
+            payload = this.jwtService.verify(token, {
+                secret: (process.env.JWT_SECRET || 'fallback-secret') + '-2fa-temp',
+            });
+        } catch (error) {
+            throw new UnauthorizedException('Invalid verification token');
+        }
+
+        const userId = payload.sub;
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+        });
+
+
+        if (!user || !user.twoFactorSecret) {
+            throw new BadRequestException('2FA is not setup');
+        }
+
+        const isValid = authenticator.verify({
+            token: code,
+            secret: user.twoFactorSecret,
+        });
+
+        if(!isValid) {
+            throw new BadRequestException('Invalid 2FA code');
+        }
+
+        const accessToken = this.generateToken(user.id, user.email);
+        return { accessToken };
     }
 }
