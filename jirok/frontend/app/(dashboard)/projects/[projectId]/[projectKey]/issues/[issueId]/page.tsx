@@ -19,7 +19,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Issue, IssuePriority, IssueStatus, IssueType, type UserProject } from "@/types/prisma";
+import { Issue, IssuePriority, IssueStatus, IssueType, UserRole, type UserProject } from "@/types/prisma";
+import { getCurrentUserRole } from "@/actions/current-user";
 
 interface DashboardPageProps {
   params: Promise<{ projectId: string; projectKey: string; issueId: string }>;
@@ -69,6 +70,14 @@ export default function IssuePage({ params }: DashboardPageProps) {
     onError: (error: Error) => toast.error(error.message),
   });
 
+  const { data: currentUserRole, isLoading: isRoleLoading } = useQuery({
+    queryKey: ["current-role", projectId],
+    queryFn: () => getCurrentUserRole(projectId ?? ""),
+    enabled: Boolean(projectId),
+  });
+
+  const isViewer = currentUserRole?.role === UserRole.VIEWER;
+
   if (!isFetched || !data) {
     return <div>loading...</div>;
   }
@@ -79,6 +88,7 @@ export default function IssuePage({ params }: DashboardPageProps) {
         <Input
           className="h-11 bg-white text-xl"
           defaultValue={data.title}
+          disabled={isViewer}
           onChange={(e) =>
             update({
               title: e.target.value,
@@ -89,6 +99,7 @@ export default function IssuePage({ params }: DashboardPageProps) {
           className="min-h-32 resize-y bg-white"
           defaultValue={data.description ?? ""}
           placeholder="description"
+          disabled={isViewer}
           onChange={(e) =>
             update({
               description: e.target.value,
@@ -101,6 +112,7 @@ export default function IssuePage({ params }: DashboardPageProps) {
           <label className={issueFieldLabelClassName}>Type</label>
           <Select
             defaultValue={data.type}
+            disabled={isViewer}
             onValueChange={(value) =>
               update({
                 type: value as IssueType,
@@ -130,6 +142,7 @@ export default function IssuePage({ params }: DashboardPageProps) {
           <label className={issueFieldLabelClassName}>Priority</label>
           <Select
             defaultValue={data.priority}
+            disabled={isViewer}
             onValueChange={(value) =>
               update({
                 priority: value as IssuePriority,
@@ -153,6 +166,7 @@ export default function IssuePage({ params }: DashboardPageProps) {
           <label className={issueFieldLabelClassName}>Status</label>
           <Select
             defaultValue={data.status}
+            disabled={isViewer}
             onValueChange={(value) =>
               update({
                 status: value as IssueStatus,
@@ -176,6 +190,7 @@ export default function IssuePage({ params }: DashboardPageProps) {
           <label className={issueFieldLabelClassName}>Assignee</label>
           <Select
             defaultValue={data.assigneeId ? String(data.assigneeId) : "unassigned"}
+            disabled={isViewer}
             onValueChange={(value) =>
               update({
                 assigneeId: value === "unassigned" ? null : Number(value),
@@ -201,7 +216,7 @@ export default function IssuePage({ params }: DashboardPageProps) {
           </Select>
         </div>
 
-        <Button
+        {!isViewer && <Button 
           type="button"
           variant="destructive"
           className="mt-2 w-full"
@@ -213,7 +228,7 @@ export default function IssuePage({ params }: DashboardPageProps) {
           disabled={deleteMutation.isPending}
         >
           {deleteMutation.isPending ? "Deleting..." : "Delete issue"}
-        </Button>
+        </Button>}
       </div>
     </div>
   );

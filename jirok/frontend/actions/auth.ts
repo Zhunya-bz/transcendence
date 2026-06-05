@@ -53,8 +53,6 @@ export const signup = async (data: {
       credentials: "include",
     });
 
-
-
     if (!response.ok) {
       throw new Error(await parseError(response, "Failed to sign up"));
     }

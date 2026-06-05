@@ -185,14 +185,13 @@ export const ModalCreateTask = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
+        {!isViewer && <Button
           size="lg"
-          disabled={false}
           className="text-base px-6 py-4 font-semibold text-center sm:text-lg bg-blue-600 hover:bg-blue-800"
         >
           <FaPlus />
           Create
-        </Button>
+        </Button>}
       </DialogTrigger>
       <DialogContent className="flex max-h-[calc(100vh-2rem)] flex-col overflow-y-auto border-none bg-linear-to-b from-orange-50 via-blue-50/30 to-blue-100/60 shadow-2xl sm:max-w-xl md:max-w-2xl">
         <DialogHeader>
