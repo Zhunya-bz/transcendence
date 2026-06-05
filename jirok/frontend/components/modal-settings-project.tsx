@@ -27,6 +27,7 @@ import toast from "react-hot-toast";
 import { z } from "zod";
 import { UserRole, type Project } from "@/types/prisma";
 import { getCurrentUserRole } from "@/actions/current-user";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 const projectSettingsSchema = z.object({
   name: z.string().trim().min(1, "Required"),
@@ -119,6 +120,7 @@ export const ModalSettingsProject = ({ project }: Props) => {
         <DialogHeader>
           <DialogTitle>Project settings</DialogTitle>
         </DialogHeader>
+        <DialogDescription className="hidden"></DialogDescription>
 
         <div className="space-y-3 rounded-lg border border-border bg-muted/40 p-4">
           <div className="flex items-start justify-between gap-4">

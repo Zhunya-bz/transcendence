@@ -96,3 +96,28 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## Project websocket stream
+
+Clients can subscribe to live project updates over `ws://<host>:3001/ws/projects`.
+
+Authentication options:
+
+- `Cookie: token=<jwt>`
+- `Authorization: Bearer <jwt>`
+- `ws://<host>:3001/ws/projects?token=<jwt>`
+
+Client messages:
+
+```json
+{ "type": "subscribe", "projectId": 123 }
+{ "type": "unsubscribe", "projectId": 123 }
+{ "type": "ping" }
+```
+
+Server messages:
+
+- `ready` when the socket is authenticated
+- `subscribed` and `unsubscribed` for room membership changes
+- `event` for `project.*` and `issue.*` updates
+- `error` when a message is invalid or the user is not allowed to subscribe

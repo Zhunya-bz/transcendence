@@ -50,8 +50,8 @@ export default function SignUp() {
   const mutation = useMutation({
     mutationFn: signup,
     onSuccess: () => {
-      toast.success("Sign up successful!");
-      router.push("/projects");
+      toast.success("Done");
+      router.push("/setup-2fa");
     },
     onError: (error) => toast.error(error.message || "An error occurred during registration"),
   });
@@ -68,11 +68,11 @@ export default function SignUp() {
             <CardTitle className="text-2xl">Sign Up</CardTitle>
             <CardDescription>
               By signin up, you agree to our{" "}
-              <Link href="/files/privacy-policy.txt">
+              <Link href="/files/Privacy_Policy.pdf" target="_blank">
                 <span className="text-blue-700">Privacy Policy</span>
               </Link>{" "}
               and{" "}
-              <Link href="/files/terms.txt">
+              <Link href="/files/Terms_of_Service.pdf" target="_blank">
                 <span className="text-blue-700">Terms of Service</span>
               </Link>
             </CardDescription>
@@ -157,18 +157,21 @@ export default function SignUp() {
             or register with
           </div>
           <CardContent className="px-7">
-            <Button
-              variant="ghost"
-              className="w-full bg-orange-300 hover:bg-orange-400 mb-3"
-            >
-              <Image
-                src="/42icon.svg"
-                width={500}
-                height={500}
-                alt="42 Icon"
-                className="w-[30px]"
-              />
-            </Button>
+              <Button
+                variant="ghost"
+                className="w-full bg-orange-300 hover:bg-orange-400 mb-3"
+                onClick={() => {
+                  window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/42`;
+                }}
+              >
+                <Image
+                  src="/42icon.svg"
+                  width={500}
+                  height={500}
+                  alt="42 Icon"
+                  className="w-[30px]"
+                />
+              </Button>
           </CardContent>
           <div className="px-7">
             <Separator className="bg-gray-400" />

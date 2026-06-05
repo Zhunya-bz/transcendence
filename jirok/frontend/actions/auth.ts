@@ -2,9 +2,14 @@
 
 import { cookies } from "next/headers";
 
-export const parseError = async (response: Response, fallbackMessage: string) => {
+export const parseError = async (
+  response: Response,
+  fallbackMessage: string,
+) => {
   const message = await response.json();
-  return message.message ? message.message : `${response.status}: ${response.statusText}` || fallbackMessage;
+  return message.message
+    ? message.message
+    : `${response.status}: ${response.statusText}` || fallbackMessage;
 };
 
 export const signin = async (data: { email: string; password: string }) => {
@@ -22,15 +27,36 @@ export const signin = async (data: { email: string; password: string }) => {
       throw new Error(await parseError(response, "Failed to login"));
     }
 
-    const { accessToken } = await response.json();
+    const result = await response.json();
 
-    (await cookies()).set("token", accessToken, {
-      httpOnly: true,
-      secure: false, // true if you're using HTTPS
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
+    if (result.require2FA) {
+      // Store the temp token in a cookie for the 2FA verification step
+      (await cookies()).set("token", result.tempToken, {
+        httpOnly: true,
+        secure: false, // true if you're using HTTPS
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 5, // 5 minutes
+      });
+      return {
+        success: true,
+        redirectTo: "/login-2fa",
+      };
+    } else {
+      const { accessToken } = result;
+
+      (await cookies()).set("token", accessToken, {
+        httpOnly: true,
+        secure: false, // true if you're using HTTPS
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+      });
+      return {
+        success: true,
+        redirectTo: "/projects",
+      };
+    }
   } catch (error) {
     console.error(error);
     throw error;
@@ -52,8 +78,6 @@ export const signup = async (data: {
       credentials: "include",
     });
 
-
-
     if (!response.ok) {
       throw new Error(await parseError(response, "Failed to sign up"));
     }
@@ -63,11 +87,10 @@ export const signup = async (data: {
     (await cookies()).set("token", accessToken, {
       httpOnly: true,
       secure: false, // true if you're using HTTPS
-      sameSite: 'lax',
-      path: '/',
+      sameSite: "lax",
+      path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
-
   } catch (error) {
     console.error(error);
     throw error;
@@ -75,5 +98,5 @@ export const signup = async (data: {
 };
 
 export const logout = async () => {
-    (await cookies()).delete("token");
-  };
+  (await cookies()).delete("token");
+};

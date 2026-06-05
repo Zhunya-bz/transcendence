@@ -10,10 +10,14 @@ import { CreateIssueDto } from './dto/create-issue.dto';
 import { UpdateIssueDto } from './dto/update-issue.dto';
 import { UpdateIssueStatusDto } from './dto/update-issue-status.dto';
 import { AssignIssueDto } from './dto/assign-issue.dto';
+import { ProjectRealtimeService } from '../realtime/project-realtime.service';
 
 @Injectable()
 export class IssuesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly realtime: ProjectRealtimeService,
+  ) {}
 
   async getProjectIssues(projectId: number) {
     return this.prisma.issue.findMany({
@@ -53,12 +57,15 @@ export class IssuesService {
       await this.validateAssignee(projectId, dto.assigneeId);
     }
 
-    return this.prisma.issue.create({
+    const issue = await this.prisma.issue.create({
       data: {
         ...dto,
         projectId,
       },
     });
+
+    this.realtime.emitIssueCreated(projectId, issue);
+    return issue;
   }
 
   async updateIssue(
@@ -73,7 +80,7 @@ export class IssuesService {
       await this.validateAssignee(projectId, dto.assigneeId);
     }
 
-    return this.prisma.issue.update({
+    const issue = await this.prisma.issue.update({
       where: {
         id: issueId,
       },
@@ -82,6 +89,9 @@ export class IssuesService {
         changedUserId: userId,
       },
     });
+
+    this.realtime.emitIssueUpdated(projectId, issue);
+    return issue;
   }
 
   async updateIssueStatus(
@@ -92,7 +102,7 @@ export class IssuesService {
   ) {
     await this.getIssue(projectId, issueId);
 
-    return this.prisma.issue.update({
+    const issue = await this.prisma.issue.update({
       where: {
         id: issueId,
       },
@@ -101,6 +111,9 @@ export class IssuesService {
         changedUserId: userId,
       },
     });
+
+    this.realtime.emitIssueStatusUpdated(projectId, issue);
+    return issue;
   }
 
   async assignIssue(
@@ -115,7 +128,7 @@ export class IssuesService {
       await this.validateAssignee(projectId, dto.assigneeId);
     }
 
-    return this.prisma.issue.update({
+    const issue = await this.prisma.issue.update({
       where: {
         id: issueId,
       },
@@ -124,12 +137,15 @@ export class IssuesService {
         changedUserId: userId,
       },
     });
+
+    this.realtime.emitIssueAssigned(projectId, issue);
+    return issue;
   }
 
   async deleteIssue(projectId: number, issueId: number) {
     await this.getIssue(projectId, issueId);
 
-    return this.prisma.issue.update({
+    const issue = await this.prisma.issue.update({
       where: {
         id: issueId,
       },
@@ -137,6 +153,9 @@ export class IssuesService {
         deletedAt: new Date(),
       },
     });
+
+    this.realtime.emitIssueDeleted(projectId, issue);
+    return issue;
   }
 
   private async validateAssignee(projectId: number, assigneeId: number) {

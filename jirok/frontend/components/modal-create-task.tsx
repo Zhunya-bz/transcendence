@@ -48,6 +48,43 @@ import {
 } from "@/components/ui/select";
 import { createIssue } from "@/actions/issues";
 
+export const issueFieldLabelClassName = "text-blue-700";
+export const issueSelectTriggerClassName = "h-11 w-full bg-white";
+
+export const issueTypeOptions = [
+  {
+    value: IssueType.BUG,
+    label: "Bug",
+    icon: MdBugReport,
+    iconClassName: "size-4 text-red-500",
+  },
+  {
+    value: IssueType.TASK,
+    label: "Task",
+    icon: MdTaskAlt,
+    iconClassName: "size-4 text-blue-500",
+  },
+  {
+    value: IssueType.STORY,
+    label: "Story",
+    icon: MdBookmark,
+    iconClassName: "size-4 text-green-500",
+  },
+] as const;
+
+export const issueStatusOptions = [
+  { value: IssueStatus.TODO, label: "To Do" },
+  { value: IssueStatus.IN_PROGRESS, label: "In Progress" },
+  { value: IssueStatus.IN_REVIEW, label: "In Review" },
+  { value: IssueStatus.DONE, label: "Done" },
+] as const;
+
+export const issuePriorityOptions = [
+  { value: IssuePriority.LOW, label: "Low" },
+  { value: IssuePriority.MEDIUM, label: "Medium" },
+  { value: IssuePriority.HIGH, label: "High" },
+] as const;
+
 const taskSchema = z.object({
   type: z.enum([IssueType.BUG, IssueType.TASK, IssueType.STORY]),
   status: z.enum([
@@ -150,7 +187,7 @@ export const ModalCreateTask = () => {
       <DialogTrigger asChild>
         <Button
           size="lg"
-          disabled={!projectId || isRoleLoading || isViewer}
+          disabled={false}
           className="text-base px-6 py-4 font-semibold text-center sm:text-lg bg-blue-600 hover:bg-blue-800"
         >
           <FaPlus />

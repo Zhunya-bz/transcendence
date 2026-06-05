@@ -10,7 +10,7 @@ import {
 } from '@nestjs/swagger';
 
 import {
-  ApiErrorResponseDto,
+  IssueApiErrorResponseDto,
   IssueDetailResponseDto,
   IssueResponseDto,
 } from '../dto/issues-swagger.dto';
@@ -25,7 +25,7 @@ export const ApiGetProjectIssues = applyDecorators(
   ApiOkResponse({ type: IssueResponseDto, isArray: true }),
   ApiNotFoundResponse({
     description: 'Project not found or user is not a member',
-    type: ApiErrorResponseDto,
+    type: IssueApiErrorResponseDto,
   }),
 );
 
@@ -36,7 +36,7 @@ export const ApiGetIssue = applyDecorators(
   ApiOkResponse({ type: IssueDetailResponseDto }),
   ApiNotFoundResponse({
     description: 'Issue not found or user is not a member',
-    type: ApiErrorResponseDto,
+    type: IssueApiErrorResponseDto,
   }),
 );
 
@@ -47,7 +47,7 @@ export const ApiCreateIssue = applyDecorators(
   ApiCreatedResponse({ type: IssueResponseDto }),
   ApiBadRequestResponse({
     description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
+    type: IssueApiErrorResponseDto,
   }),
 );
 
@@ -59,11 +59,11 @@ export const ApiUpdateIssue = applyDecorators(
   ApiOkResponse({ type: IssueResponseDto }),
   ApiBadRequestResponse({
     description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
+    type: IssueApiErrorResponseDto,
   }),
   ApiNotFoundResponse({
     description: 'Issue not found or user is not a member',
-    type: ApiErrorResponseDto,
+    type: IssueApiErrorResponseDto,
   }),
 );
 
@@ -75,11 +75,11 @@ export const ApiUpdateIssueStatus = applyDecorators(
   ApiOkResponse({ type: IssueResponseDto }),
   ApiBadRequestResponse({
     description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
+    type: IssueApiErrorResponseDto,
   }),
   ApiNotFoundResponse({
     description: 'Issue not found or user is not a member',
-    type: ApiErrorResponseDto,
+    type: IssueApiErrorResponseDto,
   }),
 );
 
@@ -91,11 +91,11 @@ export const ApiAssignIssue = applyDecorators(
   ApiOkResponse({ type: IssueResponseDto }),
   ApiBadRequestResponse({
     description: 'Validation error in request body',
-    type: ApiErrorResponseDto,
+    type: IssueApiErrorResponseDto,
   }),
   ApiNotFoundResponse({
     description: 'Issue not found or user is not a member',
-    type: ApiErrorResponseDto,
+    type: IssueApiErrorResponseDto,
   }),
 );
 
@@ -106,6 +106,6 @@ export const ApiDeleteIssue = applyDecorators(
   ApiOkResponse({ type: IssueResponseDto }),
   ApiNotFoundResponse({
     description: 'Issue not found or user is not a member',
-    type: ApiErrorResponseDto,
+    type: IssueApiErrorResponseDto,
   }),
 );
