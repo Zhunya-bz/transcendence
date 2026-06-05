@@ -25,7 +25,7 @@ export const signin = async (data: { email: string; password: string }) => {
     }
 
     const result = await response.json();
-console.log("Login result:", result);
+
     if (result.require2FA) {
       // Store the temp token in a cookie for the 2FA verification step
       (await cookies()).set("token", result.tempToken, {
@@ -39,15 +39,15 @@ console.log("Login result:", result);
     } else {
       const { accessToken } = result;
 
-    (await cookies()).set("token", accessToken, {
-      httpOnly: true,
-      secure: false, // true if you're using HTTPS
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-    redirect("/projects");
-  }
+      (await cookies()).set("token", accessToken, {
+        httpOnly: true,
+        secure: false, // true if you're using HTTPS
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+      });
+      redirect("/projects");
+    }
   } catch (error) {
     console.error(error);
     throw error;
@@ -92,7 +92,7 @@ export const signup = async (data: {
 };
 
 export const logout = async () => {
-    (await cookies()).delete("token");
-  };
+  (await cookies()).delete("token");
+};
 
 

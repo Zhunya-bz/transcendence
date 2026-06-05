@@ -207,12 +207,26 @@ export class AuthController {
   })
   @Public()
   @Post('2fa/verify')
-  verifyTwoFactor(@Request() req, @Body('code') code: string) {
-    const token = req?.cookies?.['token'];
-    if (!token) {
+  async verifyTwoFactor(
+    @Request() req,
+    @Res({ passthrough: true }) res: Response,
+    @Body('code') code: string,
+  ) {
+    const tempToken = req?.cookies?.['token'];
+    if (!tempToken) {
       throw new UnauthorizedException('Missing verification token');
     }
-    return this.authService.verifyTwoFactorCode(token, code);
+    const newToken = await this.authService.verifyTwoFactorCode(tempToken, code);
+
+    res.cookie('token', newToken.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return newToken;
   }
 
 }
