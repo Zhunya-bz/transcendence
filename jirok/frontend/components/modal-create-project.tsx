@@ -43,16 +43,16 @@ export const ModalCreateProject = ({ projectId }: Props) => {
   };
 
   return (
-    <div className="flex flex-col gap-y-2 px-3 py-3 rounded-md bg-neutral-100 mb-3">
+    <div className="mb-3 flex flex-col gap-y-2 rounded-md border border-border bg-muted px-3 py-3">
       <div className="flex items-center justify-between">
         <Link
           href="/projects"
-          className="group flex min-w-0 flex-1 flex-col gap-1 rounded-md px-2 py-1 transition hover:bg-orange-100"
+          className="group flex min-w-0 flex-1 flex-col gap-1 rounded-md px-2 py-1 transition hover:bg-background/80"
         >
-          <p className="text-sm uppercase text-neutral-500 transition group-hover:text-orange-600">
+          <p className="text-sm uppercase text-muted-foreground transition group-hover:text-foreground">
             Project
           </p>
-          <p className="truncate pl-2 text-sm font-semibold text-neutral-700 transition group-hover:text-orange-600">
+          <p className="truncate pl-2 text-sm font-semibold text-foreground transition group-hover:text-foreground">
             {currentProject?.name || "No project selected"}
           </p>
         </Link>
@@ -61,7 +61,7 @@ export const ModalCreateProject = ({ projectId }: Props) => {
             <button
               type="button"
               aria-label="Create project"
-              className="flex size-8 shrink-0 items-center justify-center rounded-md text-neutral-500 transition hover:text-blue-500 hover:opacity-100"
+              className="flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground hover:opacity-100"
             >
               <RiAddCircleFill className="size-5" />
             </button>

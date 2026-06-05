@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { UserButton } from "./UserButton";
 import { MobileSidebar } from "./MobileSidebar";
 import { ModalCreateTask } from "./modal-create-task";
+import { ThemeToggle } from "./theme-toggle";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -13,7 +14,7 @@ export default function Navbar() {
   const hideCreateTaskButton = isProjectsPage || isProfilePage;
 
   return (
-    <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
         <MobileSidebar />
         <div className="hidden lg:flex items-center space-x-2">
@@ -25,10 +26,11 @@ export default function Navbar() {
               alt="Icon Jirok"
             />
           </Link>
-          <span className="text-xl font-bold text-gray-900">Jirok</span>
+          <span className="text-xl font-bold text-foreground">Jirok</span>
         </div>
         <div>{!hideCreateTaskButton && <ModalCreateTask />}</div>
         <div className="flex items-center space-x-2 sm:space-x-4">
+          <ThemeToggle />
           <UserButton />
         </div>
       </div>
