@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const parseError = async (response: Response, fallbackMessage: string) => {
   const message = await response.json();
@@ -23,7 +24,20 @@ export const signin = async (data: { email: string; password: string }) => {
       throw new Error(await parseError(response, "Failed to login"));
     }
 
-    const { accessToken } = await response.json();
+    const result = await response.json();
+console.log("Login result:", result);
+    if (result.require2FA) {
+      // Store the temp token in a cookie for the 2FA verification step
+      (await cookies()).set("token", result.tempToken, {
+        httpOnly: true,
+        secure: false, // true if you're using HTTPS
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 5, // 5 minutes
+      });
+      redirect("/login-2fa");
+    } else {
+      const { accessToken } = result;
 
     (await cookies()).set("token", accessToken, {
       httpOnly: true,
@@ -32,6 +46,8 @@ export const signin = async (data: { email: string; password: string }) => {
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
+    redirect("/projects");
+  }
   } catch (error) {
     console.error(error);
     throw error;
@@ -78,3 +94,5 @@ export const signup = async (data: {
 export const logout = async () => {
     (await cookies()).delete("token");
   };
+
+
