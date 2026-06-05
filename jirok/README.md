@@ -260,3 +260,5 @@ Total: 18 points
 
 ### AI usage
 
+- used to help identify bugs (retroactivly and proactivly)
+- used to synthesis docs
