@@ -5,18 +5,20 @@ import { getBacklogTasks} from "@/actions/issues";
 import { getProjectMembers } from "@/actions/members";
 import { useQuery } from "@tanstack/react-query";
 import { use, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { TasksTable } from "@/components/TaskTable";
 import { Issue, type UserProject } from "@/types/prisma";
 
 interface BacklogPageProps {
   params: Promise<{ projectId: string; projectKey: string }>;
+  searchParams: Promise<{ assignee?: string }>;
 }
 
-export default function BacklogPage({ params }: BacklogPageProps) {
+export default function BacklogPage({ params, searchParams }: BacklogPageProps) {
   const { projectId, projectKey } = use(params);
-  const searchParams = useSearchParams();
-  const assigneeFilter = searchParams.get("assignee");
+  
+  // Unwrap searchParams using the `use` hook
+  const resolvedSearchParams = use(searchParams);
+  const assigneeFilter = resolvedSearchParams?.assignee;
 
   const LIMIT = 10;
   const [visible, setVisible] = useState(LIMIT);

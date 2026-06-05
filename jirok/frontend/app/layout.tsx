@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter", // css variable
+  preload: false, // disables fetching at build time
 });
 
 export const metadata: Metadata = {

@@ -49,7 +49,11 @@ export default function SignUp() {
   });
   const mutation = useMutation({
     mutationFn: signup,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data?.error) {
+        toast.error(data?.error);
+        return;
+      }
       toast.success("Done");
       router.push("/setup-2fa");
     },

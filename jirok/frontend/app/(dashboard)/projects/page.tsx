@@ -20,7 +20,6 @@ export default function ProjectPage() {
 
   useEffect(() => {
     if (isError) {
-      console.log(error.message);
       toast.error(error.message);
     }
   }, [isError, error]);

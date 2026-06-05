@@ -40,7 +40,7 @@ export default function SignIn() {
     mutationFn: signin,
     onSuccess: (data) => {
       toast.success("Done!");
-      router.replace(data.redirectTo);
+      router.replace(data.redirectTo || "/projects");
     },
     onError: (error) => toast.error(error.message || "An error occurred during login"),
   });

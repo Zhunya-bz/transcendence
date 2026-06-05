@@ -44,7 +44,6 @@ export const CreateProject = ({ onProjectCreated }: Props) => {
       onProjectCreated?.();
     },
     onError: (error) => {
-      console.log(error.message);
       toast.error(error.message);
     },
   });

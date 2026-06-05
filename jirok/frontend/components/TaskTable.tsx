@@ -7,51 +7,50 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { type TaskItem } from "@/actions/issues";
-import { IssuePriority, IssueStatus, IssueType, type UserProject } from "@/types/prisma";
+import { Issue, IssuePriority, IssueStatus, IssueType, type UserProject } from "@/types/prisma";
 import { MdBookmark, MdBugReport, MdTaskAlt } from "react-icons/md";
 import Link from "next/link";
 
 interface TasksTableProps {
-  tasks: TaskItem[];
+  tasks: Issue[];
   members: UserProject[];
   projectId: string;
   projectKey: string;
 }
 
-  export const getTypeClasses = (type: TaskItem["type"]) => {
+  export const getTypeClasses = (type: Issue["type"]) => {
     if (type === IssueType.BUG) return "text-red-600";
     if (type === IssueType.STORY) return "text-green-600";
     return "text-blue-600";
   };
 
-  export const getTypeIcon = (type: TaskItem["type"]) => {
+  export const getTypeIcon = (type: Issue["type"]) => {
     if (type === IssueType.BUG) return MdBugReport;
     if (type === IssueType.STORY) return MdBookmark;
     return MdTaskAlt;
   };
 
-  export const getStatusClasses = (status: TaskItem["status"]) => {
+  export const getStatusClasses = (status: Issue["status"]) => {
     if (status === IssueStatus.DONE) return "bg-green-100 text-green-700";
     if (status === IssueStatus.IN_PROGRESS) return "bg-orange-50 text-orange-700";
     if (status === IssueStatus.IN_REVIEW) return "bg-blue-50 text-blue-700";
     return "bg-gray-100 text-gray-700";
   };
 
-  export const getPriorityClasses = (priority: TaskItem["priority"]) => {
+  export const getPriorityClasses = (priority: Issue["priority"]) => {
     if (priority === IssuePriority.HIGH) return "bg-red-50 text-red-700";
     if (priority === IssuePriority.MEDIUM) return "bg-violet-50 text-violet-600";
     return "bg-lime-50 text-lime-700";
   };
 
-  export const getStatusLabel = (status: TaskItem["status"]) => {
+  export const getStatusLabel = (status: Issue["status"]) => {
     if (status === IssueStatus.TODO) return "To Do";
     if (status === IssueStatus.IN_PROGRESS) return "In Progress";
     if (status === IssueStatus.IN_REVIEW) return "In Review";
     return "Done";
   };
 
-  export const getPriorityLabel = (priority: TaskItem["priority"]) => {
+  export const getPriorityLabel = (priority: Issue["priority"]) => {
     if (priority === IssuePriority.HIGH) return "High";
     if (priority === IssuePriority.MEDIUM) return "Medium";
     return "Low";
@@ -150,7 +149,7 @@ export const TasksTable = ({
                   </span>
                 </TableCell>
                 <TableCell className="hidden sm:table-cell">
-                  {dateFormatter.format(new Date(task.created))}
+                  {task.created && dateFormatter.format(new Date(task.created))}
                 </TableCell>
               </TableRow>
             );

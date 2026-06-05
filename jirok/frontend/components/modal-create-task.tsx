@@ -165,7 +165,6 @@ export const ModalCreateTask = () => {
   });
 
   const handleSubmit = (values: TaskFormValues) => {
-    console.log("values", values);
     mutation.mutate({
       projectId: Number(projectId),
       title: values.title,
@@ -178,7 +177,6 @@ export const ModalCreateTask = () => {
       reporterId: Number(values.reporterId),
     });
 
-    // console.log("Create task payload", { ...values, reporterId });
     setOpen(false);
   };
 

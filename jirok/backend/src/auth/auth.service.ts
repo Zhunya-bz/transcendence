@@ -177,12 +177,10 @@ export class AuthService {
 
     //2FA
     async generateTwoFactorSecret(userId: number) {
-      console.log("Generating 2FA secret for user ID:", userId);
         const user = await this.userService.findOne(userId);
         if (!user) {
             throw new NotFoundException('User not found');
         }
-        console.log("Generating 2FA secret for user:", user.email);
 
         const secret = authenticator.generateSecret();
 
@@ -194,8 +192,6 @@ export class AuthService {
         const otpauthUrl = authenticator.keyuri(user.email, 'Jirok', secret);
 
         const qrCodeDataUrl = await QRCode.toDataURL(otpauthUrl);
-        console.log("Generated 2FA secret:", secret);
-        console.log("QR Code Data URL:", qrCodeDataUrl);
 
         return { qrCodeDataUrl, secret };
     }

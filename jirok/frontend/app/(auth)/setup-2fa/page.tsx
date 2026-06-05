@@ -37,7 +37,6 @@ export default function Setup2FA() {
     queryFn: generate2FA,
     retry: false,
   });
-  console.log("2FA QR code data:", data);
 
   const enableMutation = useMutation({
     mutationFn: enable2FA,
@@ -54,7 +53,7 @@ export default function Setup2FA() {
     const parsed = otpSchema.safeParse(otp);
 
     if (!parsed.success) {
-      toast.error(parsed.error.errors[0].message);
+      toast.error(parsed.error.issues[0].message);
       return;
     }
 

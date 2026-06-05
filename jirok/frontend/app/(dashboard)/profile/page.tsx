@@ -1,10 +1,11 @@
 "use client";
+import { Suspense } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { getCurrentMe } from "@/actions/current-user";
 import { ProfileContent } from "@/components/ProfileContent";
 
-export default function ProfilePage() {
+function ProfilePageInner() {
   const queryClient = useQueryClient();
 
   const { data: user } = useQuery({
@@ -20,5 +21,13 @@ export default function ProfilePage() {
         queryClient.invalidateQueries({ queryKey: ["currentUser"] })
       }
     />
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={null}>
+      <ProfilePageInner />
+    </Suspense>
   );
 }

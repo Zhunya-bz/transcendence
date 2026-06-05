@@ -2,17 +2,32 @@
 
 import { cookies } from "next/headers";
 
-export const parseError = async (
-  response: Response,
-  fallbackMessage: string,
-) => {
-  const message = await response.json();
-  return message.message
-    ? message.message
-    : `${response.status}: ${response.statusText}` || fallbackMessage;
+export type AuthResponse = {
+  success: boolean;
+  redirectTo?: string; // Optional, only exists on success
+  error?: string;      // Optional, only exists on failure
 };
 
-export const signin = async (data: { email: string; password: string }) => {
+export const parseError = async (response: Response, fallbackMessage: string) :Promise<AuthResponse> => {
+  try {
+    // 1. Check if the backend actually sent JSON before trying to parse it
+    const contentType = response.headers.get("content-type");
+    
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+      return { success: false, error: data.message || `${response.status}: ${response.statusText}` };
+    }
+
+    // 2. Fallback for HTML/Text error pages (e.g., 502 Bad Gateway)
+    const textData = await response.text();
+    return { success: false, error: textData ? `${response.status}: ${textData}` : fallbackMessage };
+    
+  } catch (error) {
+    return { success: false, error: fallbackMessage };
+  }
+};
+
+export const signin = async (data: { email: string; password: string }) :Promise<AuthResponse> => {
   try {
     const response = await fetch("http://backend:3001/auth/login", {
       method: "POST",
@@ -24,7 +39,8 @@ export const signin = async (data: { email: string; password: string }) => {
     });
 
     if (!response.ok) {
-      throw new Error(await parseError(response, "Failed to login"));
+      const errorMessage = await parseError(response, "Failed to login");
+      return errorMessage;
     }
 
     const result = await response.json();
@@ -67,7 +83,7 @@ export const signup = async (data: {
   name: string;
   email: string;
   password: string;
-}) => {
+}) :Promise<AuthResponse> => {
   try {
     const response = await fetch("http://backend:3001/auth/signup", {
       method: "POST",
@@ -79,7 +95,8 @@ export const signup = async (data: {
     });
 
     if (!response.ok) {
-      throw new Error(await parseError(response, "Failed to sign up"));
+      const errorMessage = await parseError(response, "Failed to sign up");
+      return errorMessage;
     }
 
     const { accessToken } = await response.json();
@@ -91,6 +108,7 @@ export const signup = async (data: {
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
+    return { success: true };
   } catch (error) {
     console.error(error);
     throw error;

@@ -1,5 +1,5 @@
 "use client";
-import { AiFillProject, AiOutlineProject } from "react-icons/ai";
+import { Suspense } from "react"; 
 import { PiListChecks, PiListChecksFill } from "react-icons/pi";
 import {
   MdOutlineSpaceDashboard,
@@ -56,7 +56,8 @@ interface NavigationProps {
   onNavigate?: () => void;
 }
 
-export const Navigation = ({ onNavigate }: NavigationProps) => {
+// 1. Rename your original component logic to "NavigationContent"
+const NavigationContent = ({ onNavigate }: NavigationProps) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const projectIdMatch = pathname.match(/\/projects\/(\d+)\/([^\/]+)/);
@@ -119,5 +120,14 @@ export const Navigation = ({ onNavigate }: NavigationProps) => {
         })}
       </ul>
     </>
+  );
+};
+// 2. Export a new Navigation component that wraps the content in Suspense
+export const Navigation = (props: NavigationProps) => {
+  return (
+    // You can replace the null fallback with a skeleton loader or a simplified navbar if you prefer
+    <Suspense fallback={null}> 
+      <NavigationContent {...props} />
+    </Suspense>
   );
 };
