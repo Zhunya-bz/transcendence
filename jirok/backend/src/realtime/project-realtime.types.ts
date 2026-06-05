@@ -1,22 +1,28 @@
-export type ProjectSubscriptionClientMessage = (
+export type ProjectSubscriptionClientMessage =
   | {
-    type: 'subscribe';
-    projectId: number;
-  } | {
-    type: 'unsubscribe';
-    projectId: number;
-  } | {
-    type: 'ping';
-  }
-)
+      type: 'subscribe';
+      projectId: number;
+    }
+  | {
+      type: 'unsubscribe';
+      projectId: number;
+    }
+  | {
+      type: 'ping';
+    };
 
-export type ProjectRealtimeEventType = (
+export type ProjectRealtimeEventType =
   | 'issue.created'
   | 'issue.updated'
   | 'issue.status.updated'
   | 'issue.assigned'
-  | 'issue.deleted'
-)
+  | 'issue.deleted';
+
+export type ProjectRealtimeServerPresenceMessage = {
+  type: 'presence.snapshot';
+  projectId: number;
+  onlineUserIds: number[];
+};
 
 export interface ProjectRealtimeEvent<T = unknown> {
   type: ProjectRealtimeEventType;
@@ -26,9 +32,17 @@ export interface ProjectRealtimeEvent<T = unknown> {
 }
 
 export interface ProjectRealtimeServerMessage<T = unknown> {
-  type: 'ready' | 'subscribed' | 'unsubscribed' | 'pong' | 'event' | 'error';
+  type:
+    | 'ready'
+    | 'subscribed'
+    | 'unsubscribed'
+    | 'pong'
+    | 'event'
+    | 'presence.snapshot'
+    | 'error';
   projectId?: number;
   userId?: number;
   message?: string;
   event?: ProjectRealtimeEvent<T>;
+  onlineUserIds?: number[];
 }

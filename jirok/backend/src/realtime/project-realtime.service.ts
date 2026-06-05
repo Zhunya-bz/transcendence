@@ -23,6 +23,7 @@ export class ProjectRealtimeService implements OnModuleDestroy {
   private server: WebSocketServer | null = null;
   private readonly sockets = new Map<WebSocket, ProjectSocketContext>();
   private readonly projectSubscribers = new Map<number, Set<WebSocket>>();
+  private readonly projectPresence = new Map<number, Map<number, number>>();
 
   constructor(
     private readonly prisma: PrismaService,
@@ -54,7 +55,13 @@ export class ProjectRealtimeService implements OnModuleDestroy {
       });
 
       socket.on('message', (data) => {
-        void this.handleMessage(socket, data.toString());
+        const rawMessage = Buffer.isBuffer(data)
+          ? data.toString('utf8')
+          : Array.isArray(data)
+            ? Buffer.concat(data).toString('utf8')
+            : Buffer.from(data as ArrayBufferLike).toString('utf8');
+
+        void this.handleMessage(socket, rawMessage);
       });
 
       socket.on('close', () => {
@@ -201,9 +208,13 @@ export class ProjectRealtimeService implements OnModuleDestroy {
 
     context.projects.add(projectId);
 
-    const subscribers = this.projectSubscribers.get(projectId) ?? new Set<WebSocket>();
+    const subscribers =
+      this.projectSubscribers.get(projectId) ?? new Set<WebSocket>();
     subscribers.add(socket);
     this.projectSubscribers.set(projectId, subscribers);
+
+    this.incrementPresence(projectId, userId);
+    this.broadcastPresence(projectId);
 
     this.send(socket, {
       type: 'subscribed',
@@ -225,6 +236,9 @@ export class ProjectRealtimeService implements OnModuleDestroy {
       this.projectSubscribers.delete(projectId);
     }
 
+    this.decrementPresence(projectId, context.userId);
+    this.broadcastPresence(projectId);
+
     this.send(socket, {
       type: 'unsubscribed',
       projectId,
@@ -244,9 +258,57 @@ export class ProjectRealtimeService implements OnModuleDestroy {
       if (subscribers && subscribers.size === 0) {
         this.projectSubscribers.delete(projectId);
       }
+
+      this.decrementPresence(projectId, context.userId);
+      this.broadcastPresence(projectId);
     }
 
     this.sockets.delete(socket);
+  }
+
+  private incrementPresence(projectId: number, userId: number) {
+    const projectPresence =
+      this.projectPresence.get(projectId) ?? new Map<number, number>();
+    const nextCount = (projectPresence.get(userId) ?? 0) + 1;
+    projectPresence.set(userId, nextCount);
+    this.projectPresence.set(projectId, projectPresence);
+  }
+
+  private decrementPresence(projectId: number, userId: number) {
+    const projectPresence = this.projectPresence.get(projectId);
+    if (!projectPresence) {
+      return;
+    }
+
+    const currentCount = projectPresence.get(userId) ?? 0;
+    if (currentCount <= 1) {
+      projectPresence.delete(userId);
+    } else {
+      projectPresence.set(userId, currentCount - 1);
+    }
+
+    if (projectPresence.size === 0) {
+      this.projectPresence.delete(projectId);
+    }
+  }
+
+  private broadcastPresence(projectId: number) {
+    const subscribers = this.projectSubscribers.get(projectId);
+    if (!subscribers || subscribers.size === 0) {
+      return;
+    }
+
+    const onlineUserIds = Array.from(
+      this.projectPresence.get(projectId)?.keys() ?? [],
+    );
+
+    for (const socket of subscribers) {
+      this.send(socket, {
+        type: 'presence.snapshot',
+        projectId,
+        onlineUserIds,
+      });
+    }
   }
 
   private send<T>(socket: WebSocket, message: ProjectRealtimeServerMessage<T>) {
@@ -288,7 +350,9 @@ export class ProjectRealtimeService implements OnModuleDestroy {
       return authorization.slice('Bearer '.length);
     }
 
-    const requestUrl = request.url ? new URL(request.url, 'http://localhost') : null;
+    const requestUrl = request.url
+      ? new URL(request.url, 'http://localhost')
+      : null;
     const queryToken = requestUrl?.searchParams.get('token');
     if (queryToken) {
       return queryToken;

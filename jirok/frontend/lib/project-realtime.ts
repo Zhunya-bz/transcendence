@@ -22,11 +22,19 @@ export interface ProjectRealtimeEvent<T = unknown> {
 }
 
 export interface ProjectRealtimeServerMessage<T = unknown> {
-  type: "ready" | "subscribed" | "unsubscribed" | "pong" | "event" | "error";
+  type:
+    | "ready"
+    | "subscribed"
+    | "unsubscribed"
+    | "pong"
+    | "event"
+    | "presence.snapshot"
+    | "error";
   projectId?: number;
   userId?: number;
   message?: string;
   event?: ProjectRealtimeEvent<T>;
+  onlineUserIds?: number[];
 }
 
 export function getProjectRealtimeUrl() {

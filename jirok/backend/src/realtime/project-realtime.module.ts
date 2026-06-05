@@ -7,7 +7,7 @@ import { ProjectRealtimeService } from './project-realtime.service';
   imports: [
     PrismaModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
+      secret: process.env.JWT_SECRET || 'fallback-secret',
     }),
   ],
   providers: [ProjectRealtimeService],
