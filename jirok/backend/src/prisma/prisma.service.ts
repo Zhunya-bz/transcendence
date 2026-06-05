@@ -34,15 +34,6 @@ export class PrismaService
   private readonly logger = new Logger(PrismaService.name);
 
   async onModuleInit() {
-    this.$on('query' as never, (event: any) => {
-      this.logger.debug(`Query: ${event.query}`);
-      this.logger.debug(`Params: ${event.params}`);
-      this.logger.debug(`Duration: ${event.duration}ms`);
-    });
-
-    this.$on('info' as never, (event: any) => {
-      this.logger.log(event.message);
-    });
 
     this.$on('warn' as never, (event: any) => {
       this.logger.warn(event.message);

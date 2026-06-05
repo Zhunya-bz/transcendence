@@ -1,13 +1,13 @@
 "use client";
 
 import { getCurrentMe } from "@/actions/current-user";
-import { getBacklogTasks, type TaskItem } from "@/actions/issues";
+import { getBacklogTasks} from "@/actions/issues";
 import { getProjectMembers } from "@/actions/members";
 import { useQuery } from "@tanstack/react-query";
 import { use, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { TasksTable } from "@/components/TaskTable";
-import { type UserProject } from "@/types/prisma";
+import { Issue, type UserProject } from "@/types/prisma";
 
 interface BacklogPageProps {
   params: Promise<{ projectId: string; projectKey: string }>;
@@ -21,7 +21,7 @@ export default function BacklogPage({ params }: BacklogPageProps) {
   const LIMIT = 10;
   const [visible, setVisible] = useState(LIMIT);
 
-  const { data, isLoading, isError } = useQuery<TaskItem[]>({
+  const { data, isLoading, isError } = useQuery<Issue[]>({
     queryKey: ["backlog", projectId],
     queryFn: () => getBacklogTasks(projectId),
   });

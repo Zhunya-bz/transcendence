@@ -5,6 +5,7 @@ import {
   IssuePriority,
   IssueStatus,
   IssueType,
+  User,
 } from "@/types/prisma";
 import { useQuery } from "@tanstack/react-query";
 import { use, type ReactNode } from "react";
@@ -46,12 +47,12 @@ export default function OverviewPage({ params }: OverviewPageProps) {
     queryFn: () => getProjectActivity(projectId),
   });
 
-  const statusCounts = activity?.statusCounts ?? {};
-  const typeCounts = activity?.typeCounts ?? {};
-  const priorityCounts = activity?.priorityCounts ?? {};
-  const assigneeCounts = activity?.assigneeCounts ?? [];
+  const statusCounts: Partial<Record<IssueStatus, number>> = activity?.statusCounts ?? {};
+  const typeCounts: Partial<Record<IssueType, number>> = activity?.typeCounts ?? {};
+  const priorityCounts: Partial<Record<IssuePriority, number>> = activity?.priorityCounts ?? {};
+const assigneeCounts: { user: User | null; count: number }[] = activity?.assigneeCounts ?? [];
 
-  const totalTasks = Object.values(statusCounts).reduce((sum, count) => sum + count, 0);
+  const totalTasks = Object.values(statusCounts).reduce((sum: number, count) => sum + (count ?? 0), 0);
   const doneTasks = statusCounts[IssueStatus.DONE] ?? 0;
   const memberCount = assigneeCounts.length > 0 ? assigneeCounts.length - 1 : 0;
   const completionPercent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
@@ -174,7 +175,6 @@ function MetricCard({
   title: string;
   value: string | number;
   subtitle: string;
-  tone: "blue" | "green" | "orange" | "violet";
 }) {
 
   return (
