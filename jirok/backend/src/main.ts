@@ -10,6 +10,10 @@ import { WebSocketServer } from 'ws';
 import { ProjectRealtimeService } from './realtime/project-realtime.service';
 
 async function bootstrap() {
+  if (!process.env.JWT_SECRET) {
+    console.error('FATAL ERROR: JWT_SECRET is not defined in .env');
+    process.exit(1);
+  }
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.enableCors({

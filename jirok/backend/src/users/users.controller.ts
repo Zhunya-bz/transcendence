@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Put, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Body, Put, Param, Delete, Query, Request, ForbiddenException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
@@ -34,9 +34,12 @@ export class UsersController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    console.log("Received update request for user ID:", id);
-    console.log("Update data:", updateUserDto);
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Request() req) {
+    if (req.user.userId !== +id) {
+      throw new ForbiddenException("You can only update your own profile");
+    }
+    // console.log("Received update request for user ID:", id);
+    // console.log("Update data:", updateUserDto);
     return this.usersService.update(+id, updateUserDto);
   }
 
@@ -83,7 +86,11 @@ export class UsersController {
   async uploadAvatar(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
+    @Request() req,
   ) {
+    if (req.user.userId !== +id) {
+      throw new ForbiddenException('You can only modify your own avatar');
+    }
     if (!file) {
       throw new BadRequestException('File required');
     }
@@ -94,7 +101,10 @@ export class UsersController {
 
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string, @Request() req) {
+    if (req.user.userId !== +id) {
+      throw new ForbiddenException('You can only delete your own account');
+    }
     return this.usersService.remove(+id);
   }
 }
