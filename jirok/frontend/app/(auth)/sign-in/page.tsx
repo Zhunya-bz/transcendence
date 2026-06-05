@@ -38,9 +38,9 @@ export default function SignIn() {
 
   const mutation = useMutation({
     mutationFn: signin,
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success("Done!");
-      // router.replace("/projects");
+      router.replace(data.redirectTo);
     },
     onError: (error) => toast.error(error.message || "An error occurred during login"),
   });

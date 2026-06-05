@@ -1,13 +1,16 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
-export const parseError = async (response: Response, fallbackMessage: string) => {
+export const parseError = async (
+  response: Response,
+  fallbackMessage: string,
+) => {
   const message = await response.json();
-  return message.message ? message.message : `${response.status}: ${response.statusText}` || fallbackMessage;
+  return message.message
+    ? message.message
+    : `${response.status}: ${response.statusText}` || fallbackMessage;
 };
-
 
 export const signin = async (data: { email: string; password: string }) => {
   try {
@@ -31,22 +34,28 @@ export const signin = async (data: { email: string; password: string }) => {
       (await cookies()).set("token", result.tempToken, {
         httpOnly: true,
         secure: false, // true if you're using HTTPS
-        sameSite: 'lax',
-        path: '/',
+        sameSite: "lax",
+        path: "/",
         maxAge: 60 * 5, // 5 minutes
       });
-      redirect("/login-2fa");
+      return {
+        success: true,
+        redirectTo: "/login-2fa",
+      };
     } else {
       const { accessToken } = result;
 
       (await cookies()).set("token", accessToken, {
         httpOnly: true,
         secure: false, // true if you're using HTTPS
-        sameSite: 'lax',
-        path: '/',
+        sameSite: "lax",
+        path: "/",
         maxAge: 60 * 60 * 24 * 7, // 7 days
       });
-      redirect("/projects");
+      return {
+        success: true,
+        redirectTo: "/projects",
+      };
     }
   } catch (error) {
     console.error(error);
@@ -69,8 +78,6 @@ export const signup = async (data: {
       credentials: "include",
     });
 
-
-
     if (!response.ok) {
       throw new Error(await parseError(response, "Failed to sign up"));
     }
@@ -80,11 +87,10 @@ export const signup = async (data: {
     (await cookies()).set("token", accessToken, {
       httpOnly: true,
       secure: false, // true if you're using HTTPS
-      sameSite: 'lax',
-      path: '/',
+      sameSite: "lax",
+      path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
-
   } catch (error) {
     console.error(error);
     throw error;
@@ -94,5 +100,3 @@ export const signup = async (data: {
 export const logout = async () => {
   (await cookies()).delete("token");
 };
-
-
