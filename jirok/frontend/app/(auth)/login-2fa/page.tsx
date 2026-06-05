@@ -44,7 +44,7 @@ export default function Verify2FA() {
       return;
     }
 
-    mutation.mutate(code);
+    mutation.mutate({ code });
   };
 
   return (

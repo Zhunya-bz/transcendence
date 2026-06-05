@@ -43,10 +43,8 @@ export async function enable2FA(code: string) {
 
 export async function verify2FA({
   code,
-  tempToken,
 }: {
   code: string;
-  tempToken: string;
 }) {
   const response = await fetch(
     getBackendUrl(`/auth/2fa/verify`),
@@ -54,7 +52,6 @@ export async function verify2FA({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${tempToken}`,
       },
       credentials: "include",
       body: JSON.stringify({
