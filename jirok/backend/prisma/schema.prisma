@@ -73,6 +73,8 @@ model User {
 	changedIssues			Issue[]			@relation("ChangedIssues")
 	notifications			Notification[]	@relation("UserNotifications")
 	triggeredNotifications	Notification[]	@relation("TriggeredNotifications")
+	twoFactorSecret			String?			@map("two_factor_secret")
+	isTwoFactorEnabled		Boolean			@default(false) @map("is_two_factor_enabled")
 
 	@@map("users")
 }
