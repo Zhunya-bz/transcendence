@@ -93,30 +93,25 @@ npm run dev
 - Frontend: `http://localhost:3000`
 - Backend API: `http://localhost:3001`
 - Backend Swagger docs: `http://localhost:3001/docs`
-- WebSocket project stream: `ws://localhost:3001/ws/projects`
 
 ## Team Information
 
-| Member | Assigned role(s) | Responsibilities |
-| --- | --- | --- |
-| ekanaeva | TBD | TBD |
-| altoulle | TBD | TBD |
-| fmoses | TBD | TBD |
-| rdalal | TBD | TBD |
+| Member   | Assigned role(s)                    |
+| -------- | ----------------------------------- |
+| ekanaeva | Product Owner + Frontend Developer  |
+| altoulle | Project Manager + Backend Developer |
+| fmoses   | Technical Lead + Frontend Developer |
+| rdalal   | Backend Developer + DevOps          |
+
+The original project idea & design came from ekanaeva & altoulle. fmoses & rdalal joined later and contributed to discussions on technical choices and architecture.
 
 ## Project Management
 
-Draft summary of the workflow:
-
-- Work was split by feature area so frontend and backend changes could move in parallel.
-- Git branches and merge requests were used to integrate changes incrementally.
-- Prisma migrations were used to keep database changes versioned and reproducible.
-- Docker Compose was used to keep the local environment consistent across team members.
-
-- Task distribution: TBD
-- Meetings / sync cadence: TBD
-- Communication channel(s): TBD
-- Tracking tool(s): TBD
+- Project Managment: We used jira to create tasks (sadly we had not yet implemented Jirok, otherwise we would have used it).
+- Task distribution: We split up between frontend and backend developers. Each developer would take a new task from the backlog and work on it.
+- Meetings / sync cadence: We meet every Tuesday at 13h30
+- Communication channel: Discord group chat, fairly frequent 
+- Code Managment: We used github. Each ticket had it's own branch and all changes must be done in a pull request.
 
 ## Technical Stack
 
@@ -167,7 +162,7 @@ erDiagram
   Project ||--o{ ApiKey : uses
 ```
 
-### Main tables
+### Tables
 
 - `users`
   - Stores profile data, authentication data, 2FA settings, and avatar information.
@@ -219,8 +214,7 @@ erDiagram
 | A public API to interact with the database with a secured API key, rate
 limiting, documentation, and at least 5 endpoints | 2 |
 | Use an ORM for the database | 1 |
-| Custom-made design system with reusable components, including a proper
-color palette, typography, and icons | 1 | 
+| Custom-made design system | 1 | 
 | Support for additional browsers | 1 |
 | Standard user management and authentication | 2 |
 | Implement remote authentication with OAuth 2.0 (Google, GitHub, 42,
@@ -243,12 +237,12 @@ Total: 18 points
 
 ## Individual Contributions
 
-| Member | Main contribution areas | Challenges / notes |
-| --- | --- | --- |
+| Member   | Main contribution areas | Challenges / notes |
+| -------- | --- | --- |
 | ekanaeva | TBD | TBD |
 | altoulle | TBD | TBD |
-| fmoses | TBD | TBD |
-| rdalal | TBD | TBD |
+| fmoses   | TBD | TBD |
+| rdalal   | TBD | TBD |
 
 ## Resources
 
