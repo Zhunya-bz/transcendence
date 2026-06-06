@@ -125,6 +125,11 @@ export default function Setup2FA() {
                 </Button>
               </>
             )}
+            <Button
+                  className="w-full bg-blue-50 text-blue-600 hover:text-blue-700"
+                  onClick={() => router.replace("/projects")}
+                > Skip for now
+                </Button>
           </CardContent>
         </Card>
       </div>
