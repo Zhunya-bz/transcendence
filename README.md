@@ -4,7 +4,7 @@
 
 ## Description
 
-Jirok is a task management platform built in the style of Jira. It allows user to create projects, manage members, and track issues.
+Jirok is a task management platform built in the style of Jira. It allows user to create projects, manage members, and track issues. Key features include multi user shared projects, real time collaborative work boards, per project API keys, usage statics, oath, 2fa, and more! For each task in the project you can mark it's type, priority, status & assigned user.
 
 The project is a full-stack typescript application built with Next.js, NestJS, Prisma, and PostgreSQL.
 
@@ -40,13 +40,20 @@ Without Docker:
 Create a root `.env` file before starting the stack.
 
 ```env
+# Don't change these
+FRONTEND_URL=http://localhost:3000
+NEXT_PUBLIC_BACKEND_URL=http://localhost:3001
+
+# Database connection info. Important: CHANGE THE PASSWORD
 POSTGRES_USER=jirok
 POSTGRES_PASSWORD=jirok_secret
 POSTGRES_DB=jirok_db
 DATABASE_URL=postgresql://jirok:jirok_secret@localhost:5432/jirok_db?schema=public
+
+# Token encryption key. Imporant: CHANGE ME
 JWT_SECRET=change-me
-FRONTEND_URL=http://localhost:3000
-NEXT_PUBLIC_BACKEND_URL=http://localhost:3001
+
+# (optional) To generate 42 oath credentils go to https://profile.intra.42.fr/oauth/applications/new
 FORTY_TWO_CLIENT_ID=your_42_client_id
 FORTY_TWO_CLIENT_SECRET=your_42_client_secret
 FORTY_TWO_CALLBACK_URL=http://localhost:3001/auth/42/callback
@@ -72,6 +79,8 @@ make re
 ```
 
 ### Run locally without Docker
+
+Note: You must have postgres running locally! https://www.postgresql.org/docs/current/server-start.html
 
 Backend:
 
@@ -104,7 +113,7 @@ npm run dev
 | fmoses   | Technical Lead + Frontend Developer |
 | rdalal   | Backend Developer + DevOps          |
 
-The original project idea & design came from ekanaeva & altoulle. fmoses & rdalal joined later and contributed to discussions on technical choices and architecture.
+The original project idea & design came from ekanaeva & altoulle. fmoses & rdalal joined later and contributed to discussions on technical choices and architecture. Further detials on what specific task members worked on can be found in the Features section and the Modules section.
 
 ## Project Management
 
@@ -122,12 +131,9 @@ The original project idea & design came from ekanaeva & altoulle. fmoses & rdala
 - React 19
 - TypeScript
 - Tailwind CSS v4
-- Radix UI primitives
 - shadcn-style component structure
 - TanStack Query for client state and server cache
 - React Hook Form + Zod for forms and validation
-- DnD Kit for drag and drop interactions
-- react-hot-toast for user feedback
 
 ### Backend
 
@@ -155,10 +161,6 @@ erDiagram
   User ||--o{ Issue : reports
   User ||--o{ Issue : assigned_to
   User ||--o{ Issue : changed_by
-  Issue ||--o{ Comment : has
-  User ||--o{ Comment : writes
-  User ||--o{ Attachment : uploads
-  User ||--o{ Notification : receives
   User ||--o{ ApiKey : owns
   Project ||--o{ ApiKey : uses
 ```
@@ -177,15 +179,6 @@ erDiagram
 - `issues`
   - Stores task and bug tracking data.
   - Key fields: `id`, `project_id`, `reporter_id`, `assignee_id`, `status`, `type`, `title`, `priority`.
-- `comments`
-  - Stores issue discussion messages.
-  - Key fields: `id`, `issue_id`, `author_id`, `description`.
-- `attachments`
-  - Stores uploaded files linked to an entity.
-  - Key fields: `id`, `file_name`, `file_size`, `storage_path`, `entity_type`, `entity_id`.
-- `notifications`
-  - Stores user notifications and event metadata.
-  - Key fields: `id`, `user_id`, `entity_type`, `entity_id`, `event_type`, `is_read`.
 - `api_keys`
   - Stores hashed API keys tied to a user and project.
   - Key fields: `id`, `user_id`, `project_id`, `key_hash`.
@@ -203,7 +196,6 @@ erDiagram
 | Drag and drop board | Move issues between statuses on the board. | fmoses |
 | Realtime updates | Push project and issue changes to connected clients over WebSocket. | fmoses |
 | User profiles | View and edit personal data, upload avatars, and browse other profiles. | ekanaeva, rdalal |
-| Notifications / activity views | Display project activity and related updates. | TBD |
 | Documentation pages | Privacy policy and terms links in the footer. | ekanaeva, altoulle |
 
 ## Modules
@@ -211,7 +203,7 @@ erDiagram
 | Module | Points | Justification | Implementation | Team member(s) |
 | --- | --- | --- | --- | --- |
 | Use a framework for both the frontend and backend | 2 | Use modern tools for Web app development | Next.js for the frontend and NestJS for the backend, both TypeScript | ekanaeva, altoulle |
-| Implement real-time features using WebSockets or similar technology | 2 | Real-time updates are essential in a collaborative task tracker so team members see changes without refreshing. Showing user online status as well. | TBD for Felix| fmoses |
+| Implement real-time features using WebSockets or similar technology | 2 | Real-time updates are essential in a collaborative task tracker so team members see changes without refreshing. Showing user online status as well. | Created a WebSocket service in NestJS that pushes changes live to the front end as they happen. Users can connect to any project they have access too any they will be informed of changes in real time, as well as being marked as online | fmoses |
 | A public API to interact with the database with a secured API key, rate
 limiting, documentation, and at least 5 endpoints | 2 |
 A public REST API provides secure and standardized CRUD access to the database through well-documented endpoints.
@@ -228,9 +220,8 @@ etc.) | 1 | OAuth simplifies onboarding for users who already have an account wi
 | Implement a complete 2FA (Two-Factor Authentication) system for the
 users | 1 | 2FA adds a critical layer of account security on top of password authentication. | Users can scan a QR code to register a TOTP app and are prompted for a code on each login | rdalal |
 | User activity analytics and insights dashboard | 1 | Giving users visibility into project activity helps teams track progress and spot bottlenecks. | A dashboard displays issue status breakdowns, and contribution metrics per project. | ekanaeva, altoulle |
-| Modules of choice minor: Dark Mode | 1 | Dark mode is a feature that improves comfort for users working in low-light environments. | TBD for Felix | fmoses |
-| Modules of choice minor: Mobile Complient | 1 | **Justification:**
-Mobile compliance ensures the application is accessible, responsive, and provides a consistent user experience across mobile devices. | Implemented a responsive design using Tailwind CSS | ekanaeva, fmoses |
+| Modules of choice minor: Dark Mode | 1 | Dark mode is a feature that improves comfort for users working in low-light environments. | Next Theme was used to modify tailwind css variables to change all the colors of the site at once without have to check the theme for each individual component | fmoses |
+| Modules of choice minor: Mobile Complient | 1 | Mobile compliance ensures the application is accessible, responsive, and provides a consistent user experience across mobile devices. | Implemented a responsive design using Tailwind CSS | ekanaeva, fmoses |
 
 Total: 18 points
 
@@ -261,7 +252,7 @@ Total: 18 points
 - Next.js documentation: https://nextjs.org/docs
 - React documentation: https://react.dev/
 - Passport documentation: https://www.passportjs.org/
-- WebSocket RFC 6455 overview: https://www.rfc-editor.org/rfc/rfc6455
+- WebSocket overview: https://www.rfc-editor.org/rfc/rfc6455
 - Tailwind CSS documentation: https://tailwindcss.com/docs
 
 ### AI usage
