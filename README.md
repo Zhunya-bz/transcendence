@@ -25,7 +25,7 @@ The project is a full-stack typescript application built with Next.js, NestJS, P
 
 ### Prerequisites
 
-Their are two ways to run the application: using Docker (recommended) or manually (more complicated).
+There are two ways to run the application: using Docker (recommended) or manually (more complicated).
 
 For Docker:
 - Docker and Docker Compose v2
@@ -54,9 +54,10 @@ FORTY_TWO_CALLBACK_URL=http://localhost:3001/auth/42/callback
 
 ### Run with Docker
 
-From the repository root:
+Go to jirok folder and run:
 
 ```bash
+cd jirok
 make start
 ```
 
@@ -140,7 +141,7 @@ The original project idea & design came from ekanaeva & altoulle. fmoses & rdala
 - bcrypt for password hashing
 - otplib and qrcode for two-factor authentication
 
-### But Why???????
+### But Why?
 
 We chose a javascript based stack since it's very popular and usefull to know career wise. As for the specific choices of Next.js, NestJS, & Prisma, we chose them for their strong type and validation support, making it easier to write clean, secure, & error free code. PostgreSQL was chosen for it's first class support from Prisma.
 
@@ -193,38 +194,43 @@ erDiagram
 
 | Feature | Description | Team member(s) |
 | --- | --- | --- |
-| Authentication | Sign up, sign in, JWT cookie sessions, logout, protected routes. | TBD |
-| 42 OAuth | OAuth login through the 42 intra provider. | TBD |
-| Two-factor authentication | Generate a QR code, enable TOTP, and verify login codes. | TBD |
-| Project management | Create and update projects, navigate dashboards, and view project data. | TBD |
-| Membership management | List members, invite by email, change roles, and remove members. | TBD |
-| Issue tracking | Create issues, edit them, assign users, change status, and browse backlog views. | TBD |
-| Drag and drop board | Move issues between statuses on the board. | TBD |
-| Realtime updates | Push project and issue changes to connected clients over WebSocket. | TBD |
-| User profiles | View and edit personal data, upload avatars, and browse other profiles. | TBD |
+| Authentication | Sign up, sign in, JWT cookie sessions, logout, protected routes. | rdalal |
+| 42 OAuth | OAuth login through the 42 intra provider. | altoulle |
+| Two-factor authentication | Generate a QR code, enable TOTP, and verify login codes. | rdalal |
+| Project management | Create and update projects, navigate dashboards, and view project data. | ekanaeva, altoulle |
+| Membership management | List members, invite by email, change roles, and remove members. | ekanaeva, altoulle |
+| Issue tracking | Create issues, edit them, assign users, change status, and browse backlog views. | ekanaeva, altoulle, fmoses |
+| Drag and drop board | Move issues between statuses on the board. | fmoses |
+| Realtime updates | Push project and issue changes to connected clients over WebSocket. | fmoses |
+| User profiles | View and edit personal data, upload avatars, and browse other profiles. | ekanaeva, rdalal |
 | Notifications / activity views | Display project activity and related updates. | TBD |
-| Documentation pages | Privacy policy and terms links in the footer. | TBD |
+| Documentation pages | Privacy policy and terms links in the footer. | ekanaeva, altoulle |
 
 ## Modules
 
 | Module | Points | Justification | Implementation | Team member(s) |
 | --- | --- | --- | --- | --- |
-| Use a framework for both the frontend and backend | 2 | TBD | TBD | TBD |
-| Implement real-time features using WebSockets or similar technology | 2 |
+| Use a framework for both the frontend and backend | 2 | Use modern tools for Web app development | Next.js for the frontend and NestJS for the backend, both TypeScript | ekanaeva, altoulle |
+| Implement real-time features using WebSockets or similar technology | 2 | Real-time updates are essential in a collaborative task tracker so team members see changes without refreshing. Showing user online status as well. | TBD for Felix| fmoses |
 | A public API to interact with the database with a secured API key, rate
 limiting, documentation, and at least 5 endpoints | 2 |
+A public REST API provides secure and standardized CRUD access to the database through well-documented endpoints.
+ | API keys are hashed and stored per user/project; endpoints are documented via Swagger at `/docs` and cover projects, issues, users, authentication. | altoulle, rdalal |
 | Use an ORM for the database | 1 |
-| Custom-made design system | 1 | 
-| Support for additional browsers | 1 |
-| Standard user management and authentication | 2 |
+Using an ORM allows secure, efficient, and simplified CRUD operations on the database through object-oriented code.
+| Prisma is used throughout the backend for all database access and schema migrations. | altoulle, rdalal |
+| Custom-made design system | 1 | A consistent design system gives the application a professional, cohesive look | Implemented a custom design system using Shadcn UI components and Tailwind CSS. | ekanaeva |
+| Support for additional browsers | 1 | Ensuring the application works across major browsers improves accessibility and reaches a wider audience. | Tested and functional on Google Chrome, Firefox, and Brave using standard web APIs | rdalal |
+| Standard user management and authentication | 2 | Secure authentication and user management are foundational to any multi-user platform. | Email/password sign-up and sign-in with bcrypt hashing, JWT cookie sessions, protected routes, and logout. | rdalal |
 | Implement remote authentication with OAuth 2.0 (Google, GitHub, 42,
-etc.) | 1 | 
-| Advanced permissions system | 2 |
+etc.) | 1 | OAuth simplifies onboarding for users who already have an account with a trusted provider. | 42 OAuth is implemented via Passport OAuth2, with callback handling and automatic account linking. | altoulle |
+| Advanced permissions system | 2 | Different roles within a project require different levels of access to prevent unauthorized actions. | Users are assigned roles (e.g. admin, member, viewer) per project via the `user_projects` table; role checks are enforced at the API level. | altoulle | 
 | Implement a complete 2FA (Two-Factor Authentication) system for the
-users | 1 | 
-| User activity analytics and insights dashboard | 1 |
-| Modules of choice minor: Dark Mode | 1 | 
-| Modules of choice minor: Mobile Complient | 1 | 
+users | 1 | 2FA adds a critical layer of account security on top of password authentication. | Users can scan a QR code to register a TOTP app and are prompted for a code on each login | rdalal |
+| User activity analytics and insights dashboard | 1 | Giving users visibility into project activity helps teams track progress and spot bottlenecks. | A dashboard displays issue status breakdowns, and contribution metrics per project. | ekanaeva, altoulle |
+| Modules of choice minor: Dark Mode | 1 | Dark mode is a feature that improves comfort for users working in low-light environments. | TBD for Felix | fmoses |
+| Modules of choice minor: Mobile Complient | 1 | **Justification:**
+Mobile compliance ensures the application is accessible, responsive, and provides a consistent user experience across mobile devices. | Implemented a responsive design using Tailwind CSS | ekanaeva, fmoses |
 
 Total: 18 points
 
@@ -239,10 +245,10 @@ Total: 18 points
 
 | Member   | Main contribution areas | Challenges / notes |
 | -------- | --- | --- |
-| ekanaeva | TBD | TBD |
-| altoulle | TBD | TBD |
-| fmoses   | TBD | TBD |
-| rdalal   | TBD | TBD |
+| ekanaeva | Project management frontend, membership management frontend, issue tracking frontend, user profiles frontend, activity dashboard, mobile responsiveness, custom design system (Shadcn UI + Tailwind), database architecture design (implemented through Prisma). | Building a coherent design system from scratch while simultaneously delivering features required constant attention to consistency across components. |
+| altoulle | 42 OAuth, project management backend, membership management backend, issue tracking backend, advanced permissions system (admin/member/viewer roles), public API, database architecture design (implemented through Prisma), documentation pages, activity dashboard backend. | Designing a flexible role system that could be enforced consistently across all API endpoints without duplicating logic was a significant architectural challenge. |
+| fmoses   | Drag and drop board, real-time updates via WebSocket, issue tracking frontend, dark mode. | Integrating WebSocket-driven state updates with the existing client-side cache required careful coordination to avoid stale or conflicting UI states. |
+| rdalal   | Authentication (sign up, sign in, JWT sessions, logout, protected routes), two-factor authentication (TOTP + QR code), user profiles backend, public API, ORM setup, cross-browser testing and support. | Implementing a secure and complete auth stack — covering passwords, JWT, 2FA, and OAuth — while keeping the flow seamless for the end user was the most demanding part of the project. |
 
 ## Resources
 
