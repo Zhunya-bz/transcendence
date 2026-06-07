@@ -88,7 +88,7 @@ const assigneeCounts: { user: User | null; count: number }[] = activity?.assigne
 
   return (
     <div className="flex flex-col gap-6 pb-8">
-        <h1 className="text-2xl font-semibold text-slate-900 sm:text-3xl">Overview</h1>
+        <h1 className="text-2xl font-semibold text-slate-900 sm:text-3xl dark:text-white">Overview</h1>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard title="Created tasks" value={totalTasks} subtitle="All tasks in this project"  />
@@ -140,10 +140,10 @@ const assigneeCounts: { user: User | null; count: number }[] = activity?.assigne
         </ChartCard>
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:bg-slate-800 dark:border-slate-800">
         <div className="mb-4 flex flex-col gap-1">
-          <h2 className="text-xl font-semibold text-slate-900">Tasks by assignee</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-white">Tasks by assignee</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-300">
             Percentage of tasks assigned to each member, including unassigned work.
           </p>
         </div>
@@ -178,10 +178,10 @@ function MetricCard({
 }) {
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-slate-500">{title}</p>
-      <p className="mt-2 text-3xl font-bold text-slate-900">{value}</p>
-      <p className="mt-2 text-sm text-slate-500">{subtitle}</p>
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:bg-slate-800 dark:border-slate-800">
+      <p className="text-sm font-medium text-slate-500 dark:text-slate-300">{title}</p>
+      <p className="mt-2 text-3xl font-bold text-slate-900 dark:text-white">{value}</p>
+      <p className="mt-2 text-sm text-slate-500 dark:text-slate-300">{subtitle}</p>
     </div>
   );
 }
@@ -196,10 +196,10 @@ function ChartCard({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:bg-slate-800 dark:border-slate-800">
       <div className="mb-4 flex flex-col gap-1">
-        <h2 className="text-xl font-semibold text-slate-900">{title}</h2>
-        <p className="text-sm text-slate-500">{description}</p>
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-white">{title}</h2>
+        <p className="text-sm text-slate-500 dark:text-slate-300">{description}</p>
       </div>
       {children}
     </div>

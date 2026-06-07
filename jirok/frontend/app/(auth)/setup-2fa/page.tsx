@@ -114,7 +114,7 @@ export default function Setup2FA() {
                 />
 
                 <Button
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white dark:text-black"
                   onClick={handleSubmit}
                   disabled={enableMutation.isPending}
                 >
@@ -124,6 +124,11 @@ export default function Setup2FA() {
                 </Button>
               </>
             )}
+            <Button
+                  className="w-full bg-blue-50 text-blue-600 hover:text-blue-700 dark:bg-slate-700 dark:text-blue-400 dark:hover:text-blue-500"
+                  onClick={() => router.replace("/projects")}
+                > Skip for now
+                </Button>
           </CardContent>
         </Card>
       </div>

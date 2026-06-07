@@ -54,12 +54,12 @@ export default function BacklogPage({ params, searchParams }: BacklogPageProps) 
   return (
     <div className="w-full">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-foreground">
           {assigneeFilter === "me" ? "My Tasks" : "Backlog"}
         </h1>
       </div>
 
-      {isLoading && <p className="text-sm text-gray-500">Loading tasks...</p>}
+      {isLoading && <p className="text-sm text-muted-foreground">Loading tasks...</p>}
       {isError && <p className="text-sm text-red-600">Could not load tasks.</p>}
 
       <TasksTable
@@ -73,7 +73,7 @@ export default function BacklogPage({ params, searchParams }: BacklogPageProps) 
         <div className="flex justify-center mt-4">
           <button
             onClick={() => setVisible((prev) => prev + LIMIT)}
-            className="px-4 py-2 text-sm bg-orange-500 text-white font-semibold rounded-md hover:bg-orange-600 transition"
+            className="px-4 py-2 text-sm bg-orange-500 text-white font-semibold rounded-md hover:bg-orange-600 transition dark:bg-orange-600 dark:hover:bg-orange-500"
           >
             Load more
           </button>

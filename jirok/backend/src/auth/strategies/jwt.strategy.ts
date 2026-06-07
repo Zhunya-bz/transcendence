@@ -12,7 +12,7 @@ PassportStrategy(Strategy) {
                 return req?.cookies?.['token'] ?? null;
             },
             ignoreExpiration: false,
-            secretOrKey: process.env.JWT_SECRET || 'fallback-secret',
+            secretOrKey: process.env.JWT_SECRET!,
         });
     }
 

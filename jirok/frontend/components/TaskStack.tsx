@@ -32,7 +32,7 @@ export function TaskStack({
     }
 
     return <div
-        className="flex-1 flex flex-col gap-1 min-w-[90px] p-1 pt-3 rounded-md bg-[rgba(255,184,106,0.1)]"
+        className="flex-1 flex flex-col gap-1 min-w-[90px] p-1 pt-3 rounded-md border border-border bg-muted/40"
         onDrop={onDrop}
         onDragOver={onDragOver}
     >
@@ -56,8 +56,9 @@ function TaskCard({ task, projectId, projectKey }: { task: Issue, projectId: str
         : task.type === IssueType.STORY
             ? <MdBookmark className={`size-4 ${getTypeClasses(task.type)}`} />
             : <MdTaskAlt className={`size-4 ${getTypeClasses(task.type)}`} />;
+
     return <a
-        className="flex flex-col gap-4 p-4 rounded-md border-2 select-none cursor-pointer hover:bg-blue-100 bg-white overflow-x-hidden"
+        className="flex flex-col gap-4 rounded-md border border-border bg-card p-4 text-card-foreground shadow-sm transition-colors select-none cursor-pointer hover:bg-muted/60"
         draggable
         onDragStart={onDragStart}
         href={`/projects/${projectId}/${projectKey}/issues/${task.id}`}
@@ -95,7 +96,7 @@ function TaskAdd({ setTask, status }: { status: IssueStatus, setTask: (task: Par
     }
 
     return <h1
-        className="opacity-0 hover:opacity-50 bg-blue-50 p-2 rounded-md border-2"
+        className="opacity-0 hover:opacity-50 bg-muted p-2 rounded-md border border-border"
         onMouseLeave={onMouseLeave}
     >
         <div

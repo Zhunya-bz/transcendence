@@ -91,7 +91,7 @@ export class AuthService {
     if (user.isTwoFactorEnabled) {
         const tempToken = this.jwtService.sign(
             { sub: user.id, email: user.email, isTwoFactor: true },
-            {secret: (process.env.JWT_SECRET || 'fallback-secret') + '-2fa-temp', expiresIn: '5m'},
+            {secret: process.env.JWT_SECRET! + '-2fa-temp', expiresIn: '5m'},
         );
         return { require2FA: true, tempToken };
     }
@@ -176,83 +176,105 @@ export class AuthService {
   }
 
     //2FA
-    async generateTwoFactorSecret(userId: number) {
-        const user = await this.userService.findOne(userId);
-        if (!user) {
-            throw new NotFoundException('User not found');
-        }
+  async generateTwoFactorSecret(userId: number) {
+      const user = await this.userService.findOne(userId);
+      if (!user) {
+          throw new NotFoundException('User not found');
+      }
 
-        const secret = authenticator.generateSecret();
+      const secret = authenticator.generateSecret();
 
-        await this.prisma.user.update({
-            where: { id: userId },
-            data: { twoFactorSecret: secret },
-        });
+      await this.prisma.user.update({
+          where: { id: userId },
+          data: { twoFactorSecret: this.encryptSecret(secret) },
+      });
 
-        const otpauthUrl = authenticator.keyuri(user.email, 'Jirok', secret);
+      const otpauthUrl = authenticator.keyuri(user.email, 'Jirok', secret);
 
-        const qrCodeDataUrl = await QRCode.toDataURL(otpauthUrl);
+      const qrCodeDataUrl = await QRCode.toDataURL(otpauthUrl);
 
-        return { qrCodeDataUrl, secret };
-    }
+      return { qrCodeDataUrl, secret };
+  }
 
-    async enableTwoFactorAuth(userId: number, code:string) {
-        const user = await this.prisma.user.findUnique({
-            where: { id: userId },
-        });
+  private encryptSecret(secret: string): string {
+    const iv = crypto.randomBytes(16);
+    const key = crypto.createHash('sha256')
+      .update(process.env.JWT_SECRET!)
+      .digest();
+      const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+      let encrypted = cipher.update(secret, 'utf8', 'hex');
+      encrypted += cipher.final('hex');
+      return iv.toString('hex') + ':' + encrypted;
+  }
 
-        if (!user || !user.twoFactorSecret) {
-            throw new BadRequestException('2FA secret not generated yet');
-        }
+  private decryptSecret(encryptedSecret: string): string {
+    const [ivHex, encryptedText] = encryptedSecret.split(':');
+    const iv = Buffer.from(ivHex, 'hex');
+    const key = crypto.createHash('sha256')
+      .update(process.env.JWT_SECRET!)
+      .digest();
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+    let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  }
 
-        const isValid = authenticator.verify({
-            token: code,
-            secret: user.twoFactorSecret,
-        });
+  async enableTwoFactorAuth(userId: number, code:string) {
+      const user = await this.prisma.user.findUnique({
+          where: { id: userId },
+      });
 
-        if (!isValid) {
-            throw new BadRequestException('Invalid 2FA code');
-        }
+      if (!user || !user.twoFactorSecret) {
+          throw new BadRequestException('2FA secret not generated yet');
+      }
 
-        await this.prisma.user.update({
-            where: { id:userId },
-            data: { isTwoFactorEnabled: true },
-        });
+      const isValid = authenticator.verify({
+          token: code,
+          secret: this.decryptSecret(user.twoFactorSecret),
+      });
 
-        return { message: '2FA enabled successfully' };
-    }
+      if (!isValid) {
+          throw new BadRequestException('Invalid 2FA code');
+      }
+
+      await this.prisma.user.update({
+          where: { id:userId },
+          data: { isTwoFactorEnabled: true },
+      });
+
+      return { message: '2FA enabled successfully' };
+  }
 
     //verify 2FA code for login
-    async verifyTwoFactorCode(token: string, code: string) {
-        let payload: any;
-        try {
-            payload = this.jwtService.verify(token, {
-                secret: (process.env.JWT_SECRET || 'fallback-secret') + '-2fa-temp',
-            });
-        } catch (error) {
-            throw new UnauthorizedException('Invalid verification token');
-        }
-
-        const userId = payload.sub;
-        const user = await this.prisma.user.findUnique({
-            where: { id: userId },
-        });
-
-
-        if (!user || !user.twoFactorSecret) {
-            throw new BadRequestException('2FA is not setup');
-        }
-
-        const isValid = authenticator.verify({
-            token: code,
-            secret: user.twoFactorSecret,
-        });
-
-        if(!isValid) {
-            throw new BadRequestException('Invalid 2FA code');
-        }
-
-        const accessToken = this.generateToken(user);
-        return { accessToken };
+  async verifyTwoFactorCode(token: string, code: string) {
+    let payload: any;
+    try {
+      payload = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET! + '-2fa-temp',
+      });
+    } catch (error) {
+      throw new UnauthorizedException('Invalid verification token');
     }
+
+    const userId = payload.sub;
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user || !user.twoFactorSecret) {
+      throw new BadRequestException('2FA is not setup');
+    }
+
+    const isValid = authenticator.verify({
+      token: code,
+      secret: this.decryptSecret(user.twoFactorSecret),
+    });
+
+    if(!isValid) {
+      throw new BadRequestException('Invalid 2FA code');
+    }
+
+    const accessToken = this.generateToken(user);
+    return { accessToken };
+  }
 }
