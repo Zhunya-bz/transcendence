@@ -10,7 +10,7 @@ export const parseError = async (response: Response, fallbackMessage: string) =>
 
 export const signin = async (data: { email: string; password: string }) => {
   try {
-    const response = await fetch("http://backend:3001/auth/login", {
+    const response = await fetch("http://backend:3001/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,7 +27,7 @@ export const signin = async (data: { email: string; password: string }) => {
 
     (await cookies()).set("token", accessToken, {
       httpOnly: true,
-      secure: false, // true if you're using HTTPS
+      secure: true, // true if you're using HTTPS
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 days
@@ -44,7 +44,7 @@ export const signup = async (data: {
   password: string;
 }) => {
   try {
-    const response = await fetch("http://backend:3001/auth/signup", {
+    const response = await fetch("http://backend:3001/api/auth/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -63,7 +63,7 @@ export const signup = async (data: {
 
     (await cookies()).set("token", accessToken, {
       httpOnly: true,
-      secure: false, // true if you're using HTTPS
+      secure: true, // true if you're using HTTPS
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 days

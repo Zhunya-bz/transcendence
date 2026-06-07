@@ -5,7 +5,7 @@ import type { MemberPayload, UserProject, UserRole } from "@/types/prisma";
 import { parseError } from "./issues";
 
 export async function getProjectMembers(projectId: string): Promise<UserProject[]> {
-  const response = await fetch(getBackendUrl(`/projects/${projectId}/members`), {
+  const response = await fetch(`/api/projects/${projectId}/members`, {
     credentials: "include",
   });
   if (!response.ok) {
@@ -16,7 +16,7 @@ export async function getProjectMembers(projectId: string): Promise<UserProject[
 
 
 export async function addProjectMember(projectId: string, payload: MemberPayload) {
-  const response = await fetch(getBackendUrl(`/projects/${projectId}/members/by-email`), {
+  const response = await fetch(`/api/projects/${projectId}/members/by-email`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -37,7 +37,7 @@ export async function updateProjectMemberRole(
   userId: number,
   role: UserRole,
 ) {
-  const response = await fetch(getBackendUrl(`/projects/${projectId}/members/${userId}`), {
+  const response = await fetch(`/api/projects/${projectId}/members/${userId}`, {
     method: "PUT",
     credentials: "include",
     headers: {
@@ -54,7 +54,7 @@ export async function updateProjectMemberRole(
 }
 
 export async function removeProjectMember(projectId: string, userId: number) {
-  const response = await fetch(getBackendUrl(`/projects/${projectId}/members/${userId}`), {
+  const response = await fetch(`/api/projects/${projectId}/members/${userId}`, {
     method: "DELETE",
     credentials: "include",
   });

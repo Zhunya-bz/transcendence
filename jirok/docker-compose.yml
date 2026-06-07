@@ -10,6 +10,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER} #taken form the .env file
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} #this too from the .env file
       POSTGRES_DB: ${POSTGRES_DB} #this too from .env
+    networks:
+      - private_net
     ports:
       - "5432:5432"
     volumes:
@@ -26,8 +28,9 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: jirok_backend
-    ports:
-      - "3001:3001"
+    networks:
+      - public_net
+      - private_net
     depends_on:
       db:
         condition: service_healthy
@@ -41,15 +44,40 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: jirok_frontend
-    ports:
-      - "3000:3000"
+    networks:
+      - public_net
     restart: unless-stopped  
     env_file:
       - .env
     volumes:
       - ./frontend:/app
       - node_modules:/app/node_modules
+  
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+
+    container_name: jirok_nginx
+    networks:
+      - public_net
+    ports:
+      - "80:80"
+      - "443:443"
+
+    depends_on:
+      - backend
+      - frontend
+
+    restart: unless-stopped
 
 volumes:
   postgres_data:
   node_modules:
+
+networks:
+  public_net:      # nginx <-> frontend/backend
+    driver: bridge
+  private_net:     # backend <-> db only
+    driver: bridge
+    internal: true # 🔑 no outside internet access at all

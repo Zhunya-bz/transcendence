@@ -11,7 +11,7 @@ export const updateUserProfile = async ({
   data: Partial<User>;
 }) => {
   try {
-    const response = await fetch(getBackendUrl(`/users/${id}`), {
+    const response = await fetch(`/api/users/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -37,7 +37,7 @@ export const updateUserAvatar = async ({
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch(getBackendUrl(`/users/${id}/avatar`), {
+    const response = await fetch(`/api/users/${id}/avatar`, {
       method: "PUT",
       body: formData,
       credentials: "include",

@@ -5,7 +5,7 @@ import type { User } from "@/types/prisma";
 import { parseError } from "./issues";
 
 export const getUserById = async (userId: string | number): Promise<User> => {
-  const response = await fetch(getBackendUrl(`/users/${userId}`), {
+  const response = await fetch(`/api/users/${userId}`, {
     credentials: "include",
   });
 
