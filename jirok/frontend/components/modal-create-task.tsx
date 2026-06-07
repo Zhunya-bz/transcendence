@@ -157,7 +157,15 @@ export const ModalCreateTask = () => {
       if (projectId) {
         await queryClient.invalidateQueries({ queryKey: ["backlog", projectId] });
       }
-      form.reset();
+      form.reset({
+        type: IssueType.TASK,
+        status: IssueStatus.TODO,
+        title: "",
+        description: "",
+        assigneeId: "unassigned",
+        priority: IssuePriority.MEDIUM,
+        reporterId: String(currentUser?.id ?? ""),
+      });
     },
     onError: (error: Error) => {
       toast.error(error.message);
