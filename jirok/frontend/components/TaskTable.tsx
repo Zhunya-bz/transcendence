@@ -32,16 +32,16 @@ interface TasksTableProps {
   };
 
   export const getStatusClasses = (status: TaskItem["status"]) => {
-    if (status === IssueStatus.DONE) return "bg-green-100 text-green-700";
-    if (status === IssueStatus.IN_PROGRESS) return "bg-orange-50 text-orange-700";
-    if (status === IssueStatus.IN_REVIEW) return "bg-blue-50 text-blue-700";
-    return "bg-gray-100 text-gray-700";
+    if (status === IssueStatus.DONE) return "bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-300";
+    if (status === IssueStatus.IN_PROGRESS) return "bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300";
+    if (status === IssueStatus.IN_REVIEW) return "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300";
+    return "bg-muted text-muted-foreground";
   };
 
   export const getPriorityClasses = (priority: TaskItem["priority"]) => {
-    if (priority === IssuePriority.HIGH) return "bg-red-50 text-red-700";
-    if (priority === IssuePriority.MEDIUM) return "bg-violet-50 text-violet-600";
-    return "bg-lime-50 text-lime-700";
+    if (priority === IssuePriority.HIGH) return "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300";
+    if (priority === IssuePriority.MEDIUM) return "bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300";
+    return "bg-lime-100 text-lime-700 dark:bg-lime-500/15 dark:text-lime-300";
   };
 
   export const getStatusLabel = (status: TaskItem["status"]) => {
@@ -77,23 +77,23 @@ export const TasksTable = ({
   });
 
   return (
-    <div className="rounded-lg border-2 bg-white shadow-md overflow-hidden">
+    <div className="overflow-hidden rounded-lg border border-border bg-card shadow-md">
       <Table className="text-base">
         <TableHeader>
-          <TableRow className="bg-orange-100 pointer-events-none">
-            <TableHead className="text-orange-900 font-semibold">
+          <TableRow className="bg-muted pointer-events-none">
+            <TableHead className="font-semibold text-foreground">
               Title
             </TableHead>
-            <TableHead className="hidden sm:table-cell text-orange-900 font-semibold">
+            <TableHead className="hidden font-semibold text-foreground sm:table-cell">
               Assignee
             </TableHead>
-            <TableHead className="text-orange-900 font-semibold">
+            <TableHead className="font-semibold text-foreground">
               Status
             </TableHead>
-            <TableHead className="hidden sm:table-cell text-orange-900 font-semibold">
+            <TableHead className="hidden font-semibold text-foreground sm:table-cell">
               Priority
             </TableHead>
-            <TableHead className="hidden sm:table-cell text-orange-900 font-semibold">
+            <TableHead className="hidden font-semibold text-foreground sm:table-cell">
               Created At
             </TableHead>
           </TableRow>
@@ -104,7 +104,7 @@ export const TasksTable = ({
             return (
               <TableRow
                 key={task.id}
-                className="border-b border-blue-100 hover:bg-orange-50"
+                className="border-b border-border hover:bg-muted/60"
               >
                 <TableCell className="max-w-[320px] truncate">
                   <div className="flex items-baseline gap-2">
@@ -116,7 +116,7 @@ export const TasksTable = ({
                     </span>
                     <Link
                       href={`/projects/${projectId}/${projectKey}/issues/${task.id}`}
-                      className="truncate hover:text-blue-900 hover:underline"
+                      className="truncate hover:text-primary hover:underline"
                     >
                       {task.title}
                     </Link>
@@ -127,12 +127,12 @@ export const TasksTable = ({
                   members?.find((m) => m.userId === task.assigneeId) ? (
                     <Link
                       href={`/users/${task.assigneeId}`}
-                      className="hover:text-blue-900 hover:underline"
+                      className="hover:text-primary hover:underline"
                     >
                       {getMemberName(task.assigneeId)}
                     </Link>
                   ) : (
-                    <span className="text-gray-500">Unassigned</span>
+                    <span className="text-muted-foreground">Unassigned</span>
                   )}
                 </TableCell>
                 <TableCell>

@@ -40,19 +40,20 @@ const roleOptions: Array<{ value: UserRole; label: string }> = [
   { value: UserRole.VIEWER, label: "Viewer" },
 ];
 
-const ROLE_STYLES: Record<UserRole,
+const ROLE_STYLES: Record<
+  UserRole,
   { badge: string; icon: React.ReactNode }
 > = {
   ADMIN: {
-    badge: "bg-orange-100 text-orange-800 border border-orange-100",
+    badge: "bg-orange-100 text-orange-800 border border-orange-200 dark:bg-orange-500/15 dark:text-orange-300 dark:border-orange-500/20",
     icon: <Shield size={11} className="inline mr-1 -mt-0.5" />,
   },
   MEMBER: {
-    badge: "bg-blue-50 text-blue-800 border border-blue-100",
+    badge: "bg-blue-100 text-blue-800 border border-blue-200 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-500/20",
     icon: <Users size={11} className="inline mr-1 -mt-0.5" />,
   },
   VIEWER: {
-    badge: "bg-gray-100 text-gray-600 border border-gray-200",
+    badge: "bg-muted text-muted-foreground border border-border",
     icon: <Eye size={11} className="inline mr-1 -mt-0.5" />,
   },
 };
@@ -128,16 +129,16 @@ export default function MembersPage({ params }: MembersPageProps) {
   return (
     <div className="w-full space-y-6 lg:max-w-4xl xl:max-w-5xl mx-auto">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Members</h1>
-        <p className="text-base text-gray-500 mt-0.5">
+        <h1 className="text-2xl font-semibold text-foreground">Members</h1>
+        <p className="text-base text-muted-foreground mt-0.5">
           {members.length} {members.length === 1 ? "person" : "people"} on{" "}
-          <span className="font-medium text-gray-700">{projectKey}</span>
+          <span className="font-medium text-foreground">{projectKey}</span>
         </p>
       </div>
 
-      <div className="rounded-xl border border-gray-200 overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
         {isLoading && (
-          <div className="py-10 text-center text-sm text-gray-400">
+          <div className="py-10 text-center text-sm text-muted-foreground">
             Loading members…
           </div>
         )}
@@ -148,7 +149,7 @@ export default function MembersPage({ params }: MembersPageProps) {
         )}
 
         {!isLoading && members.length === 0 && (
-          <div className="py-10 text-center text-sm text-gray-400">
+          <div className="py-10 text-center text-sm text-muted-foreground">
             No members yet.
           </div>
         )}
@@ -166,13 +167,13 @@ export default function MembersPage({ params }: MembersPageProps) {
             return (
               <div
                 key={`${member.projectId}-${member.userId}`}
-                className={`flex items-center gap-3 px-4 py-3 bg-white ${
-                  idx < members.length - 1 ? "border-b border-gray-100" : ""
+                className={`flex items-center gap-3 px-4 py-3 bg-background ${
+                  idx < members.length - 1 ? "border-b border-border" : ""
                 }`}
               >
                 <UserAvatar
                   className="size-9 transition shrink-0"
-                  src={(user as any)?.avatarUrl}
+                  src={user?.avatarUrl ?? null}
                   alt={fullName}
                 />
 
@@ -180,17 +181,17 @@ export default function MembersPage({ params }: MembersPageProps) {
                   <div className="flex items-center gap-2">
                     <Link
                       href={`/projects/${projectId}/${projectKey}/profile/${member.userId}`}
-                      className="text-base font-medium text-gray-900 truncate hover:text-blue-700 transition"
+                      className="text-base font-medium text-foreground truncate hover:text-primary transition"
                     >
                       {fullName}
                     </Link>
                     {isMe && (
-                      <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-400 border border-gray-200 shrink-0">
+                      <span className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border shrink-0">
                         you
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-400 truncate">
+                  <p className="text-sm text-muted-foreground truncate">
                     {user?.email ?? "—"}
                   </p>
                 </div>
@@ -234,7 +235,7 @@ export default function MembersPage({ params }: MembersPageProps) {
                       }
                     }}
                     disabled={removeMemberMutation.isPending}
-                    className="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 hover:border-red-200 hover:bg-red-50 hover:text-red-500 transition-colors shrink-0"
+                    className="w-7 h-7 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:border-red-300 hover:bg-red-50 hover:text-red-500 transition-colors shrink-0 dark:hover:bg-red-500/10"
                     aria-label={`Remove ${fullName}`}
                   >
                     <X size={13} />
@@ -247,16 +248,16 @@ export default function MembersPage({ params }: MembersPageProps) {
 
       {/* Invite form — admin only */}
       {isProjectAdmin ? (
-        <div className="rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-4 py-4 border-b border-gray-100 bg-white">
-            <h2 className="text-base font-semibold text-gray-900">
+        <div className="overflow-hidden rounded-xl border border-border bg-card">
+          <div className="border-b border-border px-4 py-4 bg-muted/40">
+            <h2 className="text-base font-semibold text-foreground">
               Invite member
             </h2>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               Enter an email to invite
             </p>
           </div>
-          <div className="px-4 py-4 bg-white">
+          <div className="bg-background px-4 py-4">
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit((v) => addMemberMutation.mutate(v))}
@@ -268,14 +269,14 @@ export default function MembersPage({ params }: MembersPageProps) {
                     name="email"
                     render={({ field }) => (
                       <div className="flex flex-col flex-1">
-                        <label className="text-sm font-medium text-gray-500 mb-2">
+                        <label className="mb-2 text-sm font-medium text-muted-foreground">
                           Email
                         </label>
                         <input
                           {...field}
                           type="email"
                           placeholder="member@example.com"
-                          className="h-10 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 text-base"
+                          className="h-10 w-full rounded-lg border border-input bg-background px-3 text-base"
                         />
                       </div>
                     )}
@@ -286,7 +287,7 @@ export default function MembersPage({ params }: MembersPageProps) {
                     name="role"
                     render={({ field }) => (
                       <div className="flex flex-col w-32">
-                        <label className="text-sm font-medium text-gray-500 mb-2">
+                        <label className="mb-2 text-sm font-medium text-muted-foreground">
                           Role
                         </label>
                         <Select
@@ -311,7 +312,7 @@ export default function MembersPage({ params }: MembersPageProps) {
                   <button
                     type="submit"
                     disabled={addMemberMutation.isPending}
-                    className="h-10 px-4 rounded-lg bg-orange-500 text-white text-base font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 flex items-center gap-1.5 shrink-0 self-end"
+                    className="h-10 px-4 rounded-lg bg-orange-500 text-white text-base font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 flex items-center gap-1.5 shrink-0 self-end dark:bg-orange-600 dark:hover:bg-orange-500"
                   >
                     <UserPlus size={14} />
                     {addMemberMutation.isPending ? "Adding…" : "Invite"}
@@ -322,7 +323,7 @@ export default function MembersPage({ params }: MembersPageProps) {
           </div>
         </div>
       ) : (
-        <p className="text-xs text-gray-400 text-center py-2">
+        <p className="text-xs text-muted-foreground text-center py-2">
           Only admins can invite members or change roles
         </p>
       )}

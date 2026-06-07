@@ -10,6 +10,9 @@ import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { ProjectsModule } from './projects/projects.module';
 import { IssuesModule } from './issues/issues.module';
+import { ProjectRealtimeModule } from './realtime/project-realtime.module';
+import { HealthModule } from './health/health.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -18,6 +21,8 @@ import { IssuesModule } from './issues/issues.module';
     AuthModule,
     ProjectsModule,
     IssuesModule,
+    ProjectRealtimeModule,
+    HealthModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,

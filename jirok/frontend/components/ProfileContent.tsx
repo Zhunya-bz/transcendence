@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -134,19 +135,19 @@ export function ProfileContent({
           {backHref ? (
             <Link
               href={backHref}
-              className="mb-2 inline-flex text-sm font-medium text-blue-700 hover:text-blue-800"
+              className="mb-2 inline-flex text-sm font-medium text-primary hover:text-primary/80"
             >
               {backLabel}
             </Link>
           ) : null}
-          <h1 className="text-2xl font-heading font-semibold text-blue-900">
+          <h1 className="text-2xl font-heading font-semibold text-foreground">
             Profile
           </h1>
-          <p className="text-base text-gray-500">Your personal details</p>
+          <p className="text-base text-muted-foreground">Your personal details</p>
         </div>
 
         <div className="grid gap-6">
-          <section className="rounded-2xl border border-neutral-300 bg-white p-4 shadow-sm">
+          <section className="rounded-2xl border border-border bg-card p-4 shadow-sm">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <UserAvatar
@@ -156,7 +157,7 @@ export function ProfileContent({
                   alt={displayName}
                 />
                 <div>
-                  <p className="text-lg font-semibold text-blue-900">
+                  <p className="text-lg font-semibold text-foreground">
                     {displayName}
                   </p>
                 </div>
@@ -218,27 +219,27 @@ export function ProfileContent({
             {canEdit && editingName && (
               <div className="mt-4 grid gap-3">
                 <label className="space-y-1.5">
-                  <span className="text-sm font-medium text-blue-700">Name</span>
+                  <span className="text-sm font-medium text-foreground">Name</span>
                   <Input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="border-blue-200 focus-visible:border-blue-400 focus-visible:ring-blue-200/60"
+                    className="border-border bg-background focus-visible:border-ring focus-visible:ring-ring/30"
                   />
                 </label>
                 <label className="space-y-1.5">
-                  <span className="text-sm font-medium text-blue-700">
+                  <span className="text-sm font-medium text-foreground">
                     Surname
                   </span>
                   <Input
                     value={surname}
                     onChange={(e) => setSurname(e.target.value)}
-                    className="border-blue-200 focus-visible:border-blue-400 focus-visible:ring-blue-200/60"
+                    className="border-border bg-background focus-visible:border-ring focus-visible:ring-ring/30"
                   />
                 </label>
                 <div className="flex flex-wrap items-center gap-2">
                   <Button
                     size="lg"
-                    className="bg-blue-600 text-white hover:bg-blue-700"
+                    className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
                     onClick={handleNameSave}
                     disabled={!isNameDirty || updateMutation.isPending}
                   >
@@ -247,7 +248,7 @@ export function ProfileContent({
                   <Button
                     variant="outline"
                     size="lg"
-                    className="border-orange-300 text-orange-700 hover:bg-orange-50"
+                    className="border-border text-foreground hover:bg-muted"
                     onClick={handleNameCancel}
                   >
                     Cancel
@@ -257,17 +258,17 @@ export function ProfileContent({
             )}
           </section>
 
-          <section className="rounded-2xl border border-neutral-300 bg-white p-4 shadow-sm">
+          <section className="rounded-2xl border border-border bg-card p-4 shadow-sm">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-lg font-semibold text-blue-900">About</p>
-                <p className="text-sm text-gray-500">Information about you</p>
+                <p className="text-lg font-semibold text-foreground">About</p>
+                <p className="text-sm text-muted-foreground">Information about you</p>
               </div>
               {canEdit && !editingAbout && (
                 <Button
                   variant="outline"
                   size="lg"
-                  className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                  className="border-border text-foreground hover:bg-muted"
                   onClick={() => setEditingAbout(true)}
                 >
                   <Pencil />
@@ -278,15 +279,15 @@ export function ProfileContent({
 
             <div className="mt-4 grid gap-4">
               <label className="space-y-1.5">
-                <span className="text-sm font-medium text-blue-700">Email</span>
+                <span className="text-sm font-medium text-foreground">Email</span>
                 <Input
                   value={email}
                   disabled
-                  className="border-blue-200 focus-visible:border-blue-400 focus-visible:ring-blue-200/60"
+                  className="border-border bg-background focus-visible:border-ring focus-visible:ring-ring/30"
                 />
               </label>
               <label className="space-y-1.5">
-                <span className="text-sm font-medium text-blue-700">
+                <span className="text-sm font-medium text-foreground">
                   Job title
                 </span>
                 <Input
@@ -294,11 +295,11 @@ export function ProfileContent({
                   onChange={(e) => setJobTitle(e.target.value)}
                   placeholder=""
                   disabled={!editingAbout}
-                  className="border-blue-200 focus-visible:border-blue-400 focus-visible:ring-blue-200/60"
+                  className="border-border bg-background focus-visible:border-ring focus-visible:ring-ring/30"
                 />
               </label>
               <label className="space-y-1.5">
-                <span className="text-sm font-medium text-blue-700">
+                <span className="text-sm font-medium text-foreground">
                   Organization
                 </span>
                 <Input
@@ -306,11 +307,11 @@ export function ProfileContent({
                   onChange={(e) => setJobOrganization(e.target.value)}
                   placeholder=""
                   disabled={!editingAbout}
-                  className="border-blue-200 focus-visible:border-blue-400 focus-visible:ring-blue-200/60"
+                  className="border-border bg-background focus-visible:border-ring focus-visible:ring-ring/30"
                 />
               </label>
               <label className="space-y-1.5">
-                <span className="text-sm font-medium text-blue-700">
+                <span className="text-sm font-medium text-foreground">
                   Location
                 </span>
                 <Input
@@ -318,7 +319,7 @@ export function ProfileContent({
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder=""
                   disabled={!editingAbout}
-                  className="border-blue-200 focus-visible:border-blue-400 focus-visible:ring-blue-200/60"
+                  className="border-border bg-background focus-visible:border-ring focus-visible:ring-ring/30"
                 />
               </label>
             </div>
@@ -327,7 +328,7 @@ export function ProfileContent({
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 <Button
                   size="lg"
-                  className="bg-blue-600 text-white hover:bg-blue-700"
+                  className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
                   onClick={handleAboutSave}
                   disabled={!isAboutDirty || updateMutation.isPending}
                 >
@@ -336,7 +337,7 @@ export function ProfileContent({
                 <Button
                   variant="outline"
                   size="lg"
-                  className="border-orange-300 text-orange-700 hover:bg-orange-50"
+                  className="border-border text-foreground hover:bg-muted"
                   onClick={handleAboutCancel}
                 >
                   Cancel

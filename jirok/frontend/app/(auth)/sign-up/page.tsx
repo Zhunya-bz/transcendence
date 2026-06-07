@@ -50,8 +50,8 @@ export default function SignUp() {
   const mutation = useMutation({
     mutationFn: signup,
     onSuccess: () => {
-      toast.success("Sign up successful!");
-      router.replace("/projects");
+      toast.success("Done");
+      router.push("/setup-2fa");
     },
     onError: (error) => toast.error(error.message || "An error occurred during registration"),
   });

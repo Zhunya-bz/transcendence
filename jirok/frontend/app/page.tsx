@@ -6,19 +6,19 @@ import Image from 'next/image';
 
 export default function Home() {
   return (
-    <div className='flex min-h-full flex-1 flex-col bg-linear-to-br from-blue-100 via-white to-orange-100'>
+    <div className="flex min-h-full flex-1 flex-col bg-background text-foreground">
       <Navbar/>
-      <main className='mx-auto w-full max-w-7xl flex-1 px-6 py-16 md:py-24'>
-        <div className='flex flex-col md:flex-row items-center justify-between gap-12'>
+      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-16 md:py-24">
+        <div className="flex flex-col items-center justify-between gap-12 md:flex-row">
           
-          <div className='flex flex-col gap-6 md:w-1/2'>
-            <h1 className='text-5xl font-extrabold text-slate-900 tracking-tight'>
-              Organize your work, <span className='text-orange-500'>naturally.</span>
+          <div className="flex flex-col gap-6 md:w-1/2">
+            <h1 className="text-5xl font-extrabold tracking-tight text-foreground">
+              Organize your work, <span className="text-orange-500">naturally.</span>
             </h1>
-            <div className='flex flex-col gap-4 text-lg text-slate-600 leading-relaxed'>
+            <div className="flex flex-col gap-4 text-lg leading-relaxed text-muted-foreground">
               <p>
                 Jirok is a simple and friendly tool to help you organize your work and stay on track. 
-                Whether you're managing a project or working with a team, Jirok keeps everything clear.
+                Whether you&apos;re managing a project or working with a team, Jirok keeps everything clear.
               </p>
               <p>
                 Create tasks, move them through stages, and see progress at a glance. 
@@ -27,17 +27,17 @@ export default function Home() {
             </div>
           </div>
 
-          <div className='w-full md:w-1/2'>
-            <div className='relative group'>
+          <div className="w-full md:w-1/2">
+            <div className="relative group">
               {/* Decorative background glow */}
-              <div className='absolute -inset-1 bg-linear-to-r from-blue-400 to-orange-400 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000'></div>
+              <div className="absolute -inset-1 rounded-lg bg-linear-to-r from-blue-400 to-orange-400 opacity-25 blur transition duration-1000 group-hover:opacity-50"></div>
               
-              <div className='relative bg-white rounded-lg shadow-2xl overflow-hidden'>
+              <div className="relative overflow-hidden rounded-lg bg-card shadow-2xl">
                 <Image 
                   src='/image.webp' 
                   width={800} 
                   height={450} 
-                  className='w-full h-auto object-cover'
+                  className="h-auto w-full object-cover"
                   alt="Jirok Tasks Table Dashboard" 
                   priority 
                 />

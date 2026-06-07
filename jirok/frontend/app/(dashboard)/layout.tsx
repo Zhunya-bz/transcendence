@@ -7,10 +7,10 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({children} : DashboardLayoutProps) => {
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-background text-foreground">
             <NavbarDashboard />
             <div className="flex flex-1 overflow-hidden">
-                <div className="hidden lg:block w-[264px] shrink-0 border-r border-neutral-200 overflow-y-auto">
+                <div className="hidden lg:block w-[264px] shrink-0 border-r border-border overflow-y-auto bg-background">
                     <Sidebar />
                 </div>
                 <main className="flex-1 overflow-y-auto px-6 py-8">

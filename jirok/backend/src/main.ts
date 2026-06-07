@@ -6,8 +6,14 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as express from 'express';
 import { join } from 'path';
+import { WebSocketServer } from 'ws';
+import { ProjectRealtimeService } from './realtime/project-realtime.service';
 
 async function bootstrap() {
+  if (!process.env.JWT_SECRET) {
+    console.error('FATAL ERROR: JWT_SECRET is not defined in .env');
+    process.exit(1);
+  }
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
@@ -35,6 +41,16 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.use('/uploads', express.static(join(process.cwd(), 'uploads')));
+
+  const realtime = app.get(ProjectRealtimeService);
+  const httpServer = app.getHttpServer();
+  const websocketServer = new WebSocketServer({
+    server: httpServer,
+    path: '/ws/projects',
+  });
+
+  realtime.attachServer(websocketServer);
+
   await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();
