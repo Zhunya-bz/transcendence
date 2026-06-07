@@ -44,6 +44,9 @@ Create a root `.env` file before starting the stack.
 FRONTEND_URL=http://localhost:3000
 NEXT_PUBLIC_BACKEND_URL=http://localhost:3001
 
+# Token for creating you profile. Important: CHANGE IT
+JWT_SECRET=change-me
+
 # Database connection info. Important: PUT YOUR VARIABLES
 POSTGRES_USER=user
 POSTGRES_PASSWORD=password
@@ -202,24 +205,23 @@ erDiagram
 | --- | --- | --- | --- | --- |
 | Use a framework for both the frontend and backend | 2 | Use modern tools for Web app development | Next.js for the frontend and NestJS for the backend, both TypeScript | ekanaeva, altoulle |
 | Implement real-time features using WebSockets or similar technology | 2 | Real-time updates are essential in a collaborative task tracker so team members see changes without refreshing. Showing user online status as well. | Created a WebSocket service in NestJS that pushes changes live to the front end as they happen. Users can connect to any project they have access too any they will be informed of changes in real time, as well as being marked as online | fmoses |
-| A public API to interact with the database with a secured API key, rate
-limiting, documentation, and at least 5 endpoints | 2 |
-A public REST API provides secure and standardized CRUD access to the database through well-documented endpoints.
- | API keys are hashed and stored per user/project; endpoints are documented via Swagger at `/docs` and cover projects, issues, users, authentication. | altoulle, rdalal |
-| Use an ORM for the database | 1 |
-Using an ORM allows secure, efficient, and simplified CRUD operations on the database through object-oriented code.
-| Prisma is used throughout the backend for all database access and schema migrations. | altoulle, rdalal |
+| A public API to interact with the database with a secured API key, rate limiting, documentation, and at least 5 endpoints | 2 |A public REST API provides secure and standardized CRUD access to the database through well-documented endpoints. | API keys are hashed and stored per user/project; endpoints are documented via Swagger at `/docs` and cover projects, issues, users, authentication. | altoulle, rdalal |
+| Use an ORM for the database | 1 | Using an ORM allows secure, efficient, and simplified CRUD operations on the database through object-oriented code.| Prisma is used throughout the backend for all database access and schema migrations. | altoulle, rdalal |
 | Custom-made design system | 1 | A consistent design system gives the application a professional, cohesive look | Implemented a custom design system using Shadcn UI components and Tailwind CSS. | ekanaeva |
 | Support for additional browsers | 1 | Ensuring the application works across major browsers improves accessibility and reaches a wider audience. | Tested and functional on Google Chrome, Firefox, and Brave using standard web APIs | rdalal |
 | Standard user management and authentication | 2 | Secure authentication and user management are foundational to any multi-user platform. | Email/password sign-up and sign-in with bcrypt hashing, JWT cookie sessions, protected routes, and logout. | rdalal |
-| Implement remote authentication with OAuth 2.0 (Google, GitHub, 42,
-etc.) | 1 | OAuth simplifies onboarding for users who already have an account with a trusted provider. | 42 OAuth is implemented via Passport OAuth2, with callback handling and automatic account linking. | altoulle |
+| Implement remote authentication with OAuth 2.0 (Google, GitHub, 42, etc.) | 1 | OAuth simplifies onboarding for users who already have an account with a trusted provider. | 42 OAuth is implemented via Passport OAuth2, with callback handling and automatic account linking. | altoulle |
 | Advanced permissions system | 2 | Different roles within a project require different levels of access to prevent unauthorized actions. | Users are assigned roles (e.g. admin, member, viewer) per project via the `user_projects` table; role checks are enforced at the API level. | altoulle | 
-| Implement a complete 2FA (Two-Factor Authentication) system for the
-users | 1 | 2FA adds a critical layer of account security on top of password authentication. | Users can scan a QR code to register a TOTP app and are prompted for a code on each login | rdalal |
+| Implement a complete 2FA (Two-Factor Authentication) system for the users | 1 | 2FA adds a critical layer of account security on top of password authentication. | Users can scan a QR code to register a TOTP app and are prompted for a code on each login | rdalal |
 | User activity analytics and insights dashboard | 1 | Giving users visibility into project activity helps teams track progress and spot bottlenecks. | A dashboard displays issue status breakdowns, and contribution metrics per project. | ekanaeva, altoulle |
-| Modules of choice minor: Dark Mode | 1 | Dark mode is a feature that improves comfort for users working in low-light environments. | Next Theme was used to modify tailwind css variables to change all the colors of the site at once without have to check the theme for each individual component | fmoses |
-| Modules of choice minor: Mobile Complient | 1 | Mobile compliance ensures the application is accessible, responsive, and provides a consistent user experience across mobile devices. | Implemented a responsive design using Tailwind CSS | ekanaeva, fmoses |
+
+### Modules of choice (2 minor)
+
+| Module               | Why We Chose It                                               | Technical Challenges Addressed                                                           | Added Value                                      | Why It Deserves Minor Module Status                                                       |
+| -------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| **Dark Mode**        | To improve user comfort and provide a customizable interface. | Implementing a global theme system and maintaining consistent styling across components. | Reduces eye strain and improves user experience. | Requires UI-wide changes and theme management while remaining a focused enhancement.      |
+| **Mobile Compliant** | To ensure the application is fully usable on mobile devices.  | Creating responsive layouts and optimizing touch interactions.                           | Allows users to manage projects from any device. | Requires significant frontend adaptation and testing without changing core functionality. |
+
 
 Total: 18 points
 
