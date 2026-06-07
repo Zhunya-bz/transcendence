@@ -1,6 +1,5 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend";
 import type { User } from "@/types/prisma";
 import { parseError } from "./issues";
 

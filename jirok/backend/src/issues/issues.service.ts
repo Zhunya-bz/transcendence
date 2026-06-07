@@ -57,6 +57,7 @@ export class IssuesService {
       await this.validateAssignee(projectId, dto.assigneeId);
     }
 
+    console.log('reporter userId:', dto.reporterId); // <-- here
     const issue = await this.prisma.issue.create({
       data: {
         ...dto,

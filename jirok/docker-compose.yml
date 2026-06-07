@@ -12,6 +12,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB} #this too from .env
     networks:
       - private_net
+      - public_net # remove if you don't want the db to be accessible from the frontend
     ports:
       - "5432:5432"
     volumes:

@@ -37,13 +37,18 @@ export interface ProjectRealtimeServerMessage<T = unknown> {
   onlineUserIds?: number[];
 }
 
-export function getProjectRealtimeUrl() {
-  const backendUrl =
-    process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3001";
-  const url = new URL("/ws/projects", backendUrl);
+// export function getProjectRealtimeUrl() {
+//   const backendUrl =
+//     process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3001";
+//   const url = new URL("/ws/projects", backendUrl);
 
-  url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
-  return url.toString();
+//   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+//   return url.toString();
+// }
+
+export function getProjectRealtimeUrl() {
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  return `${protocol}//${window.location.host}/ws/projects`;
 }
 
 export function applyIssueEvent(

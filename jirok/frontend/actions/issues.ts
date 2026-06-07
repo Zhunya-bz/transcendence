@@ -1,6 +1,5 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend";
 import { Issue } from "@/types/prisma";
 
 type CreateIssueInput = {
