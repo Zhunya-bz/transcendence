@@ -45,10 +45,10 @@ FRONTEND_URL=http://localhost:3000
 NEXT_PUBLIC_BACKEND_URL=http://localhost:3001
 
 # Database connection info. Important: CHANGE THE PASSWORD
-POSTGRES_USER=jirok
-POSTGRES_PASSWORD=jirok_secret
-POSTGRES_DB=jirok_db
-DATABASE_URL=postgresql://jirok:jirok_secret@localhost:5432/jirok_db?schema=public
+POSTGRES_USER=user
+POSTGRES_PASSWORD=password
+POSTGRES_DB=db
+DATABASE_URL=postgresql://user:password@localhost:port/db?schema=public
 
 # Token encryption key. Imporant: CHANGE ME
 JWT_SECRET=change-me
