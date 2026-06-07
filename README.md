@@ -44,16 +44,13 @@ Create a root `.env` file before starting the stack.
 FRONTEND_URL=http://localhost:3000
 NEXT_PUBLIC_BACKEND_URL=http://localhost:3001
 
-# Database connection info. Important: CHANGE THE PASSWORD
+# Database connection info. Important: PUT YOUR VARIABLES
 POSTGRES_USER=user
 POSTGRES_PASSWORD=password
 POSTGRES_DB=db
 DATABASE_URL=postgresql://user:password@localhost:port/db?schema=public
 
-# Token encryption key. Imporant: CHANGE ME
-JWT_SECRET=change-me
-
-# (optional) To generate 42 oath credentils go to https://profile.intra.42.fr/oauth/applications/new
+# To generate 42 oath credentils go to https://profile.intra.42.fr/oauth/applications/new
 FORTY_TWO_CLIENT_ID=your_42_client_id
 FORTY_TWO_CLIENT_SECRET=your_42_client_secret
 FORTY_TWO_CALLBACK_URL=http://localhost:3001/auth/42/callback
@@ -131,9 +128,10 @@ The original project idea & design came from ekanaeva & altoulle. fmoses & rdala
 - React 19
 - TypeScript
 - Tailwind CSS v4
-- shadcn-style component structure
+- Shadcn-style component structure
 - TanStack Query for client state and server cache
 - React Hook Form + Zod for forms and validation
+- Toast notification for displaying user actions
 
 ### Backend
 
