@@ -165,7 +165,6 @@ function DashboardBoard({
 
     // No id, so we are creating a new task
     else {
-      alert(JSON.stringify(currentUser));
       await fetch(getBackendUrl(`/projects/${projectId}/issues`), {
         body: JSON.stringify({
           reporterId: currentUser?.id,
@@ -182,15 +181,15 @@ function DashboardBoard({
 
   return (
     <div className="flex flex-col gap-4 width-full flex-1">
-    <div className="flex flex-row gap-4 width-full flex-1">
-      <TaskStack status={IssueStatus.TODO} tasks={data.filter(task => task.status === IssueStatus.TODO)} setTask={setTask} projectId={projectId} projectKey={projectKey} />
-      <TaskStack status={IssueStatus.IN_PROGRESS} tasks={data.filter(task => task.status === IssueStatus.IN_PROGRESS)} setTask={setTask} projectId={projectId} projectKey={projectKey} />
-      <TaskStack status={IssueStatus.IN_REVIEW} tasks={data.filter(task => task.status === IssueStatus.IN_REVIEW)} setTask={setTask} projectId={projectId} projectKey={projectKey} />
-      <TaskStack status={IssueStatus.DONE} tasks={data.filter(task => task.status === IssueStatus.DONE)} setTask={setTask} projectId={projectId} projectKey={projectKey} showAdd={false} />
-    </div>
-    <div>
-      currently online: {onlineUsers.map(user => user.name).join(", ")}
-    </div>
+      <div className="flex flex-row gap-4 width-full flex-1">
+        <TaskStack status={IssueStatus.TODO} tasks={data.filter(task => task.status === IssueStatus.TODO)} setTask={setTask} projectId={projectId} projectKey={projectKey} />
+        <TaskStack status={IssueStatus.IN_PROGRESS} tasks={data.filter(task => task.status === IssueStatus.IN_PROGRESS)} setTask={setTask} projectId={projectId} projectKey={projectKey} />
+        <TaskStack status={IssueStatus.IN_REVIEW} tasks={data.filter(task => task.status === IssueStatus.IN_REVIEW)} setTask={setTask} projectId={projectId} projectKey={projectKey} />
+        <TaskStack status={IssueStatus.DONE} tasks={data.filter(task => task.status === IssueStatus.DONE)} setTask={setTask} projectId={projectId} projectKey={projectKey} showAdd={false} />
+      </div>
+      <div>
+        currently online: {onlineUsers.map(user => user.name).join(", ")}
+      </div>
     </div>
   )
 }
