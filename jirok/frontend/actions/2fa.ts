@@ -1,10 +1,9 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend";
 import { parseError } from "./issues";
 
 export async function generate2FA() {
-  const response = await fetch(getBackendUrl(`/auth/2fa/generate`),
+  const response = await fetch(`/api/auth/2fa/generate`,
     {
       method: "POST",
       credentials: "include",
@@ -20,7 +19,7 @@ export async function generate2FA() {
 
 export async function enable2FA(code: string) {
   const response = await fetch(
-    getBackendUrl(`/auth/2fa/enable`),
+    `/api/auth/2fa/enable`,
     {
       method: "POST",
       credentials: "include",
@@ -47,7 +46,7 @@ export async function verify2FA({
   code: string;
 }) {
   const response = await fetch(
-    getBackendUrl(`/auth/2fa/verify`),
+    `/api/auth/2fa/verify`,
     {
       method: "POST",
       headers: {
