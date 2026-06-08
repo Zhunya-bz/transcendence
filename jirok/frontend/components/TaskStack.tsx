@@ -32,7 +32,7 @@ export function TaskStack({
     }
 
     return <div
-        className="flex-1 flex flex-col gap-1 min-w-[90px] p-1 pt-3 rounded-md border border-border bg-muted/40"
+        className="flex-1 flex flex-col gap-1 min-w-[90px] p-1 pt-3 rounded-md border border-border bg-muted/40 min-w-[250px]"
         onDrop={onDrop}
         onDragOver={onDragOver}
     >
