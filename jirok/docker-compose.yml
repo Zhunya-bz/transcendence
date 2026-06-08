@@ -56,9 +56,6 @@ services:
     networks:
       - public_net
     restart: unless-stopped
-    volumes:
-      - ./frontend:/app
-      - node_modules:/app/node_modules
     healthcheck:
       test: [ "CMD-SHELL", "wget -qO- http://localhost:3000/health || exit 1" ]
       interval: 60s
@@ -76,12 +73,6 @@ services:
       - public_net
     ports:
       - "3000:3000"
-
-    depends_on:
-      backend:
-        condition: service_healthy
-      frontend:
-        condition: service_healthy
 
     restart: unless-stopped
 
