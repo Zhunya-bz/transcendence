@@ -29,6 +29,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: jirok_backend
+    volumes:
+      - uploads_data:/app/uploads
     networks:
       - public_net
       - private_net
@@ -86,6 +88,7 @@ services:
 volumes:
   postgres_data:
   node_modules:
+  uploads_data:
 
 networks:
   public_net:
