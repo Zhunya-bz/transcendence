@@ -74,8 +74,8 @@ export default function IssuePage({ params }: DashboardPageProps) {
   }
 
   return (
-    <div className="flex flex-row gap-4 width-full flex-1">
-      <div className="flex flex-col gap-4 width-full flex-1">
+    <div className="flex w-full flex-1 flex-col gap-4 md:flex-row">
+      <div className="flex w-full flex-1 flex-col gap-4">
         <Input
           className="h-11 bg-white text-xl"
           defaultValue={data.title}
@@ -96,7 +96,7 @@ export default function IssuePage({ params }: DashboardPageProps) {
           }
         />
       </div>
-      <div className="flex min-w-[320px] flex-col gap-4">
+      <div className="flex w-full flex-col gap-4 md:min-w-[320px] md:w-auto">
         <div className="flex flex-col gap-2">
           <label className={issueFieldLabelClassName}>Type</label>
           <Select
