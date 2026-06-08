@@ -40,9 +40,8 @@ Without Docker:
 Create a root `.env` file before starting the stack.
 
 ```env
-# Don't change these
-FRONTEND_URL=http://localhost:3000
-NEXT_PUBLIC_BACKEND_URL=http://localhost:3001
+# Don't change this
+FRONTEND_URL=https://localhost:3000
 
 # Token for creating you profile. Important: CHANGE IT
 JWT_SECRET=change-me
@@ -100,9 +99,9 @@ npm run dev
 
 ### URLs
 
-- Frontend: `http://localhost:3000`
-- Backend API: `http://localhost:3001`
-- Backend Swagger docs: `http://localhost:3001/docs`
+- Frontend: `https://localhost:3000`
+- Backend API: `https://localhost:3000/api`
+- Backend Swagger docs: `https://localhost:3000/api/docs`
 
 ## Team Information
 
