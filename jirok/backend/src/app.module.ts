@@ -11,6 +11,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { ProjectsModule } from './projects/projects.module';
 import { IssuesModule } from './issues/issues.module';
 import { ProjectRealtimeModule } from './realtime/project-realtime.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ProjectRealtimeModule } from './realtime/project-realtime.module';
     ProjectsModule,
     IssuesModule,
     ProjectRealtimeModule,
+    HealthModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,

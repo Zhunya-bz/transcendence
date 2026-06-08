@@ -161,7 +161,7 @@ export default function SignUp() {
                 variant="ghost"
                 className="w-full bg-orange-300 hover:bg-orange-400 mb-3"
                 onClick={() => {
-                  window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/42`;
+                  window.location.href = "/api/auth/42";
                 }}
               >
                 <Image
