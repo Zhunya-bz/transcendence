@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,8 +13,12 @@ import { Monitor, MoonStar, SunMedium } from "lucide-react";
 
 export function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
-
   const currentTheme = theme === "system" ? resolvedTheme : theme;
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <DropdownMenu>
@@ -26,7 +31,9 @@ export function ThemeToggle() {
           className="shrink-0"
           suppressHydrationWarning
         >
-          {currentTheme === "dark" ? (
+          {!mounted ? (
+            <span className="size-4" />
+          ) : currentTheme === "dark" ? (
             <MoonStar className="size-4" />
           ) : (
             <SunMedium className="size-4" />
