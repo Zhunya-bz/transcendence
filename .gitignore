@@ -1,3 +1,8 @@
 jirok/backend/dist
 jirok/backend/tsconfig.build.tsbuildinfo
 jirok/.env
+jirok/frontend/.env
+jirok/frontend/node_modules
+jirok/frontend/.next
+jirok/frontend/dist
+jirok/backend/.env

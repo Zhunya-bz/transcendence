@@ -128,7 +128,7 @@ export class AuthService {
   // Handle 42 OAuth callback business logic
   handle42Callback(user: { id: number; email: string }): string {
     const token = this.generateToken(user);
-    const redirect = `${process.env.FRONTEND_URL}/auth/42/callback?token=${encodeURIComponent(
+    const redirect = `/auth/42/callback?token=${encodeURIComponent(
       token,
     )}`;
     return redirect;

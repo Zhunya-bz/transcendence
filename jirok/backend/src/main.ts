@@ -15,16 +15,20 @@ async function bootstrap() {
     process.exit(1);
   }
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
+  app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: process.env.FRONTEND_URL ?? 'https://localhost',
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   });
 
   const config = new DocumentBuilder()
     .setTitle('Jirok API')
     .setDescription('Backend API documentation for Jirok')
     .setVersion('1.0')
+    .addServer('https://localhost', 'Local HTTPS')
     .addBearerAuth(
       {
         type: 'http',
@@ -36,10 +40,9 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
-  app.use(cookieParser());
-  app.use('/uploads', express.static(join(process.cwd(), 'uploads')));
+  app.use('/api/uploads', express.static(join(process.cwd(), 'uploads')));
 
   const realtime = app.get(ProjectRealtimeService);
   const httpServer = app.getHttpServer();
